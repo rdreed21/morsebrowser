@@ -7,6 +7,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>LICW Morse Practice Page</title>
+    <script>
+        (function() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
 </head>
 <!--test8 test6 -->
 
@@ -22,7 +29,19 @@
 
                     </div>
                     <div class="col col-md-auto">
-                        <h1>Morse Practice Page</h1>
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <h1 class="mb-0">Morse Practice Page</h1>
+                            <button id="btnDarkMode" type="button" class="btn btn-sm btn-outline-secondary ms-auto"
+                                aria-label="Toggle dark mode"
+                                onclick="var d=document.documentElement.getAttribute('data-theme')==='dark';document.documentElement.setAttribute('data-theme',d?'light':'dark');localStorage.setItem('theme',d?'light':'dark');this.textContent=d?'🌙':'☀️';">
+                            </button>
+                        </div>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var btn = document.getElementById('btnDarkMode');
+                                if (btn) btn.textContent = document.documentElement.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+                            });
+                        </script>
                         <section id="credits-and-info" title="Credits and additional information"
                             aria-label="Credits and additional information">
                             <span title="Contributor info" id="contributor-info">by KN4YRM with assistance from AB5TN,
