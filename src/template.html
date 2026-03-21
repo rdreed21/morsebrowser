@@ -38,9 +38,9 @@
         <div class="row gy-2 row-cols-1">
             <!-- title header area-->
             <header class="col">
-                <div class="row row-cols-2 justify-content-md-center">
+                <div class="row row-cols-1 row-cols-md-2 justify-content-md-center">
                     <div class="col col-md-auto">
-                        <img data-bind="click: logoClick" id="logoImage" height="200px" width="200px"
+                        <img data-bind="click: logoClick" id="logoImage" style="max-width: 100%; height: auto;"
                             alt="Long Island CW Club Logo depicting a hand on a straight key and the club call sign W2LCW" />
 
                     </div>
@@ -230,7 +230,7 @@
                                 <img id='bookImage' height=20 width=20 alt="" /><span>&nbsp;</span><span>LICW
                                     Lessons</span>
                                 <span>&nbsp;</span>
-                                <span class="badge bg-success" data-bind="if: lessons.selectedDisplay().display">
+                                <span class="badge bg-success" style="white-space: normal;" data-bind="if: lessons.selectedDisplay().display">
                                     <span>Type: </span><span data-bind="text: lessons.userTarget"></span>
                                     <span>&nbsp; Class: </span><span data-bind="text: lessons.selectedClass"></span>
                                     <span>&nbsp; Letter Group: </span><span
@@ -250,202 +250,177 @@
                             aria-labelledby="headingLessonControls">
                             <div class="accordion-body">
 
-                                <div class="row gy-2 row-cols-6">
+                                <div class="row gx-2 gy-3">
                                     <!--user type-->
-                                    <div class="col-auto">
-                                        <div class="row"><span>TYPE</span></div>
-                                        <fieldset aria-label="Curriculum kind" class="btn-group-vertical"
-                                            data-bind="foreach: lessons.userTargets, childrenComplete: () => lessons.setUserTargetInitialized()">
-                                            <input type="radio" class="btn-check" name="btnradioUserTargets"
-                                                data-bind="checkedValue: $data, checked: $root.lessons.userTarget, attr: { 'aria-label': $data }">
-                                            <label class="btn btn-outline-primary" aria-hidden="true"
-                                                data-bind="text: $data, click: $root.lessons.changeUserTarget($data)"></label>
-                                        </fieldset>
+                                    <div class="col-6 col-md-auto">
+                                        <label class="form-label mb-1 fw-semibold">TYPE</label>
+                                        <div style="display:none" aria-hidden="true">
+                                            <fieldset aria-label="Curriculum kind"
+                                                data-bind="foreach: lessons.userTargets, childrenComplete: () => lessons.setUserTargetInitialized()">
+                                                <input type="radio" class="btn-check" name="btnradioUserTargets"
+                                                    data-bind="checkedValue: $data, checked: $root.lessons.userTarget, attr: { 'aria-label': $data }">
+                                                <label class="btn btn-outline-primary" aria-hidden="true"
+                                                    data-bind="text: $data, click: $root.lessons.changeUserTarget($data)"></label>
+                                            </fieldset>
+                                        </div>
+                                        <select class="form-select form-select-sm" aria-label="Curriculum kind"
+                                            data-bind="options: lessons.userTargets, value: lessons.userTarget">
+                                        </select>
                                     </div>
                                     <!--classes-->
-                                    <div class="col-auto">
-                                        <div class="row"><span>CLASS</span></div>
-                                        <fieldset aria-label="Class" class="btn-group-vertical"
-                                            data-bind="foreach: lessons.classes, childrenComplete: () => lessons.setSelectedClassInitialized()">
-                                            <input type="radio" class="btn-check" name="btnradioClasses"
-                                                data-bind="checkedValue: $data, checked: $root.lessons.selectedClass, attr: { 'aria-label': $data }">
-                                            <label class="btn btn-outline-primary" aria-hidden="true"
-                                                data-bind="text: $data, click: $root.lessons.changeSelectedClass($data,'click')"></label>
-                                        </fieldset>
+                                    <div class="col-6 col-md-auto">
+                                        <label class="form-label mb-1 fw-semibold">CLASS</label>
+                                        <div style="display:none" aria-hidden="true">
+                                            <fieldset aria-label="Class"
+                                                data-bind="foreach: lessons.classes, childrenComplete: () => lessons.setSelectedClassInitialized()">
+                                                <input type="radio" class="btn-check" name="btnradioClasses"
+                                                    data-bind="checkedValue: $data, checked: $root.lessons.selectedClass, attr: { 'aria-label': $data }">
+                                                <label class="btn btn-outline-primary" aria-hidden="true"
+                                                    data-bind="text: $data, click: $root.lessons.changeSelectedClass($data,'click')"></label>
+                                            </fieldset>
+                                        </div>
+                                        <select class="form-select form-select-sm" aria-label="Class"
+                                            data-bind="options: lessons.classes, value: lessons.selectedClass,
+                                                       event: {change: function() { lessons.changeSelectedClass(lessons.selectedClass(), 'click') }}">
+                                        </select>
                                     </div>
                                     <!--letter groups-->
-                                    <div class="col-auto">
-                                        <div class="row"><span>LETTER GROUP</span></div>
-                                        <div role="radiogroup" aria-label="Wordlist" class="list-group"
-                                            data-bind="foreach: lessons.letterGroups, childrenComplete: () => lessons.setLetterGroupInitialized()"
-                                            style="overflow-y:auto; height:290px; width: 225px;">
-                                            <button role="radio" type="button"
-                                                class="list-group-item list-group-item-action"
-                                                data-bind="text: $data, attr:{ 'aria-checked': $root.lessons.letterGroup()==$data }, click: ()=>$root.lessons.setLetterGroup($data,'click'), css: { active: $data==$parent.lessons.letterGroup()}"></button>
+                                    <div class="col-12 col-md-auto">
+                                        <label class="form-label mb-1 fw-semibold">LETTER GROUP</label>
+                                        <div style="display:none" aria-hidden="true"
+                                            data-bind="foreach: lessons.letterGroups, childrenComplete: () => lessons.setLetterGroupInitialized()">
+                                            <span></span>
                                         </div>
+                                        <select class="form-select form-select-sm" aria-label="Wordlist"
+                                            data-bind="options: lessons.letterGroups, value: lessons.letterGroup,
+                                                       event: {change: function() { lessons.setLetterGroup(lessons.letterGroup(), 'click') }}">
+                                        </select>
                                     </div>
                                     <!--lessons-->
-                                    <div class="col-auto">
-                                        <div class="row"><span>LESSON</span></div>
-                                        <div role="radiogroup" aria-label="Lesson" class="list-group"
-                                            data-bind="foreach: lessons.displays, childrenComplete: () => lessons.setDisplaysInitialized()"
-                                            style="overflow-y:auto; height:250px; width: 200px;">
-                                            <button role="radio" type="button"
-                                                class="list-group-item list-group-item-action"
-                                                data-bind="text: $data.display, attr:{ 'aria-checked': $data.display==$parent.lessons.selectedDisplay().display }, click: ()=>$root.lessons.setDisplaySelected($data,false,'click'), css: { active: $data.display==$parent.lessons.selectedDisplay().display}"></button>
+                                    <div class="col-12 col-md-auto">
+                                        <label class="form-label mb-1 fw-semibold">LESSON</label>
+                                        <div style="display:none" aria-hidden="true"
+                                            data-bind="foreach: lessons.displays, childrenComplete: () => lessons.setDisplaysInitialized()">
+                                            <span></span>
                                         </div>
+                                        <select class="form-select form-select-sm" aria-label="Lesson"
+                                            data-bind="options: lessons.displays, optionsText: 'display', value: lessons.selectedDisplay,
+                                                       event: {change: function() { lessons.setDisplaySelected(lessons.selectedDisplay(), false, 'click') }}">
+                                        </select>
                                     </div>
 
                                     <!--setting presets-->
-                                    <div class="col-auto">
-                                        <div class="row"><span>PRESETS</span></div>
-                                        <div role="radiogroup" aria-label="Settings preset" class="list-group"
-                                            data-bind="foreach: lessons.settingsPresets, childrenComplete: () => lessons.setSettingsPresetsInitialized()"
-                                            style="overflow-y:auto; height:250px; width: 200px;">
-                                            <button role="radio" id="btnLessonSettingsPresets" type="button"
-                                                class="list-group-item list-group-item-action"
-                                                data-bind="enable: $root.allowSaveCookies, text: $data.display, attr:{ 'aria-checked': $data.display==$parent.lessons.selectedSettingsPreset().display }, click: ()=>$root.lessons.setPresetSelected($data,false,'click'), css: { active: $data.display==$parent.lessons.selectedSettingsPreset().display}"></button>
+                                    <div class="col-12 col-md-auto">
+                                        <label class="form-label mb-1 fw-semibold">PRESET</label>
+                                        <div style="display:none" aria-hidden="true"
+                                            data-bind="foreach: lessons.settingsPresets, childrenComplete: () => lessons.setSettingsPresetsInitialized()">
+                                            <span></span>
                                         </div>
-
-                                        <!-- save settings button -->
-                                        <button id="saveSettingsButton" type="button" class="btn btn-outline-dark"
-                                            data-bind="click: () => saveSettings()" style="width: 98px;">
-                                            <span>Save</span>
-
-                                        </button>
-
-                                        <!-- load settings button -->
-                                        <button id="loadSettingsButton" type="button" class="btn btn-outline-dark"
-                                            onclick="getElementById('settingsfiletoread').click()" style="width: 98px;">
-                                            <span>Load</span>
-
-                                        </button>
-                                        <input type="file" accept=".json" id="settingsfiletoread" class="form-control"
-                                            data-bind="event: {change: function() { settingsFileChange($element) } }"
-                                            hidden>
+                                        <select class="form-select form-select-sm" aria-label="Settings preset"
+                                            data-bind="options: lessons.settingsPresets, optionsText: 'display', value: lessons.selectedSettingsPreset,
+                                                       enable: $root.allowSaveCookies,
+                                                       event: {change: function() { lessons.setPresetSelected(lessons.selectedSettingsPreset(), false, 'click') }}">
+                                        </select>
+                                        <div class="d-flex gap-1 mt-1">
+                                            <!-- save settings button -->
+                                            <button id="saveSettingsButton" type="button" class="btn btn-outline-dark btn-sm flex-fill"
+                                                data-bind="click: () => saveSettings()">
+                                                <span>Save</span>
+                                            </button>
+                                            <!-- load settings button -->
+                                            <button id="loadSettingsButton" type="button" class="btn btn-outline-dark btn-sm flex-fill"
+                                                onclick="getElementById('settingsfiletoread').click()">
+                                                <span>Load</span>
+                                            </button>
+                                            <input type="file" accept=".json" id="settingsfiletoread" class="form-control"
+                                                data-bind="event: {change: function() { settingsFileChange($element) } }"
+                                                hidden>
+                                        </div>
                                     </div>
 
-                                    <!--buttons for overrides and such-->
-                                    <div class="col-auto">
-                                        <div class="btn-group-vertical" role="group">
-                                            <!--randomize toggle-->
-                                            <input aria-label="Randomize" type="checkbox" class="btn-check"
-                                                autocomplete="off" id="btncheck1"
-                                                data-bind="checked: lessons.randomizeLessons">
-                                            <label aria-hidden="true" class="btn btn-outline-primary"
-                                                for="btncheck1">Randomize&nbsp;<img
-                                                    data-bind="attr:{ src: lessons.randomizeLessons() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}" /></label>
-                                            <!--autoclose toggle-->
-                                            <input aria-label="Auto close" type="checkbox" class="btn-check"
-                                                autocomplete="off" id="btncheckautoclose"
-                                                data-bind="checked: lessons.autoCloseLessonAccordion">
-                                            <label aria-hidden="true" class="btn btn-outline-primary"
-                                                for="btncheckautoclose">Auto
-                                                Close&nbsp;<img
-                                                    data-bind="attr:{ src: lessons.autoCloseLessonAccordion() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}" /></label>
-                                            <!--sticky sets toggle-->
-                                            <input aria-label="Sticky sets" type="checkbox" class="btn-check"
-                                                id="btncheck2stickysetstoggle" autocomplete="off"
-                                                data-bind="checked: lessons.ifStickySets">
-                                            <label aria-hidden="true" class="btn btn-outline-primary"
-                                                for="btncheck2stickysetstoggle" style="width: 125px;">Sticky
-                                                Sets&nbsp;<img
-                                                    data-bind="attr:{ src: lessons.ifStickySets() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}" /></label>
-                                            <!--sticky set text -->
-                                            <input type="text" class="form-control" style="max-width:125px;"
-                                                aria-label="Sticky set text" min="0"
-                                                data-bind="textInput: lessons.stickySets, enable: lessons.ifStickySets">
-                                        </div>
+                                    <!--playback options + overrides (kept together so they don't split onto a second row on desktop)-->
+                                    <div class="col-12 col-md-auto">
+                                        <div class="d-flex flex-wrap gap-4 align-items-start">
 
-                                        <div class="input-group">
-                                            <div aria-label="Custom group generation" class="btn-group-vertical"
-                                                role="group">
-                                                <p role="note" class="sr-only">
-                                                    When pressed, the "Custom group" button generates working text using
-                                                    the text entered in the "Custom group text" text input instead of
-                                                    from
-                                                    a lesson.
-                                                </p>
-                                                <!--custom group run button-->
-                                                <button type="button" class="btn btn-success"
-                                                    data-bind="click: lessons.doCustomGroup"
-                                                    style="max-width:125px; padding-left: 2px; padding-right: 2px;">Custom
-                                                    Group</button>
-                                                <!--custom group text -->
-                                                <input type="text" class="form-control" style="max-width:125px;"
-                                                    aria-label="Custom group text" min="0"
-                                                    data-bind="textInput: lessons.customGroup">
+                                            <!--playback options-->
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="btncheck1" autocomplete="off"
+                                                        data-bind="checked: lessons.randomizeLessons">
+                                                    <label class="form-check-label" for="btncheck1">Randomize</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="btncheckautoclose" autocomplete="off"
+                                                        data-bind="checked: lessons.autoCloseLessonAccordion">
+                                                    <label class="form-check-label" for="btncheckautoclose">Auto Close</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="btnchecknewlinechunking" autocomplete="off"
+                                                        data-bind="checked: settings.misc.newlineChunking">
+                                                    <label class="form-check-label" for="btnchecknewlinechunking">Keep Lines</label>
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="btncheck2stickysetstoggle" autocomplete="off"
+                                                        data-bind="checked: lessons.ifStickySets">
+                                                    <label class="form-check-label" for="btncheck2stickysetstoggle">Sticky Sets</label>
+                                                </div>
+                                                <input type="text" class="form-control form-control-sm"
+                                                    aria-label="Sticky set text"
+                                                    placeholder="Sticky characters"
+                                                    data-bind="textInput: lessons.stickySets, enable: lessons.ifStickySets">
+                                                <p role="note" class="sr-only">When pressed, the Custom Group button generates working text using the text entered in the Custom group text input instead of a lesson.</p>
+                                                <div class="input-group input-group-sm">
+                                                    <input type="text" class="form-control"
+                                                        aria-label="Custom group text"
+                                                        placeholder="Custom group"
+                                                        data-bind="textInput: lessons.customGroup">
+                                                    <button type="button" class="btn btn-success"
+                                                        data-bind="click: lessons.doCustomGroup">Go</button>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <!--newline chunking toggle-->
-                                        <input type="checkbox" class="btn-check" autocomplete="off"
-                                            aria-label="Keep lines" id="btnchecknewlinechunking"
-                                            data-bind="checked: settings.misc.newlineChunking">
-                                        <label aria-hidden="true" class="btn btn-outline-primary"
-                                            for="btnchecknewlinechunking"
-                                            style="width: 125px; max-width:125px;"><span>Keep
-                                                Lines&nbsp;<img
-                                                    data-bind="attr:{ src: settings.misc.newlineChunking() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}" /></span></label>
 
-                                    </div>
-
-                                    <!---->
-                                    <div class="col-auto">
-                                        <!--override time toggle-->
-                                        <input aria-label="Override time" type="checkbox" class="btn-check"
-                                            id="btncheck2" autocomplete="off"
-                                            data-bind="checked: lessons.ifOverrideTime">
-                                        <label aria-hidden="true" class="btn btn-outline-primary"
-                                            for="btncheck2">Override
-                                            Time&nbsp;<img
-                                                data-bind="attr:{ src: lessons.ifOverrideTime() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}" /></label>
-
-                                        <div class="input-group">
-                                            <!--override minutes-->
-                                            <span aria-hidden="true" style="width: 76px;"
-                                                class="input-group-text">Mins</span>
-                                            <input type="number" class="form-control" style="max-width:70px;"
-                                                aria-label="minutes" min="0"
-                                                data-bind="textInput: lessons.overrideMins, enable: lessons.ifOverrideTime">
-                                        </div>
-
-                                        <div class="btn-group" role="group">
-                                            <!--override size toggle-->
-                                            <input aria-label="Override size" type="checkbox" class="btn-check"
-                                                id="btncheck2overridesize" autocomplete="off"
-                                                data-bind="checked: lessons.ifOverrideMinMax">
-                                            <label aria-hidden="true" style="width: 146px;"
-                                                class="btn btn-outline-primary" for="btncheck2overridesize">Override
-                                                Size&nbsp;<img
-                                                    data-bind="attr:{ src: lessons.ifOverrideMinMax() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}" /></label>
+                                            <!--overrides-->
+                                            <div class="d-flex flex-column gap-2">
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="btncheck2" autocomplete="off"
+                                                        data-bind="checked: lessons.ifOverrideTime">
+                                                    <label class="form-check-label" for="btncheck2">Override Time</label>
+                                                </div>
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">Mins</span>
+                                                    <input type="number" class="form-control" aria-label="minutes" min="0"
+                                                        data-bind="textInput: lessons.overrideMins, enable: lessons.ifOverrideTime">
+                                                </div>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" role="switch"
+                                                        id="btncheck2overridesize" autocomplete="off"
+                                                        data-bind="checked: lessons.ifOverrideMinMax">
+                                                    <label class="form-check-label" for="btncheck2overridesize">Override Size</label>
+                                                </div>
+                                                <div class="input-group input-group-sm">
+                                                    <span class="input-group-text">Min</span>
+                                                    <input type="number" class="form-control" aria-label="Minimum" min="1"
+                                                        data-bind="textInput: lessons.overrideMin, enable: lessons.ifOverrideMinMax">
+                                                </div>
+                                                <div class="input-group input-group-sm">
+                                                    <span role="checkbox" aria-label="Sync minimum and maximum size"
+                                                        class="input-group-text" style="cursor:pointer;"
+                                                        data-bind="click: ()=>lessons.syncSize(!lessons.syncSize()), attr: {'aria-checked': lessons.syncSize() ? 'true' : 'false'}">Max&nbsp;<img
+                                                            aria-hidden="true"
+                                                            data-bind="attr:{ src: lessons.syncSize() ? morseLoadImages().getSrc('lockImage') : morseLoadImages().getSrc('unlockImage')}" /></span>
+                                                    <input aria-label="Maximum" type="number" class="form-control" min="1"
+                                                        data-bind="textInput: lessons.overrideMax, enable: lessons.ifOverrideMinMax() && !lessons.syncSize(), attr: { min: lessons.trueOverrideMin}">
+                                                </div>
+                                                <button type="button" class="btn btn-success btn-sm" id="btnApply"
+                                                    data-bind="click: ()=>doApply(true), enable: applyEnabled">Apply</button>
+                                            </div>
 
                                         </div>
-
-                                        <div class="input-group">
-                                            <!--min override-->
-                                            <span aria-hidden="true" style="width: 76px;"
-                                                class="input-group-text">Min</span>
-                                            <input aria-label="Minimum" style="width: 70px;" type="number"
-                                                class="form-control" style="max-width:75px;" min="1"
-                                                data-bind="textInput: lessons.overrideMin, enable: lessons.ifOverrideMinMax">
-
-                                        </div>
-
-                                        <div class="input-group">
-                                            <!--max override-->
-                                            <span role="checkbox" aria-label="Sync minimum and maximum size"
-                                                class="input-group-text"
-                                                data-bind="click: ()=>lessons.syncSize(!lessons.syncSize()), attr: {'aria-checked': lessons.syncSize() ? 'true' : 'false'}">Max&nbsp;<img
-                                                    aria-hidden="true"
-                                                    data-bind="attr:{ src: lessons.syncSize() ? morseLoadImages().getSrc('lockImage') : morseLoadImages().getSrc('unlockImage')}" /></span>
-                                            <input aria-label="Maximum" type="number" class="form-control"
-                                                style="max-width:70px;" min="1"
-                                                data-bind="textInput: lessons.overrideMax, enable: lessons.ifOverrideMinMax() && !lessons.syncSize(), attr: { min: lessons.trueOverrideMin}">
-                                        </div>
-                                        <!--custom group run button-->
-                                        <button type="button" class="btn btn-success" id="btnApply"
-                                            data-bind="click: ()=>doApply(true), enable: applyEnabled"
-                                            style="width: 146px; padding-left: 2px; padding-right: 2px;">Apply</button>
                                     </div>
                                 </div>
 

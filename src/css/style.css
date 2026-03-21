@@ -6,6 +6,20 @@ noiseaccordion {
     display: contents;
 }
 
+/* Logo responsive sizing */
+#logoImage {
+    max-width: 120px;
+    width: 120px;
+    height: auto;
+}
+
+@media (min-width: 576px) {
+    #logoImage {
+        max-width: 200px;
+        width: 200px;
+    }
+}
+
 /*
  * The sr-only class indicates content that is meant only for screen readers
  * and which should not be rendered on a graphical display.
