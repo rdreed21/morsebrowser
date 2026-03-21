@@ -175,7 +175,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }, this)
 
     this.displays = ko.computed(() => {
-      this.displaysInitialized = false
       this.selectedDisplay({})
       const dps = []
       if (this.selectedClass() === '' || this.userTarget() === '' || this.letterGroup() === '') {
@@ -189,8 +188,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
             dps.push(x)
           }
         })
-      return dps
+      return dps.length > 0 ? dps : [{ display: 'Select wordlist', fileName: 'dummy.txt', isDummy: true }]
     }, this)
+
   }
 
   // end constructor
@@ -471,7 +471,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
   setDisplaysInitialized = () => {
     this.displaysInitialized = true
-    // check for 'displays' lsson preset
+    // check for 'displays' lesson preset
     if (GeneralUtils.getParameterByName('selectedLesson')) {
       const paramClass = GeneralUtils.getParameterByName('selectedLesson').toUpperCase()
       const targetClass = this.displays().find(c => c.display.toUpperCase() === paramClass)
@@ -479,16 +479,19 @@ export default class MorseLessonPlugin implements ICookieHandler {
       var skipPresets = false
       if (GeneralUtils.getParameterByName('selectedPreset')) {
         skipPresets = true
-      } 
-    
-        
-      
+      }
       if (targetClass) {
         this.setDisplaySelected(targetClass, skipPresets)
         if (!this.queryStringSettingsOn) {
           // remove selectedLesson from the Querystring now that we're done
           this.removeQueryStringVariable('selectedLesson')
         }
+      }
+    } else {
+      // Auto-select the lesson when only one non-dummy option is available
+      const nonDummy = this.displays().filter(d => !d.isDummy)
+      if (nonDummy.length === 1) {
+        this.setDisplaySelected(nonDummy[0])
       }
     }
   }
@@ -555,6 +558,15 @@ export default class MorseLessonPlugin implements ICookieHandler {
       //console.log('calling setPresetSelected from setLetterGroup')
       this.setPresetSelected(this.selectedSettingsPreset(), true)
       this.upsertQueryStringVariable('selectedGroup', letterGroup)
+      // Auto-select lesson if there is exactly one option and none currently selected.
+      // this.letterGroup() update above causes displays to recompute synchronously,
+      // so this.displays() reflects the current letter group right now.
+      if (!this.selectedDisplay().display) {
+        const nonDummy = this.displays().filter((d: any) => !d.isDummy)
+        if (nonDummy.length === 1) {
+          this.setDisplaySelected(nonDummy[0])
+        }
+      }
     }
   }
 
@@ -638,7 +650,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
         SettingsOverridesJson.overrides.forEach(o => {
           if (
             (o.filters.letterGroup.some(s => s === this.letterGroup())) ||
-            (o.filters.fileName.some(s => s === this.selectedDisplay().fileName))
+            (this.selectedDisplay() && o.filters.fileName.some(s => s === this.selectedDisplay().fileName))
           ) {
             // console.log('filter found!')
             // note, possibly they match but issue for another day...
@@ -701,7 +713,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
       // give time for settings to change, then re-init the lesson
       if (!skipReinit) {
-        if (this.morseViewModel.lessons.selectedDisplay().display && !this.morseViewModel.lessons.selectedDisplay().isDummy) {
+        if (this.morseViewModel.lessons.selectedDisplay() && this.morseViewModel.lessons.selectedDisplay().display && !this.morseViewModel.lessons.selectedDisplay().isDummy) {
           setTimeout(() => { this.morseViewModel.lessons.setDisplaySelected(this.morseViewModel.lessons.selectedDisplay(), true) }
             , 1000)
         }
