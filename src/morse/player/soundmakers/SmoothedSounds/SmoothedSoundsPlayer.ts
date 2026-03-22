@@ -11,20 +11,20 @@ import * as toWav from 'audiobuffer-to-wav'
 
 export default class SmoothedSoundsPlayer implements ISoundMaker {
   sourceEnded:boolean = true
-  sourceEndedCallBack
+  sourceEndedCallBack: any
   noisePlaying:boolean = false
   lastNoiseType = 'off'
-  scaledVolume
-  wavInfo:CreatedWav
+  scaledVolume: number
+  wavInfo:CreatedWav | null
   config:SoundMakerConfig
   nodesConnected:boolean = false
   ssContext:SmoothedSoundsContext
 
   startNoise = (config:SoundMakerConfig) => {
-    let noiseNodeMaker = null
-    const afterImport = (def) => {
+    let noiseNodeMaker: (() => void) | null = null
+    const afterImport = (def: any) => {
       def.install()
-      noiseNodeMaker()
+      noiseNodeMaker!()
       this.ssContext.noiseGainNode = this.ssContext.audioContext.createGain()
       this.setNoiseVolume(config.noise.scaledNoiseVolume)
       this.ssContext.noiseNode.connect(this.ssContext.noiseGainNode)
@@ -54,11 +54,11 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
     }
   }
 
-  setVolume = (scaledVolume) => {
+  setVolume = (scaledVolume: number) => {
     this.scaledVolume = scaledVolume
   }
 
-  setNoiseVolume = (scaledVolume) => {
+  setNoiseVolume = (scaledVolume: number) => {
     if (this.ssContext.audioContext) {
       this.ssContext.noiseGainNode.gain.setValueAtTime(scaledVolume, this.ssContext.audioContext.currentTime)
     }
@@ -88,7 +88,7 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
     }
   }
 
-  setGainTimings = (wavInfo:CreatedWav, scaledVolume, config:SoundMakerConfig) => {
+  setGainTimings = (wavInfo:CreatedWav, scaledVolume: number, config:SoundMakerConfig) => {
     const currentTimeSecs = this.ssContext.audioContext.currentTime
     const currentTimeMs = currentTimeSecs * 1000
     // console.log(`currentTimeMs:${currentTimeMs}`)
@@ -127,17 +127,17 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
     this.doPlay(wavInfo, config.volume / 10, config, onEnded)
   }
 
-  doPlay = async (wavInfo:CreatedWav, scaledVolume, config:SoundMakerConfig, onEnded) => {
+  doPlay = async (wavInfo:CreatedWav | null, scaledVolume: number, config:SoundMakerConfig, onEnded: any) => {
     this.scaledVolume = scaledVolume
     this.wavInfo = wavInfo
     this.config = config
     this.sourceEnded = false
     this.sourceEndedCallBack = onEnded
-    const endTime = !config.morseDisabled ? this.getEndTime(wavInfo, config) : 0
+    const endTime = !config.morseDisabled ? this.getEndTime(wavInfo!, config) : 0
 
     if (!config.morseDisabled) {
       this.getContext(endTime)
-      this.setGainTimings(wavInfo, scaledVolume, config)
+      this.setGainTimings(wavInfo!, scaledVolume, config)
 
       // only do noise if not an offline recording
       if (!this.config.offline) {
@@ -206,7 +206,7 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
     return ret
   }
 
-  forceStop = (pauseCallBack, killNoise) => {
+  forceStop = (pauseCallBack: () => void, killNoise: boolean) => {
     if (!this.ssContext) {
       pauseCallBack()
     } else {
@@ -238,7 +238,7 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
       this.play(config, (renderedBuffer:AudioBuffer) => {
         this.sourceEnded = true
         const myWav = toWav(renderedBuffer)
-        resolve(myWav)
+        resolve(myWav as unknown as number[])
       })
     })
     return myPromise

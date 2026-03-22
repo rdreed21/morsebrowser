@@ -37,7 +37,7 @@ export default class ScreenWakeLock {
     if (this.wakeLockAvailable && this.wakeLock === null) {
       this.requested = true
       try {
-        (navigator as any).wakeLock.request('screen').then(lock => {
+        (navigator as any).wakeLock.request('screen').then((lock: any) => {
           this.wakeLock = lock
         })
       } catch (error) {

@@ -28,7 +28,7 @@ import { clear, log } from 'console'
 import ScreenWakeLock from './utils/screenWakeLock'
 
 export class MorseViewModel {
-  accessibilityAnnouncement:ko.Observable<string> = ko.observable(undefined)
+  accessibilityAnnouncement:ko.Observable<string> = ko.observable('')
   textBuffer:ko.Observable<string> = ko.observable('')
   hideList:ko.Observable<boolean> = ko.observable(true)
   currentIndex:ko.Observable<number> = ko.observable(0)
@@ -41,15 +41,15 @@ export class MorseViewModel {
   trailReveal:ko.Observable<boolean> = ko.observable(false)
   preShuffled:string = ''
   morseWordPlayer:MorseWordPlayer
-  rawText:ko.Observable<string> = ko.observable()
+  rawText:ko.Observable<string> = ko.observable('')
   showingText:ko.Observable<string> = ko.observable('')
   showRaw:ko.Observable<boolean> = ko.observable(true)
-  volume:ko.Observable<number> = ko.observable()
+  volume:ko.Observable<number> = ko.observable(10)
   noiseHidden:ko.Observable<boolean> = ko.observable(true)
   noiseEnabled:ko.Observable<boolean> = ko.observable(false)
   noiseVolume:ko.Observable<number> = ko.observable(2)
   noiseType:ko.Observable<string> = ko.observable('off')
-  lastPlayFullStart = null
+  lastPlayFullStart: number | null = null
   runningPlayMs:ko.Observable<number> = ko.observable(0)
   lastPartialPlayStart = ko.observable()
   isPaused:ko.Observable<boolean> = ko.observable(false)
@@ -118,7 +118,7 @@ export class MorseViewModel {
     // initialize the main rawText
     this.rawText(this.showingText())
 
-    this.lessons = new MorseLessonPlugin(this.settings, (s) => { this.setText(s) }, (str) => {
+    this.lessons = new MorseLessonPlugin(this.settings, (s: string) => { this.setText(s) }, (str: string) => {
       const config = this.getMorseStringToWavBufferConfig(str)
       const est = this.morseWordPlayer.getTimeEstimate(config)
       return est
@@ -171,8 +171,9 @@ export class MorseViewModel {
     }
 
     // check for voicebuffermax
-    if (GeneralUtils.getParameterByName('voiceBufferMax')) {
-      this.morseVoice.voiceBufferMaxLength(parseInt(GeneralUtils.getParameterByName('voiceBufferMax')))
+    const voiceBufferMaxParam = GeneralUtils.getParameterByName('voiceBufferMax')
+    if (voiceBufferMaxParam) {
+      this.morseVoice.voiceBufferMaxLength(parseInt(voiceBufferMaxParam))
     }
     // are we on the dev site?
     this.isDev(window.location.href.toLowerCase().indexOf('/dev/') > -1)
@@ -219,7 +220,7 @@ export class MorseViewModel {
     MorseCookies.loadCookiesOrDefaults(settingsInfo)
   }
 
-  logToFlaggedWords = (s) => {
+  logToFlaggedWords = (s: string) => {
     /* this.flaggedWordsLogCount++
     // const myPieces = this.flaggedWords.flaggedWords().split('\n')
     this.flaggedWordsLog[0] = { timeStamp: 0, msg: `LOGGED LINES:${this.flaggedWordsLogCount}` }
@@ -359,7 +360,7 @@ export class MorseViewModel {
     this.currentIndex(0)
   }
 
-  setWordIndex = (index) => {
+  setWordIndex = (index: number) => {
     if (!this.playerPlaying()) {
       this.currentIndex(index)
     } else {
@@ -374,18 +375,18 @@ export class MorseViewModel {
       this.doPause(true, false, false)
       this.setText(this.flaggedWords.flaggedWords())
       this.fullRewind()
-      document.getElementById('btnFlaggedWordsAccordianButton').click()
+      document.getElementById('btnFlaggedWordsAccordianButton')!.click()
     }
   }
 
   clearFlagged = () => {
     if (this.flaggedWords.flaggedWords().trim()) {
       this.flaggedWords.clear()
-      document.getElementById('btnFlaggedWordsAccordianButton').click()
+      document.getElementById('btnFlaggedWordsAccordianButton')!.click()
     }
   }
 
-  getMorseStringToWavBufferConfig = (text, isToneTest:boolean = false) => {
+  getMorseStringToWavBufferConfig = (text: string, isToneTest:boolean = false) => {
     const config = new SoundMakerConfig()
     config.word = MorseStringUtils.doReplacements(text)
     const speeds = this.settings.speed.getApplicableSpeed(this.playingTime())
@@ -430,7 +431,7 @@ export class MorseViewModel {
       config.isToneTest = true
       this.testTonePlaying = true
       // console.log(`testTone clidked playing status now ${this.testTonePlaying}`)
-      this.morseWordPlayer.play(config, (fromVoiceOrTrail) => {})
+      this.morseWordPlayer.play(config, (fromVoiceOrTrail: any) => {})
       // TODO: avoid hardcoding the 10 seconds, this seemed to be the easiset way
       // to flip the flag, passing in callbacks was buggy for some reason
       this.testToneFlagHandle = setTimeout(() => {
@@ -526,7 +527,7 @@ export class MorseViewModel {
         this.addToVoiceBuffer()
         const playerCmd = () => {
           if (!this.morseVoice.speakFirst() || this.playerPlaying()) {
-            this.morseWordPlayer.play(config, (fromVoiceOrTrail) => {
+            this.morseWordPlayer.play(config, (fromVoiceOrTrail: any) => {
               this.charsPlayed(this.charsPlayed() + config.word.replace(' ', '').length)
               this.playEnded(fromVoiceOrTrail)
             })
@@ -570,7 +571,7 @@ export class MorseViewModel {
     return maxBufferReached
   }
 
-  playEnded = (fromVoiceOrTrail) => {
+  playEnded = (fromVoiceOrTrail: any) => {
     console.log(`playEnded fromVoiceOrTrail:${fromVoiceOrTrail}`)
     // voice or trail have timers that might call this after user has hit stop
     // specifically they have built in pauses for "thinking time" during which the user
@@ -621,7 +622,7 @@ export class MorseViewModel {
       }
     }
 
-    const finalizeTrail = (finalCallback) => {
+    const finalizeTrail = (finalCallback: () => void) => {
       if (this.trailReveal()) {
         setTimeout(() => {
           this.maxRevealedTrail(-1)
@@ -749,7 +750,7 @@ export class MorseViewModel {
   // used by recap
   speakVoiceBuffer = () => {
     if (this.morseVoice.voiceBuffer.length > 0) {
-      const phrase = this.morseVoice.voiceBuffer.shift().txt
+      const phrase = this.morseVoice.voiceBuffer.shift()!.txt
       // for reasons I can't recall, wordifyPunctuation adds pipe character
       // remove it
       const finalPhraseToSpeak = phrase.replace(/\|/g, ' ')
@@ -777,7 +778,7 @@ export class MorseViewModel {
   }
 
   getPhraseToSpeakFromBuffer = () => {
-    let phraseToSpeak
+    let phraseToSpeak: string = ''
     try {
       const joinedBuffer = this.morseVoice.voiceBuffer.map(m => m.txt).join(' ')
       phraseToSpeak = joinedBuffer
@@ -792,7 +793,7 @@ export class MorseViewModel {
     return phraseToSpeak
   }
 
-  doPause = (fullRewind, fromPauseButton, fromStopButton) => {
+  doPause = (fullRewind: boolean, fromPauseButton: boolean, fromStopButton: boolean) => {
     console.log(`doPause called fullRewid:${fullRewind} fromPauseButton:${fromPauseButton} fromStopButton:${fromStopButton}`)
     if (fromStopButton) {
       if (this.doPlayTimeout) {
@@ -838,12 +839,12 @@ export class MorseViewModel {
     }
   }
 
-  inputFileChange = (element) => {
+  inputFileChange = (element: any) => {
     // thanks to https://newbedev.com/how-to-access-file-input-with-knockout-binding
     const file = element.files[0]
     const fr = new FileReader()
     fr.onload = (data) => {
-      this.setText(data.target.result as string)
+      this.setText(data.target!.result as string)
       // need to clear or else won't fire if use clears the text area
       // and then tries to reload the same again
       element.value = null
@@ -863,7 +864,7 @@ export class MorseViewModel {
     const config = this.getMorseStringToWavBufferConfig(allWords)
     const wav = await this.morseWordPlayer.getWavAndSample(config)
     const ary = new Uint8Array(wav)
-    const link = document.getElementById('downloadLink')
+    const link = document.getElementById('downloadLink')!
     const blob = new Blob([ary], { type: 'audio/wav' });
     (link as any).href = URL.createObjectURL(blob);
     (link as any).download = 'morse.wav'
@@ -874,7 +875,7 @@ export class MorseViewModel {
     console.log('dummy')
   }
 
-  changeSoundMaker = (data, event) => {
+  changeSoundMaker = (data: any, event: any) => {
     this.morseWordPlayer.setSoundMaker(data.smoothing())
   }
 
@@ -919,7 +920,7 @@ export class MorseViewModel {
     MorseSettingsHandler.saveSettings(this)
   }
 
-  settingsFileChange = (element) => {
+  settingsFileChange = (element: any) => {
     // thanks to https://newbedev.com/how-to-access-file-input-with-knockout-binding
     MorseSettingsHandler.settingsFileChange(element, this)
   }

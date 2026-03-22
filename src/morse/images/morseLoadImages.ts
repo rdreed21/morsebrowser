@@ -47,7 +47,7 @@ import chatRightDots from 'bootstrap-icons/icons/chat-right-dots.svg'
 import repeat from 'bootstrap-icons/icons/repeat.svg'
 
 export class MorseLoadImages {
-  info = []
+  info: Array<{ key: string, src: string }> = []
   constructor () {
     this.info.push({ key: 'logoImage', src: licwlogoPng })
     this.info.push({ key: 'volumemuteImage', src: volumemuteSvg })
@@ -96,7 +96,7 @@ export class MorseLoadImages {
     this.info.push({ key: 'bookshelfImage', src: bookshelfSvg })
     this.info.push({ key: 'chatRightDotsImage', src: chatRightDots })
     this.info.push({ key: 'repeatImage', src: repeat })
-    const dupes = []
+    const dupes: string[] = []
     /* Accomodate where id="xyzImage" This is discouraged because good practice not to duplicate ids */
     /* see below getSrc */
     this.info.forEach((i) => {
@@ -116,8 +116,8 @@ export class MorseLoadImages {
   /* This lets any element use data-bind="attr:{src: morseLoadImages().getSrc('xyzImage') }" */
   /* this means many elements can use the same image a little easier and works better for lazy added elements */
 
-  getSrc = (key) => {
+  getSrc = (key: string) => {
     const target = this.info.find(x => x.key === key)
-    return target.src
+    return target?.src
   }
 }

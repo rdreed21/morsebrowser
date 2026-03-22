@@ -1,6 +1,7 @@
 export class GeneralUtils {
-  static booleanize = (x) => {
-    if (x === 'true ' || x === 'false') {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static booleanize = (x: string): any => {
+    if (x === 'true' || x === 'false') {
       return x === 'true'
     } else {
       return x
@@ -9,7 +10,7 @@ export class GeneralUtils {
 
   // helper
   // https://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
-  static getParameterByName = (name, url = window.location.href) => {
+  static getParameterByName = (name: string, url: string = window.location.href) => {
     // eslint-disable-next-line no-useless-escape
     name = name.replace(/[\[\]]/g, '\\$&')
     const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)')

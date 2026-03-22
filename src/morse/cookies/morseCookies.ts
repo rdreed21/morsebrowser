@@ -28,30 +28,30 @@ export class MorseCookies {
       ctxt.lockoutSaveCookiesTimerHandle = setTimeout(() => { ctxt.allowSaveCookies(true) }, 700)
     }
     const cks = Cookies.get()
-    const cksKeys = []
+    const cksKeys: string[] = []
     for (const key in cks) {
       cksKeys.push(key)
     }
 
     const settings = custom || licwDefaults.startupSettings
-    const cookieFiltered = (ss) => {
+    const cookieFiltered = (ss: any[]) => {
       if (ignoreCookies) {
         return ss
       }
       // ignore setting for which there's a cookie
-      return ss.filter((x) => cksKeys.indexOf(x.key) < 0)
+      return ss.filter((x: any) => cksKeys.indexOf(x.key) < 0)
     }
 
     const workAry = ifLoadSettings ? cookieFiltered(settings) : cksKeys
-    const keyResolver = ifLoadSettings ? (x) => x.key : (x) => x
-    const valResolver = ifLoadSettings ? (x) => x.value : (x) => cks[x]
+    const keyResolver = ifLoadSettings ? (x: any) => x.key : (x: any) => x
+    const valResolver = ifLoadSettings ? (x: any) => x.value : (x: any) => cks[x]
     const specialHandling: CookieInfo[] = []
     const xtraspecialHandling: CookieInfo[] = []
     const otherHandling: CookieInfo[] = []
     if (workAry) {
-      workAry.forEach((setting) => {
+      workAry.forEach((setting: any) => {
         const key = keyResolver(setting)
-        if (!keyBlacklist.some(s => s === key)) {
+        if (!keyBlacklist.some((s: string) => s === key)) {
           let val = valResolver(setting)
           switch (key) {
             case 'syncWpm':
@@ -63,15 +63,15 @@ export class MorseCookies {
               xtraspecialHandling.push(<CookieInfo>{ key, val })
               break
             case 'numberOfRepeats':
-              ctxt[key](parseInt(val))
+              (ctxt as any)[key](parseInt(val))
               break
             default:
-              if (typeof ctxt[key] !== 'undefined') {
+              if (typeof (ctxt as any)[key] !== 'undefined') {
                 if (key === 'xtraWordSpaceDits' && parseInt(val) === 0) {
                 // prior functionality may have this at 0 so make it 1
                   val = 1
                 }
-                ctxt[key](GeneralUtils.booleanize(val))
+                (ctxt as any)[key](GeneralUtils.booleanize(val))
               } else {
                 otherHandling.push(<CookieInfo>{ key, val })
               }
@@ -85,8 +85,8 @@ export class MorseCookies {
         handler.handleCookies(otherHandling)
       })
       specialHandling.forEach((x) => {
-        console.log('in special handling')
-        ctxt[x.key](x.val)
+        console.log('in special handling');
+        (ctxt as any)[x.key](x.val)
       })
     }
     if (afterSettingsChange) {

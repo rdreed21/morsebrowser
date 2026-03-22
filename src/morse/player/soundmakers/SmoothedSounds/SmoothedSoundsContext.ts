@@ -9,7 +9,7 @@ export class SmoothedSoundsContext {
   noiseGainNode:GainNode
   offline:boolean
   offlineDurationMs:number
-  constructor (offline, offlineDurationMs) {
+  constructor (offline: boolean, offlineDurationMs: number) {
     this.offline = offline
     this.offlineDurationMs = offlineDurationMs
     this.rebuildAll()
@@ -56,7 +56,7 @@ export class SmoothedSoundsContext {
     this.contextClosed = false
   }
 
-  stopAndCloseContext = (afterCloseCallback = null) => {
+  stopAndCloseContext = (afterCloseCallback: (() => void) | null = null) => {
     if (this.oscillatorNode) {
       this.oscillatorNode.stop()
     }

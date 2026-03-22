@@ -15,7 +15,7 @@ export class SettingsChangeInfo {
   ignoreCookies:boolean = false
 
   /* settings to used. sort of conflicts with ifLoadSettings? */
-  custom:SavedSettingsInfo[] = null
+  custom:SavedSettingsInfo[] | null = null
 
   /* don't change cookies, i.e. don't make this the user's preferred setting set */
   lockoutCookieChanges:boolean = false

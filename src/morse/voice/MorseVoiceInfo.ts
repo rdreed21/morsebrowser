@@ -1,8 +1,8 @@
 export class MorseVoiceInfo {
-  textToSpeak
-  voice
-  volume
-  rate
-  pitch
-  onEnd
+  textToSpeak: string
+  voice: any
+  volume: number
+  rate: number
+  pitch: number
+  onEnd: () => void
 }

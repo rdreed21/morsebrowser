@@ -1,10 +1,10 @@
 export class RssConfig {
-  setText:(string) => void
+  setText:(s: string) => void
   fullRewind:() => void
   doPlay:(playJustEnded:boolean, fromPlayButton:boolean) => void
   lastFullPlayTime:() => number
   playerPlaying:() => boolean
-  constructor (setText:(string) => void,
+  constructor (setText:(s: string) => void,
     fullRewind:() => void,
     doPlay:(playJustEnded:boolean, fromPlayButton:boolean) => void,
     lastFullPlayTime:() => number,

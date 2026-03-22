@@ -2,7 +2,8 @@
     "compilerOptions": {
       "outDir": "./dist/",
       "sourceMap": true,
-      "noImplicitAny": false,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
       "module": "es2020",
       "target": "es2020",
       "jsx": "react",
@@ -11,5 +12,5 @@
       "allowSyntheticDefaultImports": true,
       "resolveJsonModule": true
     },
-    "exclude": ["**/*.test.ts", "vitest.config.ts"]
+    "exclude": ["**/*.test.ts", "vitest.config.ts", "prebuildLessons.ts", "prebuildPresets.ts", "prebuildPresetSets.ts", "zipdist.ts"]
   }

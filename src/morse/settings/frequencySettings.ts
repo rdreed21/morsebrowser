@@ -11,8 +11,8 @@ export class FrequencySettings implements ICookieHandler {
   dahFrequency:ko.PureComputed<number>
   constructor () {
     MorseCookies.registerHandler(this)
-    this.trudDitFrequency = ko.observable()
-    this.truDahFrequency = ko.observable()
+    this.trudDitFrequency = ko.observable(500)
+    this.truDahFrequency = ko.observable(500)
     this.syncFreq = ko.observable(true)
     this.ditFrequency = ko.pureComputed({
       read: () => {
@@ -52,7 +52,7 @@ export class FrequencySettings implements ICookieHandler {
     if (!cookies) {
       return
     }
-    let target:CookieInfo = cookies.find(x => x.key === 'syncFreq')
+    let target:CookieInfo | undefined = cookies.find(x => x.key === 'syncFreq')
     if (target) {
       this.syncFreq(GeneralUtils.booleanize(target.val))
     }

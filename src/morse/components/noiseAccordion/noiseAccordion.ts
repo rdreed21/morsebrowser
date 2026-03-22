@@ -2,7 +2,7 @@ import { MorseViewModel } from '../../morse'
 import imageTemplate from './noiseAccordion.html'
 class NoiseAccordion {
   vm:MorseViewModel
-  constructor (params) {
+  constructor (params: any) {
     this.vm = params.root
     // console.log(this.vm)
     // console.log(params)

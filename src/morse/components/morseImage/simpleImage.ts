@@ -5,7 +5,7 @@ class SimpleImageTemplate {
   width:number
   src:string
   labelText:string
-  constructor (params) {
+  constructor (params: any) {
     // console.log(params)
     this.height = params.height
     this.width = params.width

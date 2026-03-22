@@ -9,7 +9,7 @@ import { MorseCookies } from '../cookies/morseCookies'
 import { VoiceBufferInfo } from './VoiceBufferInfo'
 
 export class MorseVoice implements ICookieHandler {
-  voices = []
+  voices: any[] = []
   voicesInited:boolean = false
   voiceEnabled:ko.Observable<boolean>
   voiceCapable:ko.Observable<boolean>
@@ -65,7 +65,7 @@ export class MorseVoice implements ICookieHandler {
     this.speakFirstLastCardIndex = -1
     this.speakFirstRepeatsTracker = 0
     this.speakFirstAdditionalWordspaces = ko.observable<number>(0)
-    this.voiceVoiceName = ko.observable<string>(null)
+    this.voiceVoiceName = ko.observable<string>('')
 
     const speechDetection = EasySpeech.detect()
 
@@ -80,7 +80,7 @@ export class MorseVoice implements ICookieHandler {
 
     this.voiceVoice = ko.computed(() => {
       if (typeof this.voiceVoiceIdx() === 'undefined' || this.voiceVoiceIdx() === null || this.voiceVoiceIdx() === -1) {
-        this.voiceVoiceName(null)
+        this.voiceVoiceName('')
         return null
       }
       this.voiceVoiceName(this.voiceVoices()[this.voiceVoiceIdx()].name)
@@ -89,8 +89,8 @@ export class MorseVoice implements ICookieHandler {
 
     this.voiceVoiceName.extend({ saveCookie: 'voiceVoiceName' } as ko.ObservableExtenderOptions<boolean>)
 
-    ko.extenders.turnOffSpeakFirstWithVoiceOff = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.turnOffSpeakFirstWithVoiceOff = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         if (!newValue) {
           this.speakFirst(false)
         }
@@ -134,7 +134,7 @@ export class MorseVoice implements ICookieHandler {
     }
   }
 
-  logToFlaggedWords = (s) => {
+  logToFlaggedWords = (s: string) => {
     this.ctxt.logToFlaggedWords(s)
   }
 
@@ -191,12 +191,12 @@ export class MorseVoice implements ICookieHandler {
 
   speakInfo = (morseVoiceInfo:MorseVoiceInfo) => {
     try {
-      const esConfig = {
+      const esConfig: any = {
         logger: this.logToFlaggedWords,
         text: morseVoiceInfo.textToSpeak,
         pitch: morseVoiceInfo.pitch,
         rate: morseVoiceInfo.rate,
-        end: e => {
+        end: (e: any) => {
           this.logToFlaggedWords('end event')
           morseVoiceInfo.onEnd()
           this.logToFlaggedWords('onEnd called')
@@ -205,13 +205,13 @@ export class MorseVoice implements ICookieHandler {
         voice: morseVoiceInfo.voice ? morseVoiceInfo.voice : null,
         lang: morseVoiceInfo.voice ? morseVoiceInfo.voice.lang : null,
         voiceURI: morseVoiceInfo.voice ? morseVoiceInfo.voice.voiceURI : null,
-        error: e => {
+        error: (e: any) => {
           this.logToFlaggedWords(`error event during speak:${e}`)
           morseVoiceInfo.onEnd()
         },
-        boundary: e => this.logToFlaggedWords('boundary event'),
-        mark: e => this.logToFlaggedWords('mark event'),
-        pause: e => this.logToFlaggedWords('pause event'),
+        boundary: (e: any) => this.logToFlaggedWords('boundary event'),
+        mark: (e: any) => this.logToFlaggedWords('mark event'),
+        pause: (e: any) => this.logToFlaggedWords('pause event'),
         force: true
       }
       // fix to force to number
@@ -261,7 +261,7 @@ export class MorseVoice implements ICookieHandler {
     return morseVoiceInfo
   }
 
-  speakPhrase = (phraseToSpeak:string, onEndCallBack) => {
+  speakPhrase = (phraseToSpeak:string, onEndCallBack: () => void) => {
     // console.log(this.voiceVoice().name)
     const doOnEndCallBack = () => {
       setTimeout(onEndCallBack, this.voiceAfterThinkingTime() * 1000)
@@ -285,7 +285,7 @@ export class MorseVoice implements ICookieHandler {
     this.speakInfo(morseVoiceInfo)
   }
 
-  speakerSelect = (e, f) => {
+  speakerSelect = (e: any, f: any) => {
     // do a double-check for safari
     const idx = f.target.selectedIndex
 
@@ -312,7 +312,7 @@ export class MorseVoice implements ICookieHandler {
       return
     }
 
-    let target:CookieInfo = cookies.find(x => x.key === 'voiceEnabled')
+    let target:CookieInfo | undefined = cookies.find(x => x.key === 'voiceEnabled')
     if (target) {
       this.voiceEnabled(GeneralUtils.booleanize(target.val))
     }

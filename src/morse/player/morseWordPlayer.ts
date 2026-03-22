@@ -15,11 +15,11 @@ export class MorseWordPlayer {
     }
   }
 
-  setVolume = (volume) => {
+  setVolume = (volume: number) => {
     this.soundMaker.setVolume(volume / 10)
   }
 
-  setNoiseVolume = (volume) => {
+  setNoiseVolume = (volume: number) => {
     this.soundMaker.setNoiseVolume(volume / 10)
   }
 
@@ -28,11 +28,11 @@ export class MorseWordPlayer {
     this.soundMaker.handleNoiseSettings(config)
   }
 
-  play = (config:SoundMakerConfig, onEnded) => {
+  play = (config:SoundMakerConfig, onEnded: any) => {
     this.soundMaker.play(config, onEnded)
   }
 
-  pause = (pauseCallBack, killNoise) => {
+  pause = (pauseCallBack: () => void, killNoise: boolean) => {
     this.soundMaker.forceStop(pauseCallBack, killNoise)
   }
 

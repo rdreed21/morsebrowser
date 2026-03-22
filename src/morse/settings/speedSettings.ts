@@ -33,8 +33,8 @@ export default class SpeedSettings implements ICookieHandler {
   constructor (vm:MorseViewModel) {
     MorseCookies.registerHandler(this)
     this.vm = vm
-    this.trueWpm = ko.observable()
-    this.trueFwpm = ko.observable()
+    this.trueWpm = ko.observable(12)
+    this.trueFwpm = ko.observable(12)
     this.syncWpm = ko.observable(true)
     this.speedInterval = ko.observable(false)
     this.intervalTimingsText = ko.observable('')
@@ -78,7 +78,7 @@ export default class SpeedSettings implements ICookieHandler {
     })
 
     this.variableSpeedDisplay = ko.computed(() => {
-      return (this.speedInterval() && this.intervalTimingsText() && vm.playerPlaying())
+      return !!(this.speedInterval() && this.intervalTimingsText() && vm.playerPlaying())
     }, this)
 
     this.wpm.extend({ saveCookie: 'wpm' } as ko.ObservableExtenderOptions<number>)
@@ -123,7 +123,7 @@ export default class SpeedSettings implements ICookieHandler {
     if (!cookies) {
       return
     }
-    let target:CookieInfo = cookies.find(x => x.key === 'syncWpm')
+    let target:CookieInfo | undefined = cookies.find(x => x.key === 'syncWpm')
     if (target) {
       this.syncWpm(GeneralUtils.booleanize(target.val))
     }

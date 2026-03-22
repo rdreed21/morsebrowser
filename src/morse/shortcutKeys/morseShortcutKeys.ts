@@ -13,7 +13,7 @@ class ShortcutHandler {
 }
 
 export class MorseShortcutKeys {
-  registeredHandlers:Array<ShortcutHandler>
+  registeredHandlers:Record<string, ShortcutHandler>
   registrationCallback:(key:string, title:string) => void
 
   /**
@@ -23,7 +23,7 @@ export class MorseShortcutKeys {
    */
   constructor (registrationCallback:(key:string, title:string) => void) {
     this.registrationCallback = registrationCallback
-    this.registeredHandlers = []
+    this.registeredHandlers = {}
 
     // add the shortcut key listener
     document.addEventListener('keypress', (e) => {
@@ -112,7 +112,7 @@ export class MorseShortcutKeys {
       mv.accessibilityAnnouncement(mv.loop() ? 'Looping' : 'Not looping')
     })
 
-    const changeFarnsworth = (x) => {
+    const changeFarnsworth = (x: number) => {
       const newWpm = parseInt(mv.settings.speed.wpm() as any) + x
       const newFwpm = parseInt(mv.settings.speed.fwpm() as any) + x
       if (newWpm < 1 || newFwpm < 1) {

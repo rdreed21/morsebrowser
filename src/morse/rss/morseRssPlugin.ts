@@ -14,8 +14,8 @@ export default class MorseRssPlugin implements ICookieHandler {
   rssTitlesQueue:ko.ObservableArray<RssTitle> = ko.observableArray()
   rssPlayOn:ko.Observable<boolean> = ko.observable(false)
   lastRSSPoll:ko.Observable<number> = ko.observable(new Date(1900, 0, 0).getMilliseconds())
-  rssPlayTimerHandle = null
-  rssPollTimerHandle = null
+  rssPlayTimerHandle: any = null
+  rssPollTimerHandle: any = null
   rssMinsToWait:ko.Observable<number> = ko.observable(-1)
   rssPollMinsToWait:ko.Observable<number> = ko.observable(-1)
   rssPollingOn:ko.Observable<boolean> = ko.observable(false)
@@ -75,7 +75,7 @@ export default class MorseRssPlugin implements ICookieHandler {
         if (enoughWait || ignoreWait) {
           this.rssMinsToWait(-1)
           if (this.unreadRssCount() > 0) {
-            const target = this.rssTitlesQueue().find(x => !x.played)
+            const target = this.rssTitlesQueue().find(x => !x.played)!
             const replacement = new RssTitle(target.title, true)
             this.rssTitlesQueue.replace(target, replacement)
 
@@ -107,7 +107,7 @@ export default class MorseRssPlugin implements ICookieHandler {
         clearTimeout(this.rssPlayTimerHandle)
       }
     }
-    document.getElementById('btnRssAccordionButton').click()
+    document.getElementById('btnRssAccordionButton')!.click()
   }
 
   doRSSCallback = () => {
@@ -139,7 +139,7 @@ export default class MorseRssPlugin implements ICookieHandler {
             feed.items.reverse().forEach((entry) => {
               // console.log(entry.title + ':' + entry.link);
               if (!this.rssTitlesQueue().find(x => x.title === entry.title)) {
-                this.rssTitlesQueue.push(new RssTitle(entry.title, false))
+                this.rssTitlesQueue.push(new RssTitle(entry.title ?? '', false))
               }
             })
             this.lastRSSPoll(Date.now())
@@ -178,7 +178,7 @@ export default class MorseRssPlugin implements ICookieHandler {
     if (!cookies) {
       return
     }
-    let target:CookieInfo = cookies.find(x => x.key === 'rssFeedUrl')
+    let target:CookieInfo | undefined = cookies.find(x => x.key === 'rssFeedUrl')
     if (target) {
       this.rssFeedUrl(target.val)
     }

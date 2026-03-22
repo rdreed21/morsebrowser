@@ -4,8 +4,8 @@ import { MorseViewModel } from '../morse'
 
 export class MorseExtenders {
   static init = (ctxt:MorseViewModel) => {
-    ko.extenders.saveCookie = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.saveCookie = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         if (ctxt.allowSaveCookies()) {
           Cookies.set(option, newValue, { expires: 365 })
         }
@@ -13,16 +13,16 @@ export class MorseExtenders {
       return target
     }
 
-    ko.extenders.showingChange = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.showingChange = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         if (ctxt.showRaw()) {
           ctxt.rawText(newValue)
         }
       })
       return target
     }
-    ko.extenders.showRawChange = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.showRawChange = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         // console.log(option + ": " + newValue);
         if (newValue) {
           ctxt.showingText(ctxt.rawText())
@@ -33,22 +33,22 @@ export class MorseExtenders {
       return target
     }
 
-    ko.extenders.setVolume = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.setVolume = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         ctxt.morseWordPlayer.setVolume(newValue)
       })
       return target
     }
 
-    ko.extenders.setNoiseVolume = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.setNoiseVolume = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         ctxt.morseWordPlayer.setNoiseVolume(newValue)
       })
       return target
     }
 
-    ko.extenders.setNoiseType = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.setNoiseType = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         const config = ctxt.getMorseStringToWavBufferConfig('')
         config.noise.type = ctxt.noiseEnabled() ? newValue : 'off'
         ctxt.morseWordPlayer.setNoiseType(config)
@@ -56,8 +56,8 @@ export class MorseExtenders {
       return target
     }
 
-    ko.extenders.undoIsShuffled = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.undoIsShuffled = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         if (ctxt.isShuffled()) {
           // we are shuffled, but are we showing the correct text?
           // idea is that if something changes the text, it breaks out of shuffle
@@ -69,15 +69,15 @@ export class MorseExtenders {
       return target
     }
 
-    ko.extenders.dummyLogger = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.dummyLogger = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         console.log(`dummyloggerextension option:${option} newValue:${newValue}`)
       })
       return target
     }
 
-    ko.extenders.sWakeLock = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.sWakeLock = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         if (newValue) {
           ctxt.screenWakeLock.activate()
         } else {

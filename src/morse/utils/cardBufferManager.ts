@@ -56,7 +56,7 @@ export class CardBufferManager {
       // return null
       this.populateBuffer(repeats, additionalWordSpaces)
     }
-    return this._buffer[0].subparts.shift().word
+    return this._buffer[0].subparts.shift()!.word
   }
 
   getAllMorse = ():string => {
@@ -73,7 +73,7 @@ export class CardBufferManager {
     this._buffer = []
   }
 
-  appendArrayNTimes = (originalArray, n) => {
+  appendArrayNTimes = (originalArray: CardWordSubPart[], n: number) => {
     // Ensure n is a positive integer
     if (!Number.isInteger(n) || n <= 0) {
       console.error("Please provide a positive integer for 'n'.")

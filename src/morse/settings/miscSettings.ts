@@ -11,7 +11,7 @@ export class MiscSettings implements ICookieHandler {
   }
 
   get isMoreSettingsAccordionOpen ():boolean {
-    return GeneralUtils.booleanize(document.getElementById('moreSettingsAccordionButton').getAttribute('aria-expanded'))
+    return GeneralUtils.booleanize(document.getElementById('moreSettingsAccordionButton')!.getAttribute('aria-expanded') || '')
   }
 
   // cookie handling
@@ -19,7 +19,7 @@ export class MiscSettings implements ICookieHandler {
     if (!cookies) {
       return
     }
-    let target:CookieInfo = cookies.find(x => x.key === 'keepLines')
+    let target:CookieInfo | undefined = cookies.find(x => x.key === 'keepLines')
     if (target) {
       this.newlineChunking(GeneralUtils.booleanize(target.val))
     }
@@ -29,7 +29,7 @@ export class MiscSettings implements ICookieHandler {
       const desiredState = GeneralUtils.booleanize(target.val)
       if (desiredState !== this.isMoreSettingsAccordionOpen) {
         const elem = document.getElementById('moreSettingsAccordionButton')
-        elem.click()
+        elem?.click()
       }
     }
   }

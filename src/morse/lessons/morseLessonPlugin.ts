@@ -61,8 +61,8 @@ export default class MorseLessonPlugin implements ICookieHandler {
     MorseCookies.registerHandler(this)
     this.morseViewModel = morseViewModel
     this.yourSettingsDummy = { display: 'Your Settings', filename: 'dummy.json', isDummy: true }
-    ko.extenders.classOrLetterGroupChange = (target, option) => {
-      target.subscribe((newValue) => {
+    ko.extenders.classOrLetterGroupChange = (target: any, option: any) => {
+      target.subscribe((newValue: any) => {
         // console.log(`gettingsettingspresets:class:${this.selectedClass()}`)
         // console.log(`lettergroup:${this.letterGroup()}`)
         this.getSettingsPresets(false, true)
@@ -130,7 +130,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     })
 
     this.userTargets = ko.computed(() => {
-      const targs = []
+      const targs: any[] = []
       this.wordLists().forEach((x) => {
         if (!targs.find((y) => y === x.userTarget)) {
           targs.push(x.userTarget)
@@ -142,7 +142,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     this.classes = ko.computed(() => {
       this.selectedClassInitialized = false
       this.selectedClass('')
-      const cls = []
+      const cls: any[] = []
       this.wordLists().forEach((x) => {
         if (!cls.find((y) => y === x.class) && x.userTarget === this.userTarget()) {
           cls.push(x.class)
@@ -154,7 +154,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     this.letterGroups = ko.computed(() => {
       this.letterGroupInitialized = false
       this.letterGroup('')
-      const lgs = []
+      const lgs: any[] = []
       if (this.selectedClass() === '' || this.userTarget() === '') {
         const missing = []
         if (this.selectedClass() === '') {
@@ -176,7 +176,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
     this.displays = ko.computed(() => {
       this.selectedDisplay({})
-      const dps = []
+      const dps: any[] = []
       if (this.selectedClass() === '' || this.userTarget() === '' || this.letterGroup() === '') {
         return [{ display: 'Select wordlist', fileName: 'dummy.txt', isDummy: true }]
       }
@@ -273,7 +273,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
         }
       }
     }
-    const handleData = (d) => {
+    const handleData = (d: any) => {
       // console.log(d)
       // console.log(typeof d.data.options)
       if (typeof d.data !== 'undefined' && typeof d.data.options !== 'undefined') {
@@ -303,11 +303,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
       const targetLesson = letterGroupsGood ? targetClass.letterGroups.find(l => l.letterGroup === this.letterGroup()) : null
       if (targetLesson) {
         // sps.push({ display: targetLesson.setFile })
-        MorsePresetSetFileFinder.getMorsePresetSetFile(targetLesson.setFile, (data) => handleData(data))
+        MorsePresetSetFileFinder.getMorsePresetSetFile(targetLesson.setFile, (data: any) => handleData(data))
       } else {
         if (targetClass && targetClass.defaultSetFile) {
           // sps.push({ display: targetClass.defaultSetFile })
-          MorsePresetSetFileFinder.getMorsePresetSetFile(targetClass.defaultSetFile, (data) => handleData(data))
+          MorsePresetSetFileFinder.getMorsePresetSetFile(targetClass.defaultSetFile, (data: any) => handleData(data))
         } else {
           // no matches so use default
           this.settingsPresets(sps)
@@ -325,9 +325,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  randomWordList = (data, ifCustom) => {
+  randomWordList = (data: any, ifCustom: any) => {
     let str = ''
-    const splitWithProsignsAndStcikys = (s) => {
+    const splitWithProsignsAndStcikys = (s: string) => {
       let stickys = ''
       if (this.ifStickySets() && this.stickySets().trim()) {
         stickys = '|' + this.stickySets().toUpperCase().trim().replace(/ {2}/g, ' ').replace(/ /g, '|')
@@ -340,14 +340,14 @@ export default class MorseLessonPlugin implements ICookieHandler {
       // console.log(match)
       return match
     }
-    const chars = splitWithProsignsAndStcikys(data.letters)
+    const chars = splitWithProsignsAndStcikys(data.letters) || []
     let seconds = 0
     const controlTime = (this.ifOverrideTime() || ifCustom) ? (this.overrideMins() * 60) : data.practiceSeconds
     const minWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMin() : data.minWordSize
     const maxWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMax() : data.maxWordSize
     // Fn to generate random number min/max inclusive
     // https://www.geeksforgeeks.org/how-to-generate-random-number-in-given-range-using-javascript/
-    const randomNumber = (min, max) => {
+    const randomNumber = (min: number, max: number) => {
       min = Math.ceil(min)
       max = Math.floor(max)
       return Math.floor(Math.random() * (max - min + 1)) + min
@@ -381,7 +381,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
           if (getWordLength(word) < wordLength) {
             const currentWordLength = getWordLength(word)
             const freeSpaces = wordLength - currentWordLength
-            const usableChars = chars.filter(x => x.length === 1 ||
+            const usableChars = chars.filter((x: any) => x.length === 1 ||
               (x.startsWith('<') && x.endsWith('>')) || // prosigns counts as 1
               x.length <= freeSpaces
             )
@@ -407,11 +407,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
     this.setText(str)
   }
 
-  getWordList = (filename) => {
+  getWordList = (filename: string) => {
     if (filename) {
       const isText = filename.endsWith('txt')
 
-      const afterFound = (result) => {
+      const afterFound = (result: any) => {
         if (result.found) {
           if (isText) {
             this.setText(result.data)
@@ -438,8 +438,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
   setSelectedClassInitialized = () => {
     this.selectedClassInitialized = true
     // check for class preset
-    if (GeneralUtils.getParameterByName('selectedClass')) {
-      const paramClass = GeneralUtils.getParameterByName('selectedClass').toUpperCase()
+    const selectedClassParam = GeneralUtils.getParameterByName('selectedClass')
+    if (selectedClassParam) {
+      const paramClass = selectedClassParam.toUpperCase()
       const targetClass = this.classes().find(c => c.toUpperCase() === paramClass)
       if (targetClass) {
         this.changeSelectedClass(targetClass)
@@ -456,8 +457,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
     // console.log('setlettergroupinitialized')
     this.letterGroupInitialized = true
     // check for class preset
-    if (GeneralUtils.getParameterByName('selectedGroup')) {
-      const paramClass = GeneralUtils.getParameterByName('selectedGroup').toUpperCase()
+    const selectedGroupParam = GeneralUtils.getParameterByName('selectedGroup')
+    if (selectedGroupParam) {
+      const paramClass = selectedGroupParam.toUpperCase()
       const targetClass = this.letterGroups().find(c => c.toUpperCase() === paramClass)
       if (targetClass) {
         this.setLetterGroup(targetClass)
@@ -472,8 +474,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
   setDisplaysInitialized = () => {
     this.displaysInitialized = true
     // check for 'displays' lesson preset
-    if (GeneralUtils.getParameterByName('selectedLesson')) {
-      const paramClass = GeneralUtils.getParameterByName('selectedLesson').toUpperCase()
+    const selectedLessonParam = GeneralUtils.getParameterByName('selectedLesson')
+    if (selectedLessonParam) {
+      const paramClass = selectedLessonParam.toUpperCase()
       const targetClass = this.displays().find(c => c.display.toUpperCase() === paramClass)
       // get a boolean whether the query string value selectedPreset is present
       var skipPresets = false
@@ -498,8 +501,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
   setSettingsPresetsInitialized = () => {
     this.settingsPresetsInitialized = true
-    if (GeneralUtils.getParameterByName('selectedPreset')) {
-      const paramClass = GeneralUtils.getParameterByName('selectedPreset').toUpperCase()
+    const selectedPresetParam = GeneralUtils.getParameterByName('selectedPreset')
+    if (selectedPresetParam) {
+      const paramClass = selectedPresetParam.toUpperCase()
       const targetClass = this.settingsPresets().find(c => c.display.toUpperCase() === paramClass)
       if (targetClass) {
         //console.log(`setting preset to ${targetClass.display}`)
@@ -519,7 +523,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  changeUserTarget = (userTarget) => {
+  changeUserTarget = (userTarget: any) => {
     if (this.userTargetInitialized) {
       this.userTarget(userTarget)
       // console.log('usertarget')
@@ -528,7 +532,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  changeSelectedClass = (selectedClass, fromClick = "") => {
+  changeSelectedClass = (selectedClass: any, fromClick = "") => {
     /* console.log(`class fromClick=${fromClick}`)
     if (fromClick=== 'click') {
       console.log("CLASS WAS CLICKED")
@@ -546,7 +550,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  setLetterGroup = (letterGroup, fromClick="") => {
+  setLetterGroup = (letterGroup: any, fromClick="") => {
     /* if (fromClick === 'click') {
       this.removeQueryStringVariable('selectedPreset')
       this.removeQueryStringVariable('selectedGroup')
@@ -573,11 +577,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
   closeLessonAccordianIfAutoClosing = () => {
     if (this.autoCloseLessonAccordion()) {
       const elem = document.getElementById('lessonAccordianButton')
-      elem.click()
+      elem?.click()
     }
   }
 
-  setDisplaySelected = (display, skipPresets = false, fromClick="") => {
+  setDisplaySelected = (display: any, skipPresets = false, fromClick="") => {
     /* if (fromClick=== 'click') {
       console.log('display clicked so removing selectedPreset')
       this.removeQueryStringVariable('selectedPreset')
@@ -602,8 +606,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
   setPresetSelected = (preset:SettingsOption, skipReinit = false, fromClick="") => {
     // if the query string has selectedPreset, only proceed if that value equals preset.display
-    if (!(fromClick==='click') && GeneralUtils.getParameterByName('selectedPreset') && GeneralUtils.getParameterByName('selectedPreset').toUpperCase() !== preset.display.toUpperCase()) {
-      console.log(`skipping preset selection as query string preset is ${GeneralUtils.getParameterByName('selectedPreset')}`)
+    const qsPreset = GeneralUtils.getParameterByName('selectedPreset')
+    if (!(fromClick==='click') && qsPreset && qsPreset.toUpperCase() !== preset.display.toUpperCase()) {
+      console.log(`skipping preset selection as query string preset is ${qsPreset}`)
       return
     } 
     if (fromClick==='click') {
@@ -628,18 +633,18 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
       const applyLegacyMixin = () => {
         if (!LegacyMixinJson || !LegacyMixinJson.morseSettings) return
-        const existingKeys = new Set(settingsInfo.custom.map(s => s.key))
+        const existingKeys = new Set(settingsInfo.custom!.map(s => s.key))
         LegacyMixinJson.morseSettings.forEach(s => {
           if (!existingKeys.has(s.key)) {
-            settingsInfo.custom.push({ key: s.key, value: s.value })
+            settingsInfo.custom!.push({ key: s.key, value: s.value })
           }
         })
       }
 
       const applyOverrides = () => {
         /* make a copy as it seems some caching may be happening */
-        const customCopy = []
-        settingsInfo.custom.forEach(f => {
+        const customCopy: any[] = []
+        settingsInfo.custom!.forEach(f => {
           customCopy.push({ key: f.key, value: f.value })
         })
         settingsInfo.custom = customCopy
@@ -656,11 +661,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
             // note, possibly they match but issue for another day...
             this.settingsOverridden(true)
             o.settings.forEach(f => {
-              const target = settingsInfo.custom.find(t => t.key === f.name)
+              const target = settingsInfo.custom!.find(t => t.key === f.name)
               if (target) {
                 target.value = f.value
               } else {
-                settingsInfo.custom.push({ key: f.name, value: f.value })
+                settingsInfo.custom!.push({ key: f.name, value: f.value })
               }
             })
           } else {
@@ -674,7 +679,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
         // console.log('restoring settings')
         if (this.morseViewModel.currentSerializedSettings) {
           settingsInfo.custom = this.morseViewModel.currentSerializedSettings.morseSettings
-            .map((m) => {
+            .map((m: any) => {
               return { key: m.key, value: m.value }
             })
 
@@ -689,10 +694,10 @@ export default class MorseLessonPlugin implements ICookieHandler {
         // console.log(`presetfilename:${preset.filename}`)
 
         if (!preset.isCustom) {
-          MorsePresetFileFinder.getMorsePresetFile(preset.filename, (d) => {
+          MorsePresetFileFinder.getMorsePresetFile(preset.filename, (d: any) => {
             if (d.found) {
             /* did this filter before keyBlacklist feature was added... */
-              settingsInfo.custom = d.data.morseSettings.filter(f => f.key !== 'showRaw')
+              settingsInfo.custom = d.data.morseSettings.filter((f: any) => f.key !== 'showRaw')
 
               applyLegacyMixin()
               applyOverrides()
@@ -702,7 +707,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
           })
         } else {
           // the settings are just attached to the option
-          settingsInfo.custom = preset.morseSettings.filter(f => f.key !== 'showRaw')
+          settingsInfo.custom = preset.morseSettings.filter((f: any) => f.key !== 'showRaw')
 
           applyLegacyMixin()
           applyOverrides()
@@ -734,7 +739,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     if (!cookies) {
       return
     }
-    let target:CookieInfo = cookies.find(x => x.key === this.autoCloseCookieName)
+    let target:CookieInfo | undefined = cookies.find(x => x.key === this.autoCloseCookieName)
     if (target) {
       this.autoCloseLessonAccordion(GeneralUtils.booleanize(target.val))
     }

@@ -7,21 +7,21 @@ import { ISoundMaker } from '../ISoundMaker'
 import { SoundMakerConfig } from '../SoundMakerConfig'
 
 export default class MorseWavBufferPlayer implements ISoundMaker {
-  myAudioContext
-  source
+  myAudioContext: AudioContext
+  source: AudioBufferSourceNode
   sourceEnded = true
-  sourceEndedCallBack
-  gainNode
-  noiseNode
+  sourceEndedCallBack: any
+  gainNode: GainNode
+  noiseNode: any
   noisePlaying = false
-  noiseGainNode
+  noiseGainNode: any
   lastNoiseType = 'off'
 
   startNoise = (config:SoundMakerConfig) => {
-    let noiseNodeMaker = null
-    const afterImport = (def) => {
+    let noiseNodeMaker: (() => void) | null = null
+    const afterImport = (def: any) => {
       def.install()
-      noiseNodeMaker()
+      noiseNodeMaker!()
       this.noiseGainNode = this.myAudioContext.createGain()
       this.setNoiseVolume(config.noise.scaledNoiseVolume)
       this.noiseNode.connect(this.noiseGainNode)
@@ -32,32 +32,32 @@ export default class MorseWavBufferPlayer implements ISoundMaker {
     }
     switch (config.noise.type) {
       case 'white':
-        noiseNodeMaker = () => { this.noiseNode = this.myAudioContext.createWhiteNoise() }
+        noiseNodeMaker = () => { this.noiseNode = (this.myAudioContext as any).createWhiteNoise() }
         import('white-noise-node').then(({ default: def }) => {
           afterImport(def)
         })
         break
       case 'brown':
-        noiseNodeMaker = () => { this.noiseNode = this.myAudioContext.createBrownNoise() }
+        noiseNodeMaker = () => { this.noiseNode = (this.myAudioContext as any).createBrownNoise() }
         import('brown-noise-node').then(({ default: def }) => {
           afterImport(def)
         })
         break
       case 'pink':
-        noiseNodeMaker = () => { this.noiseNode = this.myAudioContext.createPinkNoise() }
+        noiseNodeMaker = () => { this.noiseNode = (this.myAudioContext as any).createPinkNoise() }
         import('pink-noise-node').then(({ default: def }) => {
           afterImport(def)
         })
     }
   }
 
-  setVolume = (scaledVolume) => {
+  setVolume = (scaledVolume: number) => {
     if (this.myAudioContext) {
       this.gainNode.gain.setValueAtTime(scaledVolume, this.myAudioContext.currentTime)
     }
   }
 
-  setNoiseVolume = (scaledVolume) => {
+  setNoiseVolume = (scaledVolume: number) => {
     if (this.myAudioContext) {
       this.noiseGainNode.gain.setValueAtTime(scaledVolume, this.myAudioContext.currentTime)
     }
@@ -93,7 +93,7 @@ export default class MorseWavBufferPlayer implements ISoundMaker {
     this.doPlay(wav.wav, config.volume / 10, config, onEnded)
   }
 
-  doPlay = (wav, scaledVolume, config:SoundMakerConfig, onEnded) => {
+  doPlay = (wav: number[], scaledVolume: number, config:SoundMakerConfig, onEnded: any) => {
     this.sourceEnded = false
     this.sourceEndedCallBack = onEnded
     if (typeof (this.myAudioContext) === 'undefined') {
@@ -124,7 +124,7 @@ export default class MorseWavBufferPlayer implements ISoundMaker {
     })
   }
 
-  forceStop = (pauseCallBack, killNoise) => {
+  forceStop = (pauseCallBack: () => void, killNoise: boolean) => {
     if (typeof (this.myAudioContext) === 'undefined') {
       pauseCallBack()
     } else {
