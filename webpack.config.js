@@ -4,6 +4,8 @@ const webpack = require('webpack')
 const CopyPlugin = require('copy-webpack-plugin')
 const ESLintPlugin = require('eslint-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { PurgeCSSPlugin } = require('purgecss-webpack-plugin')
+const glob = require('glob')
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production'
@@ -61,7 +63,16 @@ module.exports = (env, argv) => {
       }),
       */
       new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
-      new ESLintPlugin()
+      new ESLintPlugin(),
+      ...(isProduction ? [new PurgeCSSPlugin({
+        paths: glob.sync(`${path.join(__dirname, 'src')}/**/*`, { nodir: true }),
+        safelist: {
+          // Bootstrap dynamically adds these classes via JS (accordion, modal,
+          // collapse, dropdowns) — they won't appear in source files
+          pattern: /^(show|collapse|collapsing|fade|modal-backdrop|offcanvas|dropdown-menu|active|disabled|bs-)/,
+          greedy: true
+        }
+      })] : [])
     ],
     module: {
       rules: [
