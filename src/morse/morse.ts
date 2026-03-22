@@ -1,4 +1,4 @@
-import ko from 'knockout'
+import * as ko from 'knockout'
 import MorseStringUtils from './utils/morseStringUtils'
 import { SoundMakerConfig } from './player/soundmakers/SoundMakerConfig'
 import { MorseWordPlayer } from './player/morseWordPlayer'
@@ -90,7 +90,7 @@ export class MorseViewModel {
   allowSaveCookies:ko.Observable<boolean> = ko.observable(true)
   lockoutSaveCookiesTimerHandle:any = null
   currentSerializedSettings:any = null
-  allShortcutKeys:ko.ObservableArray
+  allShortcutKeys:ko.ObservableArray<any>
   applyEnabled:ko.Computed<boolean>
   numberOfRepeats:ko.Observable<number> = ko.observable(0)
   testTonePlaying:boolean = false

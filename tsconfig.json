@@ -10,7 +10,8 @@
       "allowJs": true,
       "moduleResolution": "node",
       "allowSyntheticDefaultImports": true,
-      "resolveJsonModule": true
+      "resolveJsonModule": true,
+      "allowUmdGlobalAccess": true
     },
     "exclude": ["**/*.test.ts", "vitest.config.ts", "prebuildLessons.ts", "prebuildPresets.ts", "prebuildPresetSets.ts", "zipdist.ts"]
   }
