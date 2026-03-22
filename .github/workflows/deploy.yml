@@ -1,0 +1,75 @@
+name: Deploy
+
+# Runs only when code is merged/pushed to main.
+# Deploys to two places:
+#   1. GitHub Pages — free backup copy at https://rdreed21.github.io/morsebrowser/
+#   2. DigitalOcean — main site at reedgames.net (requires GitHub Secrets, see CLAUDE.md)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # ── Deploy to GitHub Pages (free backup copy) ──────────────────────────
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          clean: true
+          clean-exclude: |
+            dev
+            1_0_0
+            1_0_1
+            1_0_2
+            1_0_3
+            1_0_4
+            1_0_5
+            1_0_6
+            1_0_7
+            1_0_8
+            1_0_9
+            1_0_10
+            1_10
+            1_11
+            1_12
+            soundslope
+
+      # ── Deploy to DigitalOcean (main site at reedgames.net) ────────────────
+      # Requires these GitHub Secrets (Settings → Secrets and variables → Actions):
+      #   DO_SSH_KEY  — contents of your private SSH key (e.g. ~/.ssh/id_rsa)
+      #   DO_HOST     — your droplet's IP address or hostname
+      #   DO_USER     — Linux username on the droplet (e.g. root)
+      #   DO_PATH     — folder on the droplet (e.g. /var/www/html/morsebrowser)
+      - name: Deploy to DigitalOcean
+        env:
+          DO_SSH_KEY: ${{ secrets.DO_SSH_KEY }}
+          DO_HOST: ${{ secrets.DO_HOST }}
+          DO_USER: ${{ secrets.DO_USER }}
+          DO_PATH: ${{ secrets.DO_PATH }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DO_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          rsync -avz --delete \
+            -e "ssh -o StrictHostKeyChecking=no" \
+            dist/ \
+            "$DO_USER@$DO_HOST:$DO_PATH"
