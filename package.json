@@ -32,9 +32,9 @@
   },
   "scripts": {
     "prebuild": "tsx ./prebuildLessons.ts && tsx ./prebuildPresetSets.ts && tsx ./prebuildPresets.ts",
-    "build": "webpack",
+    "build": "webpack --mode=production",
     "postbuild": "tsx ./zipdist.ts && node ./checklessons.js",
-    "dev": "webpack serve",
+    "dev": "webpack serve --mode=development",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
