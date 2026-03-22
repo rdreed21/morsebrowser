@@ -10,5 +10,6 @@
       "moduleResolution": "node",
       "allowSyntheticDefaultImports": true,
       "resolveJsonModule": true
-    }
+    },
+    "exclude": ["**/*.test.ts", "vitest.config.ts"]
   }

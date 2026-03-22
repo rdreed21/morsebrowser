@@ -17,5 +17,8 @@ export default defineConfig({
 
     // Only pick up files ending in .test.ts inside src/.
     include: ['src/**/*.test.ts'],
+
+    // Use the test-specific tsconfig that includes vitest/globals types.
+    typecheck: { tsconfig: './tsconfig.test.json' },
   },
 })
