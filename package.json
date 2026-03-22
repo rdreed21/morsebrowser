@@ -35,7 +35,10 @@
     "prebuild": "node ./prebuildLessons.js && node ./prebuildPresetSets.js && node ./prebuildPresets.js",
     "build": "webpack",
     "postbuild": "node ./zipdist.js && node ./checklessons.js",
-    "dev": "webpack serve"
+    "dev": "webpack serve",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
@@ -44,6 +47,7 @@
     "@types/knockout": "^3.4.71",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
+    "@vitest/coverage-v8": "^1.6.1",
     "babel-loader": "^8.2.4",
     "eslint": "^8.16.0",
     "eslint-config-standard": "^17.0.0",
@@ -56,6 +60,7 @@
     "mini-css-extract-plugin": "^2.6.0",
     "ts-loader": "^9.3.0",
     "typescript": "^4.7.2",
+    "vitest": "^1.6.1",
     "webpack-dev-server": "^4.7.4"
   }
 }
