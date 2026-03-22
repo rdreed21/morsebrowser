@@ -91,6 +91,22 @@ section:last-of-type {
     }
 }
 
+/* ===================== LOADING SPINNER ===================== */
+#app-loading {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bs-body-bg, #fff);
+    z-index: 9999;
+}
+
+/* ===================== DARK MODE TOGGLE ICON ===================== */
+.theme-icon-dark { display: none; }
+[data-bs-theme="dark"] .theme-icon-light { display: none; }
+[data-bs-theme="dark"] .theme-icon-dark { display: inline; }
+
 /* ===================== DARK MODE ===================== */
 :root {
     --theme-table-header-bg: #e7f1ff;
@@ -112,4 +128,4 @@ section:last-of-type {
 }
 
 
-/*# sourceMappingURL=bundle.2e219d38113dccf9a017.css.map*/
+/*# sourceMappingURL=bundle.98cd6debc127d8825eb6.css.map*/
