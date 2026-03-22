@@ -10,3 +10,5 @@ import './css/style.css'
 import { MorseViewModel } from './morse/morse.ts'
 
 ko.applyBindings(new MorseViewModel())
+const loader = document.getElementById('app-loading')
+if (loader) loader.remove()
