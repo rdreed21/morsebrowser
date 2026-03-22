@@ -93,6 +93,12 @@ section:last-of-type {
 [data-theme="dark"] {
     --theme-table-header-bg: #2a2a3e;
     color-scheme: dark;
+    /* Override Bootstrap 5.3 CSS variables so components like form-check-label
+       that use var(--bs-body-color) get the dark-mode text color */
+    --bs-body-color: #e0e0e0;
+    --bs-body-bg: #1a1a2e;
+    --bs-emphasis-color: #e0e0e0;
+    --bs-secondary-color: #aaa;
 }
 
 [data-theme="dark"] img {
