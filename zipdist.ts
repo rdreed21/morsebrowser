@@ -1,4 +1,4 @@
-import zip from 'zip-a-folder'
+import * as zip from 'zip-a-folder'
 import path from 'path'
 import fs from 'fs'
 
@@ -23,7 +23,7 @@ class TestMe {
       fs.rmdirSync(endDownLoadFolder, { recursive: true })
     }
     // console.log('removed')
-    await (zip as any).zip(zipFromFolder, initialZipFile)
+    await zip.zip(zipFromFolder, initialZipFile)
     ensureDirSync(endDownLoadFolder)
     fs.renameSync(initialZipFile, endDownLoadFile)
   }
