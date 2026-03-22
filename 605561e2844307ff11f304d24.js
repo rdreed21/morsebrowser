@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[60556],{60556(A){A.exports="WEAR AND TEAR \r\nVOLTS AND AMPS \r\nROCK AND ROLL \r\nLIVE AND LEARN \r\nPLAIN AND SIMPLE \r\nNOW AND THEN \r\nTO AND FRO \r\nMORE OR LESS \r\nPICK AND CHOOSE \r\nGIVE AND TAKE \r\n"}}]);

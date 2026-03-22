@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[84872],{84872(P){P.exports="PIE RAG SIP PIN TAP PEA GAP PEG PIG GRIP NAP PAN PING GASP PAGE GRASP SPIN PAIN\n"}}]);

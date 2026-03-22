@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[81941],{81941(n){n.exports="U \r\nW \r\nB \r\nW \r\nB \r\nU \r\nB \r\nU \r\nW \r\nU \r\nW \r\nB \r\n"}}]);

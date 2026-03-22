@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[29393],{29393(e){e.exports=JSON.parse('{"letters":"<BT>","minWordSize":1,"maxWordSize":1,"practiceSeconds":60}')}}]);

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[46912],{46912(E){E.exports="W2LCW DE W2JSJ OK JOHN SOLID CPY\nAGE 58 YRS\t\nBEEN HAM FER 30 YRS\nRETIRED TEACHER\nOK HW? <AR> W2LCW DE W2JSJ K\n"}}]);

@@ -1,0 +1,2 @@
+(self.webpackChunk=self.webpackChunk||[]).push([[42948],{42948(e){for(var t=new Float32Array(220500),n=null,r=0,a=t.length;r<a;r++)t[r]=2*Math.random()-1;function l(e){null===n&&(n=e.createBuffer(1,t.length,e.sampleRate)).getChannelData(0).set(t);var r=e.createBufferSource();return r.buffer=n,r.loop=!0,r}l.install=function(){Object.defineProperty(AudioContext.prototype,"createWhiteNoise",{value:function(){return new l(this)},enumerable:!1,writable:!1,configurable:!0})},e.exports=l}}]);
+//# sourceMappingURL=429482464a0aee7df5ac2fc4d.js.map

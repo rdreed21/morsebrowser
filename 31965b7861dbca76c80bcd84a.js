@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[31965],{31965(A){A.exports="NICE AND EASY \r\nDAY AND NIGHT \r\nFIRST AND LAST \r\nKEY OR PADDLE \r\nACHES AND PAINS \r\nIDLE OR BUSY \r\nFAR AND AWAY \r\nGRIP IT AND RIP IT \r\nOPEN AND SHUT \r\nFAR AND WIDE \r\n\r\n"}}]);

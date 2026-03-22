@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[67945],{67945(O){O.exports="CUL BOB  \nWUD FLOW  \nCUD U  \nHW LOW  \nLOUD CW  \nCU DOC  \nCUD FOLD  \nFB BUD  \nWL HOWL\nWOLF HOWL  \nOLD BOWL  \nWHO WOULD  \nBOLD BOW\nDOC COULD  \nCOLD COD  \nFOUL BOWL  \nLOW CLOUD\n"}}]);

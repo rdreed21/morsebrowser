@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[22498],{22498(E){E.exports="NEW NET   \nRR TU  \nABT U  \nUR ANT  \nRU NEW\nURBAN TRIBE  \nBEEN ABT  \nATE BURNT  \nEAT TUNA  \nTAN TUBER  \nWET WATER  \nTU NATE  \nEA TUNE\nU WRITE  \nEA WINE  \nUNTIE BRENT  \nUR EAR  \nEA BEAR \n"}}]);

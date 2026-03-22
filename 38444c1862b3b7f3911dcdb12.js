@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[38444],{38444(O){O.exports="CUB WHO HUB LOW COW OWL CLUB BOLD COULD HOWL CHOW CHUB WOULD OUCH FOLD CLUB CLOUD LOUD\n"}}]);

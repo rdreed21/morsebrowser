@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[77985],{77985(e){e.exports=JSON.parse('{"letters":"reatinpgslcdhofuwb73?qxv59,kmy","minWordSize":3,"maxWordSize":3,"practiceSeconds":120}')}}]);

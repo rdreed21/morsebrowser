@@ -1,0 +1,18 @@
+/*!
+  * Bootstrap v5.3.8 (https://getbootstrap.com/)
+  * Copyright 2011-2025 The Bootstrap Authors (https://github.com/twbs/bootstrap/graphs/contributors)
+  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+  */
+
+/*!
+ * Knockout JavaScript library v3.5.1
+ * (c) The Knockout.js team - http://knockoutjs.com/
+ * License: MIT (http://www.opensource.org/licenses/mit-license.php)
+ */
+
+/*!
+This code is © Copyright Stephen C. Phillips, 2018.
+Email: steve@scphillips.com
+*/
+
+/*! js-cookie v3.0.1 | MIT */

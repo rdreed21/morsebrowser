@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunk=self.webpackChunk||[]).push([[86617],{86617(e){e.exports="{W2LCW|w 2 l c w} {DE|from} {WB0JRH|w b 0 j r h} OK RICH {TNX|thanks} {FER|for} {FB|fine business} {QSO|contact} \n{ES|and} {HP|hope} {CUAGN|see you again} 73 {<AR>|end of message} {W2LCW|w 2 l c w} {DE|from} {WB0JRH|w b 0 j r h} {TU|thank you} {<SK>|end of contact} \n"}}]);
