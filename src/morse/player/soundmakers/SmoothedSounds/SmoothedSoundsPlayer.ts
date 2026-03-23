@@ -59,7 +59,7 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
   }
 
   setNoiseVolume = (scaledVolume: number) => {
-    if (this.ssContext.audioContext) {
+    if (this.ssContext && this.ssContext.audioContext) {
       this.ssContext.noiseGainNode.gain.setValueAtTime(scaledVolume, this.ssContext.audioContext.currentTime)
     }
   }
