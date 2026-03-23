@@ -577,28 +577,6 @@
                                     </div>
 
 
-                                    <!--noise toggle-->
-                                    <div class="col-auto" data-bind="visible: showExpertSettings && !noiseHidden">
-
-                                        <input type="checkbox" class="btn-check" autocomplete="off" id="btnchecknoise"
-                                            data-bind="checked: noiseEnabled" aria-label="Noise"
-                                            title="Toggles display of the experimental Noise settings accordion">
-                                        <label class=" btn btn-outline-primary" for="btnchecknoise"
-                                            aria-hidden="true"><img
-                                                data-bind="attr:{ src: morseLoadImages().getSrc('soundwaveImage')}">&nbsp;Noise&nbsp;<img
-                                                data-bind="attr:{ src: noiseEnabled() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}"
-                                                alt="" /></label>
-                                    </div>
-
-                                    <!--rss toggle-->
-                                    <!--  <div class="col-auto" data-bind="visible: showExpertSettings">
-
-                                        <input type="checkbox" class="btn-check" autocomplete="off" id="btncheckrss"
-                                            data-bind="checked: rss.rssEnabled">
-                                        <label class=" btn btn-outline-primary" for="btncheckrss"><img
-                                                data-bind="attr:{ src: morseLoadImages().getSrc('rssImage')}">&nbsp;RSS&nbsp;<img
-                                                data-bind="attr:{ src: rss.rssEnabled() ? morseLoadImages().getSrc('checkImage') : morseLoadImages().getSrc('circleImage')}" /></label>
-                                    </div> -->
 
                                     <!--repeats-->
                                     <div class="input-group">
@@ -908,17 +886,6 @@
                         </div>
                     </div>
 
-                    <!-- RSS -->
-                    <!-- ko if: rss.rssEnabled() && showExpertSettings() -->
-                    <div class="accordion-item" data-bind="component: {name: 'rssaccordion', params: {root: $root}}">
-                    </div>
-                    <!-- /ko -->
-
-                    <!-- NOISE -->
-                    <!-- ko if: noiseEnabled() && showExpertSettings() -->
-                    <div class="accordion-item" data-bind="component: {name: 'noiseaccordion', params: {root: $root}}">
-                    </div>
-                    <!-- /ko -->
 
                     <!-- flagged words -->
                     <div class="accordion-item"
