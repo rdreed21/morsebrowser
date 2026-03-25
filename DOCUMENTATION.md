@@ -1,7 +1,7 @@
 # MorseBrowser — Complete Project Documentation
 
 **Long Island CW Club (LICW) — Morse Code Practice Web Application**
-Version 1.13 | Stack: TypeScript + Knockout.js + Webpack 5 + Bootstrap 5
+Version 1.13 | Stack: TypeScript + React + Webpack 5 + Bootstrap 5
 
 ---
 
@@ -11,7 +11,7 @@ Version 1.13 | Stack: TypeScript + Knockout.js + Webpack 5 + Bootstrap 5
 2. [Technology Stack](#2-technology-stack)
 3. [Repository Layout](#3-repository-layout)
 4. [Architecture Overview](#4-architecture-overview)
-5. [The MVVM Pattern (Knockout.js)](#5-the-mvvm-pattern-knockoutjs)
+5. [React UI and the ViewModel](#5-react-ui-and-the-viewmodel)
 6. [Major Modules](#6-major-modules)
    - 6.1 [MorseViewModel — Root Controller](#61-morseviewmodel--root-controller)
    - 6.2 [Lesson System (morseLessonPlugin)](#62-lesson-system-morselessonplugin)
@@ -37,6 +37,7 @@ Version 1.13 | Stack: TypeScript + Knockout.js + Webpack 5 + Bootstrap 5
 17. [Deployment](#17-deployment)
 18. [Fork Changes vs Upstream](#18-fork-changes-vs-upstream)
 19. [Glossary](#19-glossary)
+20. [Maintainer guide (design & content flow)](docs/MAINTAINER_GUIDE.md)
 
 ---
 
@@ -53,25 +54,27 @@ MorseBrowser is a **browser-based Morse code practice tool** built for the Long 
 - Shuffle, repeat, or advance through practice sets
 - Persist all preferences across sessions via browser cookies/localStorage
 
-The app is intentionally built with **accessible, "ham-tinkerer-friendly" code** — no complex frameworks, no server requirement. It runs entirely in the browser from static files.
+The app is intentionally built with **accessible, "ham-tinkerer-friendly" code** — no server requirement. The UI is **React**; core logic lives in `MorseViewModel` with custom observables. It runs entirely in the browser from static files.
 
 ---
 
 ## 2. Technology Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| UI binding | Knockout.js (MVVM) | 3.5.1 |
-| CSS framework | Bootstrap | 5.1.3 |
-| Language | TypeScript + JavaScript | TS 4.7.2 |
+| Layer | Technology | Notes |
+|-------|-----------|--------|
+| UI | React | Components under `src/morse/components/`; `MorseContext` bridges the ViewModel |
+| ViewModel | `MorseViewModel` + custom observables | `src/morse/utils/observable.ts` (KO-like API, not Knockout.js) |
+| CSS framework | Bootstrap | 5.3.x |
+| Language | TypeScript + JavaScript | TS 5.x; `src/morse-pro/` remains JS |
 | Build tool | Webpack | 5.x |
-| Transpiler | Babel | 7.17+ |
+| Transpiler | Babel | 7.x |
 | Audio | Web Audio API (browser built-in) | — |
 | Speech | EasySpeech (wrapper) | 2.3.1 |
 | State | js-cookie + localStorage | 3.0.1 |
 | RSS | rss-parser | 3.12.0 |
 | Noise | pink-noise-node, white-noise-node, brown-noise-node | — |
 | Linting | ESLint + @typescript-eslint | — |
+| Tests | Vitest | `npm test` |
 
 ---
 
@@ -80,24 +83,27 @@ The app is intentionally built with **accessible, "ham-tinkerer-friendly" code**
 ```
 morsebrowser/
 ├── src/                        # All source code
-│   ├── index.js                # Webpack entry point — bootstraps the app
-│   ├── template.html           # Single-page HTML with Knockout bindings (~82KB)
+│   ├── index.tsx               # Webpack entry — Bootstrap, MorseViewModel, React root
+│   ├── App.tsx                 # MorseProvider + main layout
+│   ├── template.html           # Minimal HTML shell (#react-root, theme script)
 │   ├── assets/                 # Static images (logos, favicons, icons)
 │   ├── css/
-│   │   └── style.css           # Bootstrap 5 + custom dark mode + responsive
+│   │   └── style.css           # Bootstrap 5 + dark mode + responsive
 │   ├── configs/
 │   │   ├── licwdefaults.json   # Default startup values (WPM, freq, text, etc.)
 │   │   └── wordify.json        # Abbreviation → spoken word mappings for TTS
-│   ├── morse/                  # Main application TypeScript modules (22 dirs)
+│   ├── morse/                  # Main application TypeScript modules
 │   │   ├── morse.ts            # ROOT: MorseViewModel class
+│   │   ├── context/
+│   │   │   └── MorseContext.tsx  # Subscribes to VM observables → React state
 │   │   ├── lessons/
 │   │   │   └── morseLessonPlugin.ts   # Entire lesson selection system
 │   │   ├── player/             # Audio player abstraction
 │   │   ├── timing/             # PARIS timing algorithm
 │   │   ├── settings/           # Settings encapsulation
 │   │   ├── voice/              # Text-to-speech
-│   │   ├── utils/              # String helpers, word info, card buffer
-│   │   └── components/         # Knockout UI components (accordion panels)
+│   │   ├── utils/              # observables, string helpers, word info, card buffer
+│   │   └── components/         # React UI (accordions, controls, header, …)
 │   ├── morse-pro/              # External Morse encode/decode libraries (SC Phillips)
 │   ├── presets/                # Lesson class definitions and preset configs
 │   │   ├── config.json         # Class list (BC1, BC2, INT1, ADV1, …)
@@ -114,11 +120,12 @@ morsebrowser/
 ├── package.json                # npm scripts and dependencies
 ├── .babelrc                    # Babel transpilation config
 ├── .eslintrc.json              # Linting rules
-├── prebuildLessons.js          # Generates morseLessonFinder.js at build time
-├── prebuildPresets.js          # Generates morsePresetFinder.js at build time
-├── prebuildPresetSets.js       # Generates morsePresetSetFinder.js at build time
+├── prebuildLessons.ts          # Generates morseLessonFinder at build time
+├── prebuildPresets.ts          # Generates morsePresetFinder at build time
+├── prebuildPresetSets.ts       # Generates morsePresetSetFinder at build time
 ├── checklessons.js             # Post-build: validates lesson data integrity
-├── zipdist.js                  # Post-build: packages dist/ into morse.zip
+├── zipdist.ts                  # Post-build: packages dist/ into morse.zip
+├── vitest.config.ts            # Unit test runner config
 ├── CLAUDE.md                   # Fork-specific change log
 └── DOCUMENTATION.md            # This file
 ```
@@ -127,13 +134,13 @@ morsebrowser/
 
 ## 4. Architecture Overview
 
-The app is a **Single Page Application (SPA)** using the **MVVM pattern** (Model–View–ViewModel) via Knockout.js.
+The app is a **Single Page Application (SPA)**. The **view** is **React**; the **model/controller** is **`MorseViewModel`**, which keeps MVVM-style separation of concerns without using the Knockout.js library.
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                        Browser                          │
 │                                                         │
-│  template.html ←─ Knockout bindings ─→ MorseViewModel  │
+│  React components ←─ MorseContext ─→ MorseViewModel   │
 │       │                                      │          │
 │       │ (renders)                    (owns/controls)    │
 │       ▼                                      ▼          │
@@ -152,23 +159,24 @@ The app is a **Single Page Application (SPA)** using the **MVVM pattern** (Model
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Key principle:** The ViewModel holds all state as Knockout `observable` values. The HTML template declares bindings (`data-bind="..."`) that automatically update the DOM whenever observables change — no manual DOM manipulation needed.
+**Key principle:** `MorseViewModel` holds state in **custom observables** (`observable`, `computed`, `observableArray` from `src/morse/utils/observable.ts`). **`MorseContext`** subscribes to the observables the UI needs and copies values into React state so components re-render. User actions call ViewModel methods or observable setters (often via `vm` from the context).
 
 ---
 
-## 5. The MVVM Pattern (Knockout.js)
+## 5. React UI and the ViewModel
 
-If you haven't used Knockout before, here's the mental model:
+The UI is implemented as **React function components** under `src/morse/components/`. They read synchronized fields via **`useMorse()`** and mutate state through **`morse.vm`** (e.g. `morse.vm.volume(5)`).
+
+The **observable** layer matches the subset of Knockout’s API used by the original app: `observable()` returns a function that gets/sets a value and supports `.subscribe()`. **`computed()`** and **`writableComputed()`** take an explicit dependency list (unlike Knockout’s automatic dependency tracking).
 
 | Concept | What it means |
 |---------|--------------|
-| `ko.observable(value)` | A reactive variable. When it changes, any bound UI updates automatically. |
-| `ko.observableArray([])` | Like `observable` but for arrays. UI lists rebind on add/remove. |
-| `ko.computed(() => ...)` | A derived value. Re-runs whenever its dependencies change. |
-| `data-bind="text: name"` | HTML attribute that wires a DOM element to a ViewModel property. |
-| `ko.components.register()` | Registers a reusable UI widget with its own template + class. |
+| `observable(value)` | Reactive variable; `subscribe` notifies listeners when the value changes. |
+| `observableArray([...])` | Array-valued observable with helper mutators. |
+| `computed(fn, deps)` | Derived value; re-runs when any listed dependency changes. |
+| React + `MorseContext` | Mirrors selected observables into React state for rendering. |
 
-Example: when the user changes WPM, `speedSettings.wpm` (an observable) updates, which triggers recomputation of timing, which updates the audio player config — all automatically.
+Example: when the user changes WPM, the setting’s observable updates, timing recomputes, and both the audio pipeline and any React-bound display fields stay in sync.
 
 ---
 
@@ -178,7 +186,7 @@ Example: when the user changes WPM, `speedSettings.wpm` (an observable) updates,
 
 **File:** [src/morse/morse.ts](src/morse/morse.ts)
 
-This is the **central hub** of the application. It is instantiated once in `index.js` and applied to the entire page via `ko.applyBindings(vm)`.
+This is the **central hub** of the application. It is instantiated once in `src/index.tsx` and passed into **`MorseProvider`** so React components share the same instance.
 
 **Key observables:**
 | Observable | Type | Purpose |
@@ -205,7 +213,7 @@ This is the **central hub** of the application. It is instantiated once in `inde
 1. Loads `licwdefaults.json` config
 2. Instantiates Settings, LessonPlugin, MorseVoice, RssPlugin
 3. Restores cookies (saved class, lesson, WPM, etc.)
-4. Calls `ko.applyBindings(this)` to wire up the UI
+4. React mounts under `#react-root`; `MorseContext` attaches subscriptions to observables the UI reads
 
 ---
 
@@ -226,7 +234,7 @@ This is the **most complex module** in the codebase. It manages the three-level 
 | `displays` | Computed list of lesson options for current class |
 
 **Critical design decisions:**
-- `displays` must **never return an empty array**. If no word list matches the current filters, it returns a dummy "Select a lesson" item. This prevents Knockout's `value` binding from setting `selectedDisplay` to `undefined`, which would crash downstream code.
+- `displays` must **never return an empty array**. If no word list matches the current filters, it returns a dummy "Select a lesson" item. An empty lesson `<select>` would leave **no valid selection**, so `selectedDisplay` could become `undefined` and crash code that accesses `.fileName`.
 - `displaysInitialized` flag gates `setDisplaySelected` calls during page load, preventing premature word list loading before the DOM is ready.
 - Cookie persistence saves/restores `selectedClass`, `selectedDisplay`, and `userTarget` across sessions.
 
@@ -484,7 +492,7 @@ User Action                  → What Happens in Code
                                Returns matching DisplayOptions[]
                                If empty → returns [dummy "Select a lesson"]
 
-3. LESSON dropdown updates   → KO renders new <select> options
+3. LESSON dropdown updates   → React re-renders `<select>` options from `displays`
                                If exactly 1 real option → auto-select it
                                If multiple → user must choose
 
@@ -498,7 +506,7 @@ User Action                  → What Happens in Code
                                Play button becomes active
 ```
 
-**Common pitfall:** If `displays` ever returns `[]` (empty array), Knockout sets `selectedDisplay` to `undefined`, which crashes code that accesses `selectedDisplay().fileName`. The fix: always return at least a dummy item.
+**Common pitfall:** If `displays` ever returns `[]` (empty array), the lesson dropdown has no valid value and `selectedDisplay` can become `undefined`, which crashes code that accesses `selectedDisplay().fileName`. The fix: always return at least a dummy item.
 
 ---
 
@@ -565,7 +573,7 @@ The build has **three phases**: Pre-build → Webpack → Post-build.
 ```
 npm run prebuild
     │
-    ├─ prebuildLessons.js
+    ├─ prebuildLessons.ts
     │   Scans all files in src/wordfiles/
     │   Generates src/morse/lessons/morseLessonFinder.js
     │   Contains a giant switch/case:
@@ -573,11 +581,11 @@ npm run prebuild
     │     case "Words_10L":   return require("../../wordfiles/Words_10L.txt")
     │     ...
     │
-    ├─ prebuildPresets.js
+    ├─ prebuildPresets.ts
     │   Scans src/presets/configs/
     │   Generates morsePresetFinder.js (same switch/case pattern)
     │
-    └─ prebuildPresetSets.js
+    └─ prebuildPresetSets.ts
         Scans src/presets/sets/
         Generates morsePresetSetFinder.js
 ```
@@ -589,7 +597,7 @@ npm run prebuild
 ```
 npm run build
     │
-    Entry: src/index.js
+    Entry: src/index.tsx
     │
     Loaders applied:
     ├─ .ts files     → ts-loader → TypeScript compiled to ES2020
@@ -608,7 +616,7 @@ npm run build
 ### Post-build
 
 ```
-├─ zipdist.js        → Creates morse.zip from dist/ contents
+├─ zipdist.ts        → Creates morse.zip from dist/ contents
 └─ checklessons.js   → Validates all lesson JSON files have required fields
 ```
 
@@ -621,7 +629,7 @@ npm run build   # runs prebuild + webpack + postbuild automatically
 
 ## 11. UI Structure
 
-The single-page UI (`src/template.html`) is divided into these sections:
+The layout is implemented in **React** (see `src/morse/components/app/AppContent.tsx` and related files). `src/template.html` only mounts the app. The following matches the on-screen structure:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -681,25 +689,20 @@ User preferences persist across browser sessions via two mechanisms:
 - `licw_display` → selected lesson display name
 - `licw_lettergroup` → selected letter group
 
-**On load:** The ViewModel calls each handler's `.load()` method, which reads the cookie and restores the observable value before `ko.applyBindings()` runs.
+**On load:** The ViewModel calls each handler's `.load()` method, which reads the cookie and restores the observable value before the React tree reads initial state via `MorseContext`.
 
 ---
 
 ## 13. Dark Mode
 
-Implemented with CSS custom properties and a `data-theme` attribute on `<body>`.
+Implemented with **Bootstrap 5.3 color modes** using `data-bs-theme` on the **document root** (`<html>`), plus custom CSS in `src/css/style.css`.
 
 **How it works:**
-1. `<body data-theme="dark">` triggers all CSS rules under `[data-theme="dark"]`
-2. A small inline `<script>` in `<head>` reads localStorage and sets `data-theme` **before** CSS loads, preventing a flash of light mode
-3. The toggle button (🌙/☀️) switches the attribute and saves to localStorage
-4. All icons and the club logo are inverted to white via:
-   ```css
-   [data-theme="dark"] img {
-       filter: invert(1);
-   }
-   ```
-5. Bootstrap form controls, buttons, accordions, badges, and tables all have dark overrides
+1. `data-bs-theme="dark"` enables Bootstrap’s dark palette and fork-specific overrides under `[data-bs-theme="dark"]`
+2. A small inline `<script>` in `<head>` of `src/template.html` reads `localStorage` and sets the theme **before** CSS loads, reducing flash of the wrong mode
+3. The toggle in `Header.tsx` flips `data-bs-theme`, updates `theme-color` meta, and persists `theme` in `localStorage`
+4. Icons and the club logo are inverted in dark mode via CSS (see `style.css`)
+5. Additional tweaks cover accordions, tables, and controls as needed
 
 ---
 
@@ -736,6 +739,8 @@ Activated via **query parameters**:
 ---
 
 ## 16. Development Workflow
+
+For a **verbose walkthrough of architecture, the React–ViewModel bridge, lesson cascade, and playback pipeline**, see **[docs/MAINTAINER_GUIDE.md](docs/MAINTAINER_GUIDE.md)**.
 
 ### Prerequisites
 - Node.js 16+
@@ -799,23 +804,23 @@ This repository is a fork of the upstream LICW repo. Changes made in this fork:
 
 ### Lesson Bug Fixes (`src/morse/lessons/morseLessonPlugin.ts`)
 - **Removed `displaysInitialized = false`** from inside the `displays` computed. This caused a permanent lock-out after class switches because `childrenComplete` (the only restorer) doesn't fire on same-length array transitions.
-- **`displays` returns dummy item** instead of `[]` when no wordlist matches, preventing Knockout from setting `selectedDisplay` to `undefined`.
+- **`displays` returns dummy item** instead of `[]` when no wordlist matches, preventing an empty lesson dropdown from leaving `selectedDisplay` `undefined`.
 - **Null guards** added in `applyOverrides` and `setPresetSelected` for `selectedDisplay()`.
 - **Auto-select** when exactly one lesson is available (in `setDisplaysInitialized` else-branch and `setLetterGroup`).
 
-### TYPE Select Fix (`src/template.html`)
-- Added `event: {change: function() { lessons.changeUserTarget(lessons.userTarget()) }}` to the TYPE select binding to ensure the lesson cascade re-filters when the TYPE changes.
+### TYPE Select Fix
+- **Upstream / Knockout era:** `src/template.html` used a Knockout `change` handler on TYPE to call `lessons.changeUserTarget`.
+- **This fork (React):** `src/morse/components/app/LessonsAccordion.tsx` wires the TYPE `<select>` with `onChange` → `vm.lessons.changeUserTarget(...)`.
 
-### Dark Mode (`src/css/style.css`, `src/template.html`)
-- Full dark mode via `[data-theme="dark"]` CSS selector
-- All Bootstrap components overridden: body, forms, buttons, accordions, badges, tables, links
-- No-flash script in `<head>` applies theme before CSS loads
-- Toggle button (🌙/☀️) with localStorage persistence
-- `[data-theme="dark"] img { filter: invert(1); }` inverts all PNG icons and club logo to white
+### Dark Mode (`src/css/style.css`, `src/template.html`, React header)
+- Dark mode via `data-bs-theme` on `<html>` and CSS under `[data-bs-theme="dark"]`
+- No-flash script in `<head>` applies saved theme before CSS loads
+- Toggle in `Header.tsx` with `localStorage` and `theme-color` meta updates
+- Image inversion and component tweaks as in `style.css`
 
-### UI Refactor (`src/template.html`)
-- Settings area, working text area, and playback controls reorganised to flexbox layout
-- Google Analytics and Google Tag Manager scripts removed
+### UI layout (React)
+- Settings, working text, playback controls, and accordions live in React components (`src/morse/components/`) with Bootstrap layout classes
+- Google Analytics and Google Tag Manager scripts removed from the template
 
 ### Logo Responsive Sizing (`src/css/style.css`)
 - Logo scales: 120px on mobile, 200px on screens ≥576px
@@ -841,13 +846,13 @@ This repository is a fork of the upstream LICW repo. Changes made in this fork:
 | **VET** | Variable Element Timing — a practice modality |
 | **QSO** | Ham radio contact / conversation |
 | **LICW** | Long Island CW Club |
-| **MVVM** | Model-View-ViewModel — the architectural pattern Knockout.js implements |
-| **Observable** | A Knockout reactive variable — UI updates automatically when it changes |
-| **Computed** | A Knockout derived value that re-evaluates when its dependencies change |
+| **MVVM** | Model-View-ViewModel — separation between ViewModel (`MorseViewModel`) and React view |
+| **Observable** | A reactive value in `src/morse/utils/observable.ts`; `MorseContext` syncs to React |
+| **Computed** | Derived observable that re-evaluates when listed dependencies change |
 | **Sticky sets** | Word groups that remain fixed (not shuffled) between sessions |
 | **Wordify** | The process of expanding abbreviations before text-to-speech |
 | **PreSpace** | Silence before playback starts (helps prepare the listener) |
 
 ---
 
-*Documentation generated 2026-03-22. For fork-specific changes, see [CLAUDE.md](CLAUDE.md).*
+*Documentation updated for React UI + ViewModel bridge. For fork-specific changes, see [CLAUDE.md](CLAUDE.md).*

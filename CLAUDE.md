@@ -18,6 +18,12 @@ npm run test:coverage  # Tests + show what % of code is covered
 
 ---
 
+## Current architecture (this fork)
+
+The **UI is React** (`src/App.tsx`, `src/morse/components/**/*.tsx`). **`MorseViewModel`** (`src/morse/morse.ts`) still owns practice logic, lessons, audio, and settings. State uses **custom observables** in `src/morse/utils/observable.ts` (KO-like API; the Knockout library is not used). **`MorseContext`** (`src/morse/context/MorseContext.tsx`) subscribes to observables and mirrors values into React so components re-render. The HTML shell `src/template.html` only mounts `#react-root` and applies saved theme before CSS loads.
+
+---
+
 ## Changes vs Upstream
 
 ### 1. Lesson Dropdown Bug Fix
@@ -32,32 +38,29 @@ dropdown permanently until the page was refreshed.
   (`childrenComplete`) doesn't fire when the array length stays the same. Once stuck
   at `false`, `setDisplaySelected` was permanently blocked.
 - `displays` now returns a dummy "Select a lesson" item instead of `[]` when no word
-  list matches the current filters. An empty `<select>` causes Knockout to set
-  `selectedDisplay` to `undefined`, crashing downstream code that accesses `.fileName`.
+  list matches the current filters. An empty `<select>` would leave no valid lesson
+  selection, so `selectedDisplay` could become `undefined`, crashing downstream code
+  that accesses `.fileName`.
 - Added null guards in `applyOverrides` and `setPresetSelected` for `selectedDisplay()`.
 - Added auto-select logic when exactly one lesson matches the current filters.
 
 ---
 
 ### 2. TYPE Select Fix
-**File:** `src/template.html`
+**Upstream (Knockout):** `src/template.html` — `event: {change: …}` on the TYPE select so `lessons.changeUserTarget` runs when TYPE changes.
 
-Added `event: {change: function() { lessons.changeUserTarget(lessons.userTarget()) }}`
-to the TYPE select binding. Without this, changing the TYPE dropdown did not trigger
-the lesson cascade to re-filter.
+**This fork (React):** `src/morse/components/app/LessonsAccordion.tsx` — the TYPE `<select>` uses `onChange` → `vm.lessons.changeUserTarget(e.target.value)`.
 
 ---
 
 ### 3. Dark Mode
-**Files:** `src/css/style.css`, `src/template.html`
+**Files:** `src/css/style.css`, `src/template.html`, `src/morse/components/app/Header.tsx`
 
-- Full dark mode via `[data-theme="dark"]` CSS selector covering body, form controls,
-  buttons, accordions, badges, tables, and links.
-- A small `<script>` in `<head>` reads `localStorage` and sets `data-theme` **before**
-  CSS loads, preventing a flash of the wrong theme on page load.
-- Toggle button (🌙/☀️) in the header persists the preference to `localStorage`.
-- `[data-theme="dark"] img { filter: invert(1); }` inverts all PNG icons and the club
-  logo to white in dark mode.
+- Bootstrap 5.3 color mode: `data-bs-theme` on `<html>`; CSS under `[data-bs-theme="dark"]`.
+- A small `<script>` in `<head>` reads `localStorage` and sets dark theme **before**
+  CSS loads, reducing flash of the wrong mode.
+- Toggle in the React header flips theme, updates `theme-color` meta, and persists `theme` in `localStorage`.
+- Image inversion and extra component styling in `style.css`.
 
 ---
 
@@ -76,10 +79,7 @@ Google Analytics and Google Tag Manager scripts were removed from the template.
 ---
 
 ### 6. UI Refactor
-**File:** `src/template.html`
-
-Settings area, working text area, and playback controls were reorganised to a
-flexbox layout for better responsiveness.
+**This fork:** Layout lives in **React** components under `src/morse/components/` (Bootstrap flex/grid). The old monolithic Knockout template is replaced by this component tree.
 
 ---
 
@@ -237,8 +237,8 @@ The tests only cover **pure logic** — code that takes inputs and returns outpu
 with no browser involvement. Some parts of the app can't be tested this way:
 
 - **Audio playback** — requires Web Audio API (browser only)
-- **Knockout.js observables** — requires the UI to be mounted
-- **Lesson dropdown cascade** — requires DOM and Knockout binding
+- **Full UI / MorseContext** — integration of ViewModel + React is exercised manually
+- **Lesson dropdown cascade** — requires DOM and full app wiring
 - **Text-to-speech** — requires browser speech APIs
 
 These are tested manually by running the app in a browser. The CLAUDE.md bug-fix
@@ -322,8 +322,8 @@ ssh user@your-droplet-ip 'systemctl status certbot.timer'
 ## Project Overview
 
 MorseBrowser is a browser-based Morse code practice tool for the Long Island CW Club.
-It runs entirely as static files — no server-side code. The full technical documentation
-is in `DOCUMENTATION.md`.
+It runs entirely as static files — no server-side code. The UI is **React** with a
+**MorseViewModel** bridge (`MorseContext`). Full technical documentation is in `DOCUMENTATION.md`.
 
 **Live sites:**
 - Upstream (LICW): https://longislandcw.github.io/morsebrowser/

@@ -1,19 +1,20 @@
 /**
- * MorseContext — React state bridge over the Knockout ViewModel.
+ * MorseContext — React state bridge over MorseViewModel.
  *
  * Strategy (strangler-fig migration):
- *   • MorseViewModel (KO) continues to own all business logic and the existing
- *     HTML template during the migration.
- *   • This context subscribes to the KO observables that React components need
- *     and mirrors their values into React state so that React components
- *     re-render correctly when state changes.
- *   • Setters on the context value proxy through to the KO observable, keeping
- *     KO as the single source of truth until Phase 5 when KO is removed.
+ *   • MorseViewModel continues to own all business logic and uses custom
+ *     observables (src/morse/utils/observable.ts), not the Knockout library.
+ *   • This context subscribes to the observables React components need and
+ *     mirrors their values into React state so components re-render when
+ *     the model changes.
+ *   • Writers should still use the ViewModel's observable setters (e.g.
+ *     morse.vm.volume(5)) so the VM stays the single source of truth until
+ *     any later phase that removes the bridge entirely.
  *
  * Usage:
  *   const morse = useMorse()
  *   // read:  morse.volume
- *   // write: morse.vm.volume(5)   ← KO setter, triggers KO subscribers + React re-render
+ *   // write: morse.vm.volume(5)   ← observable setter; subscribers + React re-render
  */
 
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
@@ -113,7 +114,7 @@ export interface VoiceState {
 }
 
 export interface MorseContextValue {
-  /** The KO ViewModel — use for imperative calls during migration */
+  /** MorseViewModel — use for imperative calls and observable setters */
   vm: MorseViewModel
 
   // ── Text / display ────────────────────────────────────────────────────────
@@ -200,7 +201,7 @@ const MorseContext = createContext<MorseContextValue | null>(null)
 
 // ─── KO → React bridge ───────────────────────────────────────────────────────
 
-/** Read all current KO observable values into a plain snapshot object. */
+/** Read all current observable values into a plain snapshot object. */
 function snapshot(vm: MorseViewModel): MorseContextValue {
   const l = vm.lessons
   const s = vm.settings
@@ -359,7 +360,7 @@ function snapshot(vm: MorseViewModel): MorseContextValue {
 }
 
 /**
- * Subscribe to all KO observables that matter for the UI.
+ * Subscribe to all ViewModel observables that matter for the UI.
  * When any changes, re-snapshot and set React state.
  */
 function useKOBridge(vm: MorseViewModel): MorseContextValue {
