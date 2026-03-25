@@ -63,7 +63,7 @@ module.exports = (env, argv) => {
       }),
       */
       new MiniCssExtractPlugin({ filename: '[name].[contenthash].css' }),
-      new ESLintPlugin(),
+      new ESLintPlugin({ extensions: ['js', 'jsx', 'ts', 'tsx'] }),
       ...(isProduction ? [new PurgeCSSPlugin({
         paths: glob.sync(`${path.join(__dirname, 'src')}/**/*`, { nodir: true }),
         safelist: {
