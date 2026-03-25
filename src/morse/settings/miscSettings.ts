@@ -1,13 +1,13 @@
-import * as ko from 'knockout'
+import { observable, Observable } from '../utils/observable'
 import { CookieInfo } from '../cookies/CookieInfo'
 import { ICookieHandler } from '../cookies/ICookieHandler'
 import { MorseCookies } from '../cookies/morseCookies'
 import { GeneralUtils } from '../utils/general'
 export class MiscSettings implements ICookieHandler {
-  newlineChunking:ko.Observable<boolean>
+  newlineChunking:Observable<boolean>
   constructor () {
     MorseCookies.registerHandler(this)
-    this.newlineChunking = ko.observable(false)
+    this.newlineChunking = observable(false)
   }
 
   get isMoreSettingsAccordionOpen ():boolean {

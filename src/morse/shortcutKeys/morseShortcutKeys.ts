@@ -107,9 +107,18 @@ export class MorseShortcutKeys {
     })
 
     // Toggle loop
-    this.registerShortcutKeyHandler('l', 'Toggle looping', () => {
+    this.registerShortcutKeyHandler('o', 'Toggle looping', () => {
       mv.loop(!mv.loop())
       mv.accessibilityAnnouncement(mv.loop() ? 'Looping' : 'Not looping')
+    })
+
+    // Toggle dark / light mode
+    this.registerShortcutKeyHandler('l', 'Toggle dark / light mode', () => {
+      const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark'
+      document.documentElement.setAttribute('data-bs-theme', isDark ? 'light' : 'dark')
+      localStorage.setItem('theme', isDark ? 'light' : 'dark')
+      const meta = document.getElementById('theme-color-meta')
+      if (meta) meta.setAttribute('content', isDark ? '#ffffff' : '#212529')
     })
 
     const changeFarnsworth = (x: number) => {

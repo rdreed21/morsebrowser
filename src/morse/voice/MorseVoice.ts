@@ -1,4 +1,4 @@
-import * as ko from 'knockout'
+import { observable, Observable, computed, observableArray, ObservableArray } from '../utils/observable'
 import { MorseVoiceInfo } from './MorseVoiceInfo'
 import EasySpeech, { Status } from 'easy-speech'
 import { MorseViewModel } from '../morse'
@@ -11,61 +11,60 @@ import { VoiceBufferInfo } from './VoiceBufferInfo'
 export class MorseVoice implements ICookieHandler {
   voices: any[] = []
   voicesInited:boolean = false
-  voiceEnabled:ko.Observable<boolean>
-  voiceCapable:ko.Observable<boolean>
-  voiceThinkingTime:ko.Observable<number>
-  voiceThinkingTimeWpm:ko.Computed<any>
-  voiceAfterThinkingTime:ko.Observable<number>
-  voiceVoice:ko.Computed<any>
-  voiceVoiceName:ko.Observable<string>
-  voiceVoiceIdx:ko.Observable<number>
-  voiceVolume:ko.Observable<number>
-  voiceRate:ko.Observable<number>
-  voicePitch:ko.Observable<number>
-  voiceLang:ko.Observable<string>
-  voiceVoices:ko.ObservableArray<any>
+  voiceEnabled:Observable<boolean>
+  voiceCapable:Observable<boolean>
+  voiceThinkingTime:Observable<number>
+  voiceThinkingTimeWpm:Observable<any>
+  voiceAfterThinkingTime:Observable<number>
+  voiceVoice:Observable<any>
+  voiceVoiceName:Observable<string>
+  voiceVoiceIdx:Observable<number>
+  voiceVolume:Observable<number>
+  voiceRate:Observable<number>
+  voicePitch:Observable<number>
+  voiceLang:Observable<string>
+  voiceVoices:ObservableArray<any>
   voiceBuffer:Array<VoiceBufferInfo>
-  voiceBufferMaxLength:ko.Observable<number>
+  voiceBufferMaxLength:Observable<number>
   ctxt:MorseViewModel
-  voiceSpelling:ko.Observable<boolean>
+  voiceSpelling:Observable<boolean>
   // keep a reference because read that garbage collector can grab
   // and onend never fires?!
   currentUtterance:SpeechSynthesisUtterance
-  voiceLastOnly:ko.Observable<boolean>
-  manualVoice:ko.Observable<boolean>
-  speakFirst:ko.Observable<boolean>
-  speakFirstRepeats:ko.Observable<number>
+  voiceLastOnly:Observable<boolean>
+  manualVoice:Observable<boolean>
+  speakFirst:Observable<boolean>
+  speakFirstRepeats:Observable<number>
   speakFirstRepeatsTracker:number = 0
   speakFirstLastCardIndex:number = -1
-  speakFirstAdditionalWordspaces:ko.Observable<number>
+  speakFirstAdditionalWordspaces:Observable<number>
   easyspeechInitCount:number = 0
   msFound:boolean = false
 
   constructor (context:MorseViewModel) {
     MorseCookies.registerHandler(this)
     this.ctxt = context
-    this.voiceEnabled = ko.observable(false)
-    this.voiceCapable = ko.observable(false)
-    this.voiceThinkingTime = ko.observable(0)
-    this.voiceAfterThinkingTime = ko.observable(0)
-    // this.voiceVoice = ko.observable()
-    this.voiceVoiceIdx = ko.observable(-1)
-    this.voiceVolume = ko.observable(10)
-    this.voiceRate = ko.observable(1)
-    this.voicePitch = ko.observable(1)
-    this.voiceLang = ko.observable('en-us')
-    this.voiceVoices = ko.observableArray([])
+    this.voiceEnabled = observable(false)
+    this.voiceCapable = observable(false)
+    this.voiceThinkingTime = observable(0)
+    this.voiceAfterThinkingTime = observable(0)
+    this.voiceVoiceIdx = observable(-1)
+    this.voiceVolume = observable(10)
+    this.voiceRate = observable(1)
+    this.voicePitch = observable(1)
+    this.voiceLang = observable('en-us')
+    this.voiceVoices = observableArray([])
     this.voiceBuffer = []
-    this.voiceBufferMaxLength = ko.observable(1)
-    this.voiceSpelling = ko.observable(true)
-    this.voiceLastOnly = ko.observable(false)
-    this.manualVoice = ko.observable(false)
-    this.speakFirst = ko.observable(false)
-    this.speakFirstRepeats = ko.observable<number>(0)
+    this.voiceBufferMaxLength = observable(1)
+    this.voiceSpelling = observable(true)
+    this.voiceLastOnly = observable(false)
+    this.manualVoice = observable(false)
+    this.speakFirst = observable(false)
+    this.speakFirstRepeats = observable<number>(0)
     this.speakFirstLastCardIndex = -1
     this.speakFirstRepeatsTracker = 0
-    this.speakFirstAdditionalWordspaces = ko.observable<number>(0)
-    this.voiceVoiceName = ko.observable<string>('')
+    this.speakFirstAdditionalWordspaces = observable<number>(0)
+    this.voiceVoiceName = observable<string>('')
 
     const speechDetection = EasySpeech.detect()
 
@@ -76,31 +75,23 @@ export class MorseVoice implements ICookieHandler {
       this.logToFlaggedWords(`Synthesis: ${speechDetection.speechSynthesis} Utterance:${speechDetection.speechSynthesisUtterance}`)
     }
 
-    // this.initEasySpeech()
-
-    this.voiceVoice = ko.computed(() => {
+    this.voiceVoice = computed(() => {
       if (typeof this.voiceVoiceIdx() === 'undefined' || this.voiceVoiceIdx() === null || this.voiceVoiceIdx() === -1) {
         this.voiceVoiceName('')
         return null
       }
       this.voiceVoiceName(this.voiceVoices()[this.voiceVoiceIdx()].name)
       return this.voiceVoices()[this.voiceVoiceIdx()]
-    }, this)
+    }, [this.voiceVoiceIdx, this.voiceVoices])
 
-    this.voiceVoiceName.extend({ saveCookie: 'voiceVoiceName' } as ko.ObservableExtenderOptions<boolean>)
+    // Turn off speakFirst whenever voice is disabled
+    this.voiceEnabled.subscribe((newValue: boolean) => {
+      if (!newValue) {
+        this.speakFirst(false)
+      }
+    })
 
-    ko.extenders.turnOffSpeakFirstWithVoiceOff = (target: any, option: any) => {
-      target.subscribe((newValue: any) => {
-        if (!newValue) {
-          this.speakFirst(false)
-        }
-      })
-      return target
-    }
-
-    this.voiceEnabled.extend(({ turnOffSpeakFirstWithVoiceOff: 'voiceEnabled'}) as ko.ObservableExtenderOptions<boolean>)
-
-    this.voiceThinkingTimeWpm = ko.computed(() => {
+    this.voiceThinkingTimeWpm = computed(() => {
       let vtt = this.voiceThinkingTime()
       if (typeof vtt === 'string') {
         vtt = parseFloat(vtt)
@@ -117,12 +108,11 @@ export class MorseVoice implements ICookieHandler {
       } else {
         return '--'
       }
-    }, this)
+    }, [this.voiceThinkingTime])
   }
 
   initEasySpeech = async () => {
     if (this.easyspeechInitCount < 1) {
-    // let easySpeechInitStatus
       this.easyspeechInitCount++
       console.log('initEasySpeech!')
       EasySpeech.init({ maxTimeout: 5000, interval: 250 }).then((e) => {
@@ -161,8 +151,7 @@ export class MorseVoice implements ICookieHandler {
         'es-US', 'es_US',
         'pt-BR', 'pt_BR',
         'pt-PT', 'pt_PT'
-      ];
-    
+      ]
 
       this.voices = this.voices.filter(x => allowedLangs.includes(x.lang)).map((v) => {
         v.idx = idx++
@@ -180,13 +169,6 @@ export class MorseVoice implements ICookieHandler {
     } else {
       this.logToFlaggedWords('no voices')
     }
-    // if (this.easyspeechInitCount < 1 && !this.msFound) {
-    // this.easyspeechInitCount++
-    /* setTimeout(() => {
-        console.log('trying init again!')
-        this.initEasySpeech()
-      }, 5000) */
-    // }
   }
 
   speakInfo = (morseVoiceInfo:MorseVoiceInfo) => {
@@ -217,7 +199,6 @@ export class MorseVoice implements ICookieHandler {
       // fix to force to number
       esConfig.rate = parseFloat(esConfig.rate)
       esConfig.pitch = parseFloat(esConfig.pitch)
-      // console.log(`rate:${esConfig.rate} ${typeof esConfig.rate === 'number'}`)
       EasySpeech.speak(esConfig)
     } catch (e) {
       this.logToFlaggedWords(`caught in speakInfo2:${e}`)
@@ -230,7 +211,6 @@ export class MorseVoice implements ICookieHandler {
     morseVoiceInfo.textToSpeak = phraseToSpeak.toLowerCase()
     const target = document.getElementById('selectVoiceDropdown')
     this.logToFlaggedWords(`target:${target ? 'target found' : 'target not found'}`)
-    // const selectedIndex = target ? (target as any).selectedIndex : -1
     const selectedVal = target && (target as any).value ? parseInt(`${(target as any).value}`) : -1
     const idx = this.voiceVoiceIdx() ? this.voiceVoiceIdx() : -1
     this.logToFlaggedWords(`selectedVal:${selectedVal}`)
@@ -256,13 +236,11 @@ export class MorseVoice implements ICookieHandler {
     morseVoiceInfo.volume = this.voiceVolume() / 10
     morseVoiceInfo.rate = this.voiceRate()
     morseVoiceInfo.pitch = this.voicePitch()
-    // console.log(morseVoiceInfo.voice)
 
     return morseVoiceInfo
   }
 
   speakPhrase = (phraseToSpeak:string, onEndCallBack: () => void) => {
-    // console.log(this.voiceVoice().name)
     const doOnEndCallBack = () => {
       setTimeout(onEndCallBack, this.voiceAfterThinkingTime() * 1000)
     }

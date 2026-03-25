@@ -113,7 +113,8 @@ section:last-of-type {
     --theme-table-header-bg: #2a2a3e;
 }
 
-[data-bs-theme="dark"] img {
+[data-bs-theme="dark"] img,
+[data-bs-theme="dark"] input[type="image"] {
     filter: invert(1);
 }
 

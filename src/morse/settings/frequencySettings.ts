@@ -1,20 +1,21 @@
-import * as ko from 'knockout'
+import { observable, Observable, writableComputed } from '../utils/observable'
 import { CookieInfo } from '../cookies/CookieInfo'
 import { ICookieHandler } from '../cookies/ICookieHandler'
 import { MorseCookies } from '../cookies/morseCookies'
 import { GeneralUtils } from '../utils/general'
 export class FrequencySettings implements ICookieHandler {
-  trudDitFrequency:ko.Observable<number>
-  truDahFrequency:ko.Observable<number>
-  syncFreq:ko.Observable<boolean>
-  ditFrequency:ko.PureComputed<number>
-  dahFrequency:ko.PureComputed<number>
+  trudDitFrequency:Observable<number>
+  truDahFrequency:Observable<number>
+  syncFreq:Observable<boolean>
+  ditFrequency:Observable<number>
+  dahFrequency:Observable<number>
   constructor () {
     MorseCookies.registerHandler(this)
-    this.trudDitFrequency = ko.observable(500)
-    this.truDahFrequency = ko.observable(500)
-    this.syncFreq = ko.observable(true)
-    this.ditFrequency = ko.pureComputed({
+    this.trudDitFrequency = observable(500)
+    this.truDahFrequency = observable(500)
+    this.syncFreq = observable(true)
+
+    this.ditFrequency = writableComputed({
       read: () => {
         return this.trudDitFrequency()
       },
@@ -24,10 +25,9 @@ export class FrequencySettings implements ICookieHandler {
           this.truDahFrequency(value)
         }
       },
-      owner: this
-    })
+    }, [this.trudDitFrequency])
 
-    this.dahFrequency = ko.pureComputed({
+    this.dahFrequency = writableComputed({
       read: () => {
         if (!this.syncFreq()) {
           return this.truDahFrequency()
@@ -39,12 +39,7 @@ export class FrequencySettings implements ICookieHandler {
       write: (value) => {
         this.truDahFrequency(value)
       },
-      owner: this
-    })
-
-    this.ditFrequency.extend({ saveCookie: 'ditFrequency' } as ko.ObservableExtenderOptions<number>)
-    this.dahFrequency.extend({ saveCookie: 'dahFrequency' } as ko.ObservableExtenderOptions<number>)
-    this.syncFreq.extend({ saveCookie: 'syncFreq' } as ko.ObservableExtenderOptions<boolean>)
+    }, [this.truDahFrequency, this.trudDitFrequency, this.syncFreq])
   }
 
   // cookie handlers

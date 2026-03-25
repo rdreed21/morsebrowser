@@ -1,20 +1,20 @@
-import * as ko from 'knockout'
+import { observable, Observable, computed } from '../utils/observable'
 import MorseStringUtils from '../utils/morseStringUtils'
 import WordInfo from '../utils/wordInfo'
 export class FlaggedWords {
-  flaggedWords:ko.Observable<string>
-  flaggedWordsCount:ko.Computed<number>
+  flaggedWords:Observable<string>
+  flaggedWordsCount:Observable<number>
   lastFlaggedWordMs:number
   constructor () {
     this.lastFlaggedWordMs = Date.now()
-    this.flaggedWords = ko.observable('')
+    this.flaggedWords = observable('')
 
-    this.flaggedWordsCount = ko.computed(() => {
+    this.flaggedWordsCount = computed(() => {
       if (!this.flaggedWords().trim()) {
         return 0
       }
       return MorseStringUtils.getWords(this.flaggedWords(), false).length
-    }, this)
+    }, [this.flaggedWords])
   }
 
   clear = () => {
@@ -33,7 +33,6 @@ export class FlaggedWords {
 
       const words:WordInfo[] = this.flaggedWords() ? MorseStringUtils.getWords(this.flaggedWords(), false) : []
 
-      // const words = this.flaggedWords().trim().split(' ')
       const lastWord = words[words.length - 1]
       if (lastWord.rawWord === word.rawWord && (msPassedSince < threshold)) {
         // we have a double click scenario so remove it

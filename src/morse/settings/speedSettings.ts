@@ -1,4 +1,4 @@
-import * as ko from 'knockout'
+import { observable, Observable, computed, writableComputed } from '../utils/observable'
 import { CookieInfo } from '../cookies/CookieInfo'
 import { ICookieHandler } from '../cookies/ICookieHandler'
 import { MorseCookies } from '../cookies/morseCookies'
@@ -15,35 +15,35 @@ export class ApplicableSpeed {
   }
 }
 export default class SpeedSettings implements ICookieHandler {
-  wpm: ko.PureComputed<number>
-  fwpm: ko.PureComputed<number>
-  trueWpm: ko.Observable<number>
-  trueFwpm: ko.Observable<number>
-  syncWpm: ko.Observable<boolean>
-  speedInterval:ko.Observable<boolean>
-  intervalTimingsText:ko.Observable<string>
-  intervalWpmText:ko.Observable<string>
-  intervalFwpmText:ko.Observable<string>
+  wpm: Observable<number>
+  fwpm: Observable<number>
+  trueWpm: Observable<number>
+  trueFwpm: Observable<number>
+  syncWpm: Observable<boolean>
+  speedInterval:Observable<boolean>
+  intervalTimingsText:Observable<string>
+  intervalWpmText:Observable<string>
+  intervalFwpmText:Observable<string>
   morseViewModel:MorseViewModel
-  variableSpeedDisplay: ko.Computed<boolean>
-  vWpm: ko.Observable<number>
-  vFwpm: ko.Observable<number>
+  variableSpeedDisplay: Observable<boolean>
+  vWpm: Observable<number>
+  vFwpm: Observable<number>
   vm:MorseViewModel
 
   constructor (vm:MorseViewModel) {
     MorseCookies.registerHandler(this)
     this.vm = vm
-    this.trueWpm = ko.observable(12)
-    this.trueFwpm = ko.observable(12)
-    this.syncWpm = ko.observable(true)
-    this.speedInterval = ko.observable(false)
-    this.intervalTimingsText = ko.observable('')
-    this.intervalWpmText = ko.observable('')
-    this.intervalFwpmText = ko.observable('')
-    this.vWpm = ko.observable(0)
-    this.vFwpm = ko.observable(0)
+    this.trueWpm = observable(12)
+    this.trueFwpm = observable(12)
+    this.syncWpm = observable(true)
+    this.speedInterval = observable(false)
+    this.intervalTimingsText = observable('')
+    this.intervalWpmText = observable('')
+    this.intervalFwpmText = observable('')
+    this.vWpm = observable(0)
+    this.vFwpm = observable(0)
 
-    this.wpm = ko.pureComputed({
+    this.wpm = writableComputed({
       read: () => {
         return this.trueWpm()
       },
@@ -53,10 +53,9 @@ export default class SpeedSettings implements ICookieHandler {
           this.trueFwpm(value)
         }
       },
-      owner: this
-    })
+    }, [this.trueWpm])
 
-    this.fwpm = ko.pureComputed({
+    this.fwpm = writableComputed({
       read: () => {
         if (!this.syncWpm()) {
           if (parseInt(this.trueFwpm() as any) <= parseInt(this.trueWpm() as any)) {
@@ -74,16 +73,11 @@ export default class SpeedSettings implements ICookieHandler {
           this.trueFwpm(value)
         }
       },
-      owner: this
-    })
+    }, [this.syncWpm, this.trueFwpm, this.trueWpm])
 
-    this.variableSpeedDisplay = ko.computed(() => {
+    this.variableSpeedDisplay = computed(() => {
       return !!(this.speedInterval() && this.intervalTimingsText() && vm.playerPlaying())
-    }, this)
-
-    this.wpm.extend({ saveCookie: 'wpm' } as ko.ObservableExtenderOptions<number>)
-    this.fwpm.extend({ saveCookie: 'fwpm' } as ko.ObservableExtenderOptions<number>)
-    this.syncWpm.extend({ saveCookie: 'syncWpm' } as ko.ObservableExtenderOptions<boolean>)
+    }, [this.speedInterval, this.intervalTimingsText, vm.playerPlaying])
   }
 
   getApplicableSpeed = (playingTimeInfo:PlayingTimeInfo) => {
@@ -97,13 +91,11 @@ export default class SpeedSettings implements ICookieHandler {
       runningSum += t
       return runningSum
     })
-    // console.log(`adjTimes:${JSON.stringify(adjTimes)}`)
     const wpms = this.intervalWpmText().split(',').map(x => parseInt(x))
     const fwpms = this.intervalFwpmText().split(',').map(x => parseInt(x))
     let idx = -1
     adjTimes.forEach((t, i, ary) => {
       if (idx === -1 && playingTimeInfo.totalSeconds < t) {
-        // this is the interval
         idx = i
       }
     })
@@ -113,7 +105,6 @@ export default class SpeedSettings implements ICookieHandler {
 
     const wpm = wpms.length - 1 >= idx ? wpms[idx] : wpms[wpms.length - 1]
     const fwpm = fwpms.length - 1 >= idx ? fwpms[idx] : fwpms[fwpms.length - 1]
-    // console.log(`sec:${secondsPassed},idx:${idx},wpm:${wpm},fwpm${fwpm}`)
     this.vWpm(wpm)
     this.vFwpm(fwpm)
     return new ApplicableSpeed(wpm, fwpm)

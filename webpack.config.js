@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
   return {
     mode: argv.mode || 'development',
     entry: {
-      bundle: path.resolve(__dirname, 'src/index.js')
+      bundle: path.resolve(__dirname, 'src/index.tsx')
     },
     output: {
       filename: '[name][contenthash].js',

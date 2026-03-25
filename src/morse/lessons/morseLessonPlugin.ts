@@ -1,4 +1,4 @@
-import * as ko from 'knockout'
+import { observable, Observable, computed, writableComputed, observableArray, ObservableArray } from '../utils/observable'
 import WordListsJson from '../../wordfilesconfigs/wordlists.json'
 import { CookieInfo } from '../cookies/CookieInfo'
 import { ICookieHandler } from '../cookies/ICookieHandler'
@@ -17,41 +17,41 @@ import { SettingsOption } from '../settings/settingsOption'
 import MorseSettingsHandler from '../settings/morseSettingsHandler'
 import LegacyMixinJson from '../../presets/legacymixin/legacymixin.json'
 export default class MorseLessonPlugin implements ICookieHandler {
-  autoCloseLessonAccordion:ko.Observable<boolean>
-  userTarget:ko.Observable<string>
-  selectedClass:ko.Observable<string>
+  autoCloseLessonAccordion:Observable<boolean>
+  userTarget:Observable<string>
+  selectedClass:Observable<string>
   userTargetInitialized:boolean
   selectedClassInitialized:boolean
   letterGroupInitialized:boolean
   displaysInitialized:boolean
   settingsPresetsInitialized:boolean
-  letterGroup:ko.Observable<string>
-  selectedDisplay:ko.Observable<any>
-  wordLists:ko.ObservableArray<FileOptionsInfo>
+  letterGroup:Observable<string>
+  selectedDisplay:Observable<any>
+  wordLists:ObservableArray<FileOptionsInfo>
   morseSettings:MorseSettings
   setText:any
-  ifStickySets:ko.Observable<boolean>
-  stickySets:ko.Observable<string>
-  randomizeLessons:ko.Observable<boolean>
-  ifOverrideTime:ko.Observable<boolean>
-  overrideMins:ko.Observable<number>
-  customGroup:ko.Observable<string>
-  ifOverrideMinMax:ko.Observable<boolean>
-  trueOverrideMin:ko.Observable<number>
-  trueOverrideMax:ko.Observable<number>
-  overrideMin:ko.PureComputed<number>
-  overrideMax:ko.PureComputed<number>
-  syncSize:ko.Observable<boolean>
+  ifStickySets:Observable<boolean>
+  stickySets:Observable<string>
+  randomizeLessons:Observable<boolean>
+  ifOverrideTime:Observable<boolean>
+  overrideMins:Observable<number>
+  customGroup:Observable<string>
+  ifOverrideMinMax:Observable<boolean>
+  trueOverrideMin:Observable<number>
+  trueOverrideMax:Observable<number>
+  overrideMin:Observable<number>
+  overrideMax:Observable<number>
+  syncSize:Observable<boolean>
   getTimeEstimate:any
-  classes:ko.Computed<Array<any>>
-  userTargets:ko.Computed<Array<any>>
-  letterGroups:ko.Computed<Array<any>>
-  displays:ko.Computed<Array<any>>
+  classes:Observable<Array<any>>
+  userTargets:Observable<Array<any>>
+  letterGroups:Observable<Array<any>>
+  displays:Observable<Array<any>>
   autoCloseCookieName:string
-  settingsPresets:ko.ObservableArray<SettingsOption>
-  selectedSettingsPreset:ko.Observable<SettingsOption>
-  lastSelectedSettingsPreset:ko.Observable<SettingsOption>
-  settingsOverridden:ko.Observable<boolean>
+  settingsPresets:ObservableArray<SettingsOption>
+  selectedSettingsPreset:Observable<SettingsOption>
+  lastSelectedSettingsPreset:Observable<SettingsOption>
+  settingsOverridden:Observable<boolean>
   morseViewModel:MorseViewModel
   yourSettingsDummy:SettingsOption
   customSettingsOptions:SettingsOption[] = []
@@ -61,45 +61,37 @@ export default class MorseLessonPlugin implements ICookieHandler {
     MorseCookies.registerHandler(this)
     this.morseViewModel = morseViewModel
     this.yourSettingsDummy = { display: 'Your Settings', filename: 'dummy.json', isDummy: true }
-    ko.extenders.classOrLetterGroupChange = (target: any, option: any) => {
-      target.subscribe((newValue: any) => {
-        // console.log(`gettingsettingspresets:class:${this.selectedClass()}`)
-        // console.log(`lettergroup:${this.letterGroup()}`)
-        this.getSettingsPresets(false, true)
-      })
-      return target
-    }
 
     this.autoCloseCookieName = 'autoCloseLessonAccordian'
     this.morseSettings = morseSettings
-    this.autoCloseLessonAccordion = ko.observable(false).extend({ saveCookie: this.autoCloseCookieName } as ko.ObservableExtenderOptions<boolean>)
-    this.userTarget = ko.observable('STUDENT')
-    this.selectedClass = ko.observable('').extend({ classOrLetterGroupChange: null } as ko.ObservableExtenderOptions<boolean>)
+    this.autoCloseLessonAccordion = observable(false)
+    this.userTarget = observable('STUDENT')
+    this.selectedClass = observable('')
     this.userTargetInitialized = false
     this.selectedClassInitialized = false
     this.letterGroupInitialized = false
     this.displaysInitialized = false
-    this.letterGroup = ko.observable('').extend({ classOrLetterGroupChange: null } as ko.ObservableExtenderOptions<boolean>)
-    this.selectedDisplay = ko.observable({})
-    this.selectedSettingsPreset = ko.observable(this.yourSettingsDummy)
-    this.lastSelectedSettingsPreset = ko.observable(this.yourSettingsDummy)
-    this.settingsOverridden = ko.observable(false)
-    this.wordLists = ko.observableArray([])
+    this.letterGroup = observable('')
+    this.selectedDisplay = observable({})
+    this.selectedSettingsPreset = observable(this.yourSettingsDummy)
+    this.lastSelectedSettingsPreset = observable(this.yourSettingsDummy)
+    this.settingsOverridden = observable(false)
+    this.wordLists = observableArray([])
     this.setText = setTextCallBack
     this.getTimeEstimate = timeEstimateCallback
-    this.ifStickySets = ko.observable(false)
-    this.stickySets = ko.observable('')
-    this.randomizeLessons = ko.observable(true)
-    this.ifOverrideTime = ko.observable(false)
-    this.overrideMins = ko.observable(2)
-    this.customGroup = ko.observable('')
-    this.ifOverrideMinMax = ko.observable(false)
-    this.trueOverrideMin = ko.observable(3)
-    this.trueOverrideMax = ko.observable(3)
-    this.syncSize = ko.observable(true)
-    this.settingsPresets = ko.observableArray([this.yourSettingsDummy])
+    this.ifStickySets = observable(false)
+    this.stickySets = observable('')
+    this.randomizeLessons = observable(true)
+    this.ifOverrideTime = observable(false)
+    this.overrideMins = observable(2)
+    this.customGroup = observable('')
+    this.ifOverrideMinMax = observable(false)
+    this.trueOverrideMin = observable(3)
+    this.trueOverrideMax = observable(3)
+    this.syncSize = observable(true)
+    this.settingsPresets = observableArray([this.yourSettingsDummy])
 
-    this.overrideMin = ko.pureComputed({
+    this.overrideMin = writableComputed({
       read: () => {
         return this.trueOverrideMin()
       },
@@ -109,10 +101,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
           this.trueOverrideMax(value)
         }
       },
-      owner: this
-    })
+    }, [this.trueOverrideMin])
 
-    this.overrideMax = ko.pureComputed({
+    this.overrideMax = writableComputed({
       read: () => {
         if (!this.syncSize()) {
           return this.trueOverrideMax()
@@ -126,10 +117,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
           this.trueOverrideMax(value)
         }
       },
-      owner: this
-    })
+    }, [this.trueOverrideMax, this.trueOverrideMin, this.syncSize])
 
-    this.userTargets = ko.computed(() => {
+    this.userTargets = computed(() => {
       const targs: any[] = []
       this.wordLists().forEach((x) => {
         if (!targs.find((y) => y === x.userTarget)) {
@@ -137,9 +127,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
         }
       })
       return targs
-    }, this)
+    }, [this.wordLists])
 
-    this.classes = ko.computed(() => {
+    this.classes = computed(() => {
       this.selectedClassInitialized = false
       this.selectedClass('')
       const cls: any[] = []
@@ -149,9 +139,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
         }
       })
       return cls
-    }, this)
+    }, [this.wordLists, this.userTarget])
 
-    this.letterGroups = ko.computed(() => {
+    this.letterGroups = computed(() => {
       this.letterGroupInitialized = false
       this.letterGroup('')
       const lgs: any[] = []
@@ -172,9 +162,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
           }
         })
       return lgs
-    }, this)
+    }, [this.wordLists, this.selectedClass, this.userTarget])
 
-    this.displays = ko.computed(() => {
+    this.displays = computed(() => {
       this.selectedDisplay({})
       const dps: any[] = []
       if (this.selectedClass() === '' || this.userTarget() === '' || this.letterGroup() === '') {
@@ -189,8 +179,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
           }
         })
       return dps.length > 0 ? dps : [{ display: 'Select wordlist', fileName: 'dummy.txt', isDummy: true }]
-    }, this)
+    }, [this.wordLists, this.selectedClass, this.userTarget, this.letterGroup])
 
+    // Fire getSettingsPresets whenever class or letter group changes
+    this.selectedClass.subscribe(() => { this.getSettingsPresets(false, true) })
+    this.letterGroup.subscribe(() => { this.getSettingsPresets(false, true) })
   }
 
   // end constructor
@@ -198,11 +191,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
   // toggle queryStringSettingsOn
   toggleQueryStringSettingsOn = () => {
     console.log("toggling queryStringSettingsOn")
-    this.queryStringSettingsOn = !this.queryStringSettingsOn    
+    this.queryStringSettingsOn = !this.queryStringSettingsOn
   }
 
   // helper function that takes a query string variable and its value and upserts into the query string with proper url encoding
-  upsertQueryStringVariable = (variable:string, value:string):string => {  
+  upsertQueryStringVariable = (variable:string, value:string):string => {
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
     const priority = ['selectedClass', 'selectedGroup', 'selectedLesson', 'selectedPreset']
@@ -211,12 +204,10 @@ export default class MorseLessonPlugin implements ICookieHandler {
       return urlParams.toString()
     }
 
-
     // if the variable and value are already set in the query string, do nothing
-    if (urlParams.has(variable) && urlParams.get(variable) === value) { 
+    if (urlParams.has(variable) && urlParams.get(variable) === value) {
       return urlParams.toString()
     }
-
 
     // if the variable is in the priority list, remove all other variables of lower priority, with "lower priority" being later in the order of the priority array
     const idx = priority.indexOf(variable as typeof priority[number]);
@@ -237,10 +228,8 @@ export default class MorseLessonPlugin implements ICookieHandler {
     return urlParams.toString()
   }
 
-  // given a querty string variable, remove it from the querystring immediately in the window
+  // given a query string variable, remove it from the querystring immediately in the window
   removeQueryStringVariable = (variable:string):string => {
-    // log the current window query string to the console
-    // console.log(`removing query string variable ${variable} from ${window.location.search}`)
     const queryString = window.location.search
     const urlParams = new URLSearchParams(queryString)
     if (urlParams.has(variable)) {
@@ -248,10 +237,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
       // update the URL without reloading the page
       window.history.replaceState({}, '', `${window.location.pathname}?${urlParams.toString()}`)
     }
-    // console.log(`new query string is ${window.location.search}`)
     return urlParams.toString()
-    
-
   }
 
   getSettingsPresets = (forceRefresh:boolean = false, selectFirstNonYour:boolean = false) => {
@@ -261,9 +247,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
     const handleAutoSelect = () => {
       if (selectFirstNonYour) {
-        // console.log(`length:${this.settingsPresets().length}`)
         if (this.settingsPresets().length > 1) {
-          // console.log(`class:${this.selectedClass()}`)
           if (this.selectedSettingsPreset().isDummy ||
           this.selectedSettingsPreset().filename !== this.settingsPresets()[1].filename) {
             this.setPresetSelected(this.settingsPresets()[1])
@@ -274,8 +258,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
       }
     }
     const handleData = (d: any) => {
-      // console.log(d)
-      // console.log(typeof d.data.options)
       if (typeof d.data !== 'undefined' && typeof d.data.options !== 'undefined') {
         this.settingsPresets(sps.concat(d.data.options))
       } else {
@@ -294,7 +276,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
       }
     } else {
       const targetClass = ClassPresets.classes.find(c => c.className === this.selectedClass())
-      // check if targetClass has letterGroups property and that lettergroups is an array
       const letterGroupsGood = typeof targetClass !== 'undefined' &&
                                typeof targetClass.letterGroups !== 'undefined' &&
                                Array.isArray(targetClass.letterGroups) &&
@@ -302,11 +283,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
       const targetLesson = letterGroupsGood ? targetClass.letterGroups.find(l => l.letterGroup === this.letterGroup()) : null
       if (targetLesson) {
-        // sps.push({ display: targetLesson.setFile })
         MorsePresetSetFileFinder.getMorsePresetSetFile(targetLesson.setFile, (data: any) => handleData(data))
       } else {
         if (targetClass && targetClass.defaultSetFile) {
-          // sps.push({ display: targetClass.defaultSetFile })
           MorsePresetSetFileFinder.getMorsePresetSetFile(targetClass.defaultSetFile, (data: any) => handleData(data))
         } else {
           // no matches so use default
@@ -334,10 +313,8 @@ export default class MorseLessonPlugin implements ICookieHandler {
       }
 
       const regStr = `<.*?>${stickys}|[^<.*?>]|\\W`
-      // console.log(regStr)
       const re = new RegExp(regStr, 'g')
       const match = s.toUpperCase().match(re)
-      // console.log(match)
       return match
     }
     const chars = splitWithProsignsAndStcikys(data.letters) || []
@@ -345,8 +322,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
     const controlTime = (this.ifOverrideTime() || ifCustom) ? (this.overrideMins() * 60) : data.practiceSeconds
     const minWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMin() : data.minWordSize
     const maxWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMax() : data.maxWordSize
-    // Fn to generate random number min/max inclusive
-    // https://www.geeksforgeeks.org/how-to-generate-random-number-in-given-range-using-javascript/
     const randomNumber = (min: number, max: number) => {
       min = Math.ceil(min)
       max = Math.floor(max)
@@ -386,9 +361,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
               x.length <= freeSpaces
             )
 
-            // determine the letter
-            // console.log(chars)
-            // console.log(usableChars)
             const selectedChars:string = usableChars[randomNumber(1, usableChars.length) - 1]
             console.log(`selectedChars=${selectedChars}`)
             word += selectedChars
@@ -450,11 +422,10 @@ export default class MorseLessonPlugin implements ICookieHandler {
         }
       }
     }
-    
+
   }
 
   setLetterGroupInitialized = () => {
-    // console.log('setlettergroupinitialized')
     this.letterGroupInitialized = true
     // check for class preset
     const selectedGroupParam = GeneralUtils.getParameterByName('selectedGroup')
@@ -478,7 +449,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
     if (selectedLessonParam) {
       const paramClass = selectedLessonParam.toUpperCase()
       const targetClass = this.displays().find(c => c.display.toUpperCase() === paramClass)
-      // get a boolean whether the query string value selectedPreset is present
       var skipPresets = false
       if (GeneralUtils.getParameterByName('selectedPreset')) {
         skipPresets = true
@@ -506,19 +476,14 @@ export default class MorseLessonPlugin implements ICookieHandler {
       const paramClass = selectedPresetParam.toUpperCase()
       const targetClass = this.settingsPresets().find(c => c.display.toUpperCase() === paramClass)
       if (targetClass) {
-        //console.log(`setting preset to ${targetClass.display}`)
-        // console.log(targetClass)
         this.setPresetSelected(targetClass)
         if (!this.queryStringSettingsOn) {
-          // not sure why delay here is needed but something is causing it to go to default if we don't.
-          // after a delay of 1 second remove selectedPreset from the Querystring now that we're done
           setTimeout(() => {
             this.removeQueryStringVariable('selectedPreset')
           }, 1000)
         }
       } else {
         console.log('no preset found')
-        
       }
     }
   }
@@ -526,45 +491,24 @@ export default class MorseLessonPlugin implements ICookieHandler {
   changeUserTarget = (userTarget: any) => {
     if (this.userTargetInitialized) {
       this.userTarget(userTarget)
-      // console.log('usertarget')
-      // console.log(`calling setPresetSelection from changeUserTarget:${userTarget}`)
       this.setPresetSelected(this.selectedSettingsPreset(), true)
     }
   }
 
   changeSelectedClass = (selectedClass: any, fromClick = "") => {
-    /* console.log(`class fromClick=${fromClick}`)
-    if (fromClick=== 'click') {
-      console.log("CLASS WAS CLICKED")
-      this.removeQueryStringVariable('selectedPreset')
-      this.removeQueryStringVariable('selectedGroup')
-      this.removeQueryStringVariable('selectedLesson')
-    } */
     if (this.selectedClassInitialized) {
       this.selectedClass(selectedClass)
-      // console.log(selectedClass)
-      // console.log(ClassPresets)
-      //console.log('calling setPresetSelection from changeSelectedClass')
       this.setPresetSelected(this.selectedSettingsPreset(), true)
       this.upsertQueryStringVariable('selectedClass', selectedClass)
     }
   }
 
   setLetterGroup = (letterGroup: any, fromClick="") => {
-    /* if (fromClick === 'click') {
-      this.removeQueryStringVariable('selectedPreset')
-      this.removeQueryStringVariable('selectedGroup')
-      this.removeQueryStringVariable('selectedLesson')
-    } */
     if (this.letterGroupInitialized) {
-      // console.log('setlettergroup')
       this.letterGroup(letterGroup)
-      //console.log('calling setPresetSelected from setLetterGroup')
       this.setPresetSelected(this.selectedSettingsPreset(), true)
       this.upsertQueryStringVariable('selectedGroup', letterGroup)
       // Auto-select lesson if there is exactly one option and none currently selected.
-      // this.letterGroup() update above causes displays to recompute synchronously,
-      // so this.displays() reflects the current letter group right now.
       if (!this.selectedDisplay().display) {
         const nonDummy = this.displays().filter((d: any) => !d.isDummy)
         if (nonDummy.length === 1) {
@@ -582,22 +526,14 @@ export default class MorseLessonPlugin implements ICookieHandler {
   }
 
   setDisplaySelected = (display: any, skipPresets = false, fromClick="") => {
-    /* if (fromClick=== 'click') {
-      console.log('display clicked so removing selectedPreset')
-      this.removeQueryStringVariable('selectedPreset')
-      this.removeQueryStringVariable('selectedLesson')
-    } */
     if (!display.isDummy) {
       if (this.displaysInitialized) {
         this.selectedDisplay(display)
-        //console.log(display)
         this.upsertQueryStringVariable('selectedLesson', display.display)
         this.morseSettings.misc.newlineChunking(display.newlineChunking)
-        // setText(`when we have lesson files, load ${selectedDisplay().fileName}`)
         this.getWordList(this.selectedDisplay().fileName)
         this.closeLessonAccordianIfAutoClosing()
         if (!skipPresets) {
-          //console.log('calling setPresetSelected from setDisplaySelected')
           this.setPresetSelected(this.selectedSettingsPreset(), true)
         }
       }
@@ -610,15 +546,12 @@ export default class MorseLessonPlugin implements ICookieHandler {
     if (!(fromClick==='click') && qsPreset && qsPreset.toUpperCase() !== preset.display.toUpperCase()) {
       console.log(`skipping preset selection as query string preset is ${qsPreset}`)
       return
-    } 
+    }
     if (fromClick==='click') {
       this.removeQueryStringVariable('selectedPreset')
     }
     console.log(`setPresetSelected:${preset.display}`)
     if (this.settingsPresetsInitialized) {
-      // before we do anything, if the prior was Your Settings, then
-      // make those the saved serialized, unless they've been overridden
-
       const last = this.lastSelectedSettingsPreset()
       if (typeof last.isDummy !== 'undefined' && last.isDummy && !this.settingsOverridden()) {
         this.morseViewModel.currentSerializedSettings = MorseSettingsHandler.getCurrentSerializedSettings(this.morseViewModel)
@@ -648,17 +581,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
           customCopy.push({ key: f.key, value: f.value })
         })
         settingsInfo.custom = customCopy
-        /* handle overrides */
-        // console.log(`lettergroup:${this.letterGroup()}`)
-        // console.log(`file:${this.selectedDisplay().fileName}`)
-        // console.log(settingsInfo.custom)
         SettingsOverridesJson.overrides.forEach(o => {
           if (
             (o.filters.letterGroup.some(s => s === this.letterGroup())) ||
             (this.selectedDisplay() && o.filters.fileName.some(s => s === this.selectedDisplay().fileName))
           ) {
-            // console.log('filter found!')
-            // note, possibly they match but issue for another day...
             this.settingsOverridden(true)
             o.settings.forEach(f => {
               const target = settingsInfo.custom!.find(t => t.key === f.name)
@@ -675,8 +602,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
       }
 
       if (typeof preset.isDummy !== 'undefined' && preset.isDummy) {
-        // restore whatever the defaults are
-        // console.log('restoring settings')
         if (this.morseViewModel.currentSerializedSettings) {
           settingsInfo.custom = this.morseViewModel.currentSerializedSettings.morseSettings
             .map((m: any) => {
@@ -687,21 +612,16 @@ export default class MorseLessonPlugin implements ICookieHandler {
           applyOverrides()
           MorseCookies.loadCookiesOrDefaults(settingsInfo)
         } else {
-          // console.log('no serialized originals')
           this.morseViewModel.currentSerializedSettings = MorseSettingsHandler.getCurrentSerializedSettings(this.morseViewModel)
         }
       } else {
-        // console.log(`presetfilename:${preset.filename}`)
-
         if (!preset.isCustom) {
           MorsePresetFileFinder.getMorsePresetFile(preset.filename, (d: any) => {
             if (d.found) {
-            /* did this filter before keyBlacklist feature was added... */
               settingsInfo.custom = d.data.morseSettings.filter((f: any) => f.key !== 'showRaw')
 
               applyLegacyMixin()
               applyOverrides()
-              // console.log(settingsInfo.custom)
               MorseCookies.loadCookiesOrDefaults(settingsInfo)
             }
           })
@@ -711,7 +631,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
           applyLegacyMixin()
           applyOverrides()
-          // console.log(settingsInfo.custom)
           MorseCookies.loadCookiesOrDefaults(settingsInfo)
         }
       }
@@ -725,7 +644,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
       }
 
       this.lastSelectedSettingsPreset(preset)
-      // console.log(`leaving the selected preset is ${this.selectedSettingsPreset().display}`)
       this.upsertQueryStringVariable('selectedPreset', preset.display)
     }
   }
