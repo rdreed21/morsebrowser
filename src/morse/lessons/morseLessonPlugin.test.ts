@@ -137,6 +137,54 @@ describe('MorseLessonPlugin', () => {
     expect(plugin.userTarget()).toBe('TEACHER')
   })
 
+  it('changeUserTarget resets selectedClass via the classes computed cascade', () => {
+    // When userTarget changes the classes computed runs, which resets selectedClass('')
+    // and sets selectedClassInitialized=false. This is the cascade that clears
+    // downstream dropdowns (letter group, displays) when the user switches target.
+    const { plugin } = mountPlugin()
+    selectClassAndGroup(plugin)
+    expect(plugin.selectedClass()).toBe('BC1')
+
+    plugin.userTargetInitialized = true
+    plugin.changeUserTarget('TEACHER')
+
+    // The classes computed resets selectedClass when userTarget changes
+    expect(plugin.selectedClass()).toBe('')
+    // And the subsequent letterGroups computed resets letterGroup too
+    expect(plugin.letterGroup()).toBe('')
+  })
+
+  it('displaysInitialized is not reset when displays recomputes after switching user target', () => {
+    // Regression test for the bug fixed in this fork:
+    // Previously, the `displays` computed set displaysInitialized=false on every
+    // recompute. Once stuck at false, setDisplaySelected was permanently blocked.
+    // Verify that displaysInitialized stays true across a user-target switch and
+    // that setDisplaySelected can still load a word list after the round-trip.
+    const { plugin, setText } = mountPlugin()
+    selectClassAndGroup(plugin)
+    plugin.displaysInitialized = true
+
+    // Trigger a displays recompute by switching user target away and back
+    plugin.userTargetInitialized = true
+    plugin.changeUserTarget('TEACHER')
+    // displaysInitialized must NOT be wiped by the recompute
+    expect(plugin.displaysInitialized).toBe(true)
+
+    // Restore the selection path
+    plugin.userTarget('STUDENT')
+    plugin.selectedClassInitialized = true
+    plugin.changeSelectedClass('BC1')
+    plugin.letterGroupInitialized = true
+    plugin.setLetterGroup('REA')
+
+    const real = plugin.displays().find((x: { isDummy?: boolean }) => !x.isDummy)
+    expect(real).toBeTruthy()
+
+    // setDisplaySelected must still work — displaysInitialized was not cleared
+    plugin.setDisplaySelected(real, true)
+    expect(getMorseLessonFile).toHaveBeenCalledWith('lessonA.txt', expect.any(Function))
+  })
+
   it('auto-selects single lesson when setDisplaysInitialized and exactly one match', () => {
     const single = fileOptionsFixture.filter(f => f.userTarget === 'STUDENT' && f.display === 'Lesson A')
     stubBrowserGlobals()

@@ -102,4 +102,54 @@ describe('ComputedTimes', () => {
       expect(times.totalPlusTrail).toBeGreaterThan(times.totalTime)
     })
   })
+
+  describe('extraWordSpacingDitsTime and singleWordSpaceTime', () => {
+    // extraWordSpacingDitsCount lets callers add extra inter-word padding (in dit units).
+    // singleWordSpaceTime is the time for one trailing word-space including any extra padding.
+    // Both are computed at 12 WPM with no Farnsworth (100ms per unit).
+    const units = new UnitTimingsAndMultipliers(12, 12)
+
+    it('extraWordSpacingDitsTime is zero when extraWordSpacingDitsCount is 0', () => {
+      const counts = makeCountUnits({ wordSpacesCount: 2 })
+      // extraWordSpacingDitsCount defaults to 0
+      const times = new ComputedTimes(units, counts)
+      expect(times.extraWordSpacingDitsTime).toBe(0)
+    })
+
+    it('extraWordSpacingDitsTime scales with wordSpacesCount and extraWordSpacingDitsCount', () => {
+      // 2 word spaces × 3 extra dits × 1 (ditMultiplier) × 100ms (FW unit) = 600ms
+      const counts = makeCountUnits({ wordSpacesCount: 2, extraWordSpacingDitsCount: 3 })
+      const times = new ComputedTimes(units, counts)
+      expect(times.extraWordSpacingDitsTime).toBeCloseTo(600, 5)
+    })
+
+    it('extraWordSpacingDitsTime is included in totalTime', () => {
+      const countsWithout = makeCountUnits({ wordSpacesCount: 1 })
+      const countsWith    = makeCountUnits({ wordSpacesCount: 1, extraWordSpacingDitsCount: 5 })
+      const without = new ComputedTimes(units, countsWithout)
+      const with_   = new ComputedTimes(units, countsWith)
+      expect(with_.totalTime).toBeGreaterThan(without.totalTime)
+    })
+
+    it('singleWordSpaceTime equals 7 FW units when extraWordSpacingDitsCount is 0', () => {
+      // 7 (wordSpaceMultiplier) × 100ms (FW unit at 12/12 WPM) = 700ms
+      const counts = makeCountUnits()
+      const times = new ComputedTimes(units, counts)
+      expect(times.singleWordSpaceTime).toBeCloseTo(700, 5)
+    })
+
+    it('singleWordSpaceTime grows with extraWordSpacingDitsCount', () => {
+      const noExtra  = makeCountUnits({ extraWordSpacingDitsCount: 0 })
+      const withExtra = makeCountUnits({ extraWordSpacingDitsCount: 4 })
+      const t1 = new ComputedTimes(units, noExtra)
+      const t2 = new ComputedTimes(units, withExtra)
+      expect(t2.singleWordSpaceTime).toBeGreaterThan(t1.singleWordSpaceTime)
+    })
+
+    it('totalPlusTrail equals totalTime + singleWordSpaceTime', () => {
+      const counts = makeCountUnits({ ditCount: 3, wordSpacesCount: 1, extraWordSpacingDitsCount: 2 })
+      const times = new ComputedTimes(units, counts)
+      expect(times.totalPlusTrail).toBeCloseTo(times.totalTime + times.singleWordSpaceTime, 5)
+    })
+  })
 })

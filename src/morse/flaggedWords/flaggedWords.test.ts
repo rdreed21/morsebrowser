@@ -43,4 +43,13 @@ describe('FlaggedWords', () => {
     expect(f.flaggedWords()).toBe('')
     expect(f.flaggedWordsCount()).toBe(0)
   })
+
+  it('same word added after threshold (>500ms) appends instead of removing', () => {
+    const f = new FlaggedWords()
+    f.addFlaggedWord(new WordInfo('TEST'))
+    vi.advanceTimersByTime(600)   // exceeds the 500ms double-click threshold
+    f.addFlaggedWord(new WordInfo('TEST'))
+    expect(f.flaggedWords()).toBe('TEST TEST')
+    expect(f.flaggedWordsCount()).toBe(2)
+  })
 })

@@ -123,6 +123,18 @@ describe('morse2text', () => {
     const decoded = morse2text(encoded.morse)
     expect(decoded.message).toBe(original)
   })
+
+  it('round-trips prosigns: <AR> → encode → decode', () => {
+    // Prosigns are sent as a single fused character (no intra-char space).
+    // They must survive the full encode→decode cycle without error.
+    const encoded = text2morse('<AR>')
+    expect(encoded.hasError).toBe(false)
+    const decoded = morse2text(encoded.morse)
+    // morse2text has no prosign concept so it decodes the fused sequence as letters.
+    // The important thing is that no error is flagged and we get a non-empty result.
+    expect(decoded.hasError).toBe(false)
+    expect(decoded.message.length).toBeGreaterThan(0)
+  })
 })
 
 // ─── looksLikeMorse ─────────────────────────────────────────────────────────
