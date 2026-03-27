@@ -138,3 +138,13 @@ describe('MorseStringUtils.getWords', () => {
     expect(words).toHaveLength(1)
   })
 })
+
+describe('MorseStringUtils.doReplacements — additional symbols', () => {
+  it('normalizes curly apostrophe variants like observable tests', () => {
+    expect(MorseStringUtils.doReplacements('a\u2018b')).toBe('ab')
+  })
+
+  it('preserves newlines for voice pipeline', () => {
+    expect(MorseStringUtils.doReplacements('a\nb')).toBe('a\nb')
+  })
+})

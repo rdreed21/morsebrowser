@@ -128,3 +128,38 @@ describe('WordInfo — hasOverride helper', () => {
     expect(w.hasOverride('hello')).toBe(false)
   })
 })
+
+describe('WordInfo — getBracesIndex', () => {
+  it('index 0 returns morse side of override', () => {
+    const w = new WordInfo('x')
+    expect(w.getBracesIndex('{CQ|c q}', 0)).toBe('CQ')
+  })
+
+  it('index 1 returns speech side', () => {
+    const w = new WordInfo('x')
+    expect(w.getBracesIndex('{CQ|c q}', 1)).toBe('c q')
+  })
+
+  it('index 2 returns empty string', () => {
+    const w = new WordInfo('x')
+    expect(w.getBracesIndex('{CQ|c q}', 2)).toBe('')
+  })
+
+  it('non-override string falls through to doReplacements', () => {
+    const w = new WordInfo('x')
+    expect(w.getBracesIndex('plain', 0)).toBe('plain')
+  })
+})
+
+describe('WordInfo — speakText spelling path', () => {
+  it('spells digits with e-workaround for TTS exponent quirk', () => {
+    const w = new WordInfo('1e2')
+    const out = w.speakText(true)
+    expect(out).toContain('1,e,2')
+  })
+
+  it('override with speech only uses morse side when force spelling', () => {
+    const w = new WordInfo('{AB|}')
+    expect(w.speakText(true)).toMatch(/A\s+B/)
+  })
+})
