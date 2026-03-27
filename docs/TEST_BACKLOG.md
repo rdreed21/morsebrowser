@@ -12,6 +12,12 @@ This document is a **priority backlog** to make the codebase safe to modify and 
 
 ---
 
+## Status (implemented in repo)
+
+**P0 / P1 baseline:** Vitest coverage added for `observable`, `MorseTimingCalculator`, settings serialization (`SpeedSettings`, `FrequencySettings`, `MorseSettingsHandler.getCurrentSerializedSettings`), `wordlists.json` ↔ `src/wordfiles/` integrity (`scripts/wordlists-integrity.ts` + `src/wordlistsIntegrity.test.ts`), `MorseLessonPlugin` (mocked finder), `MorsePresetFileFinder`, `FlaggedWords`, `GeneralUtils`, and extra cases for `WordInfo` / `MorseStringUtils`. **Data fix:** `wordlists.json` had broken `fileName` entries (`Fam_Words â€“ 4.txt`, `Fam_LN.txt`); corrected to match files on disk.
+
+---
+
 ## P0 — Safety, persistence, silent wrongness
 
 | Priority | What to create | Code / area | Protects |

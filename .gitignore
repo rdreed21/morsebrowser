@@ -2,6 +2,7 @@
 node_modules
 morse.zip
 dist
+coverage
 morseLessonFinder.js
 morsePresetFinder.js
 notes.txt
