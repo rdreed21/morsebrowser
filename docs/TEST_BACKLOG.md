@@ -1,6 +1,6 @@
 # Test backlog: production-grade coverage plan (P0–P5)
 
-**GitHub:** This document was written to be filed as a single tracking issue on the repo. **Issues are currently disabled** on [rdreed21/morsebrowser](https://github.com/rdreed21/morsebrowser), so `gh issue create` failed; the backlog lives here until issues are enabled or you track it elsewhere (e.g. project board, Linear).
+**Tracking issue:** [rdreed21/morsebrowser#4](https://github.com/rdreed21/morsebrowser/issues/4) — keep this file and the issue in sync when the backlog changes.
 
 ---
 
