@@ -6,7 +6,7 @@
 
 ## Context
 
-The app currently has **88 Vitest unit tests** covering pure logic: Morse encode/decode (`morse-pro.js`), timing (`ComputedTimes`, `UnitTimingsAndMultipliers`), `wordInfo`, and `morseStringUtils`. React UI, ViewModel (`morse.ts`), lessons plugin, audio, persistence, and prebuild data checks are largely untested.
+The Vitest suite now includes **135+ tests** (including P0/P1 items below). Core pure logic remains strong: Morse encode/decode (`morse-pro.js`), timing (`ComputedTimes`, `UnitTimingsAndMultipliers`), `wordInfo`, `morseStringUtils`, observables, lesson plugin (mocked), settings slices, and wordlists integrity. React UI, full `MorseViewModel` construction, audio playback, and `MorseCookies.loadCookiesOrDefaults` end-to-end are still largely untested.
 
 This document is a **priority backlog** to make the codebase safe to modify and ship with confidence (production-style regression detection).
 
@@ -93,4 +93,4 @@ This document is a **priority backlog** to make the codebase safe to modify and 
 
 ## Acceptance
 
-This backlog is **documentation** until individual items are implemented as PRs. Split into smaller issues or tasks when work begins.
+Track remaining work here or in child issues. **P0/P1 baseline** is partially implemented (see Status above); P2–P5 remain. Split large items (for example full `morse.ts` tests) into focused PRs.
