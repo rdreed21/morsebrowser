@@ -3,7 +3,7 @@ import { useMorse } from '../../context/MorseContext'
 
 export function MoreSettingsAccordion() {
   const [isOpen, setIsOpen] = useState(false)
-  const { vm, speed, frequency, voice, showExpertSettings, adminMode, cardsVisible,
+  const { vm, lessons, speed, frequency, voice, showExpertSettings, adminMode, cardsVisible,
     trailReveal, trailPreDelay, trailPostDelay, trailFinal,
     preSpace, xtraWordSpaceDits, cardSpace, cardFontPx,
     numberOfRepeats, shuffleIntraGroup, morseLoadImages } = useMorse()
@@ -205,6 +205,18 @@ export function MoreSettingsAccordion() {
               <label className="btn btn-outline-primary" htmlFor="btncheckcardsvisible" aria-hidden="true">
                 <img src={img('grid3x3gapImage')} alt="" />&nbsp;Cards&nbsp;
                 <img src={checkOrCircle(cardsVisible)} alt="" />
+              </label>
+            </div>
+
+            {/* Auto Close lesson accordion */}
+            <div className="col-auto">
+              <input type="checkbox" className="btn-check" autoComplete="off"
+                id="btncheckautoclose" title="Collapse the Lessons accordion when playback starts" aria-label="Auto Close"
+                checked={lessons.autoCloseLessonAccordion}
+                onChange={e => vm.lessons.autoCloseLessonAccordion(e.target.checked)} />
+              <label className="btn btn-outline-secondary" htmlFor="btncheckautoclose" aria-hidden="true">
+                Auto Close&nbsp;
+                <img src={checkOrCircle(lessons.autoCloseLessonAccordion)} alt="" />
               </label>
             </div>
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
 export function LessonsAccordion() {
-  const { vm, lessons, misc, allowSaveCookies, applyEnabled, morseLoadImages } = useMorse()
+  const { vm, lessons, misc, trailReveal, allowSaveCookies, applyEnabled, morseLoadImages } = useMorse()
   const settingsFileRef = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState(true)
 
@@ -218,10 +218,10 @@ export function LessonsAccordion() {
                     <label className="form-check-label" htmlFor="btncheck1">Randomize</label>
                   </div>
                   <div className="form-check form-switch">
-                    <input className="form-check-input" type="checkbox" role="switch" id="btncheckautoclose"
-                      autoComplete="off" checked={lessons.autoCloseLessonAccordion}
-                      onChange={e => vm.lessons.autoCloseLessonAccordion(e.target.checked)} />
-                    <label className="form-check-label" htmlFor="btncheckautoclose">Auto Close</label>
+                    <input className="form-check-input" type="checkbox" role="switch" id="btnchecktrailreveal"
+                      autoComplete="off" checked={trailReveal}
+                      onChange={e => vm.trailReveal(e.target.checked)} />
+                    <label className="form-check-label" htmlFor="btnchecktrailreveal">Trail Reveal</label>
                   </div>
                   <div className="form-check form-switch">
                     <input className="form-check-input" type="checkbox" role="switch" id="btnchecknewlinechunking"
