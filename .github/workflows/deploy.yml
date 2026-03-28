@@ -62,17 +62,17 @@ jobs:
       #   DO_HOST     — your droplet's IP address or hostname
       #   DO_USER     — Linux username on the droplet (e.g. root)
       #   DO_PATH     — folder on the droplet (e.g. /var/www/html/morsebrowser)
-      - name: Deploy to DigitalOcean
-        env:
-          DO_SSH_KEY: ${{ secrets.DO_SSH_KEY }}
-          DO_HOST: ${{ secrets.DO_HOST }}
-          DO_USER: ${{ secrets.DO_USER }}
-          DO_PATH: ${{ secrets.DO_PATH }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$DO_SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          rsync -avz --delete \
-            -e "ssh -o StrictHostKeyChecking=no" \
-            dist/ \
-            "$DO_USER@$DO_HOST:$DO_PATH"
+   #   - name: Deploy to DigitalOcean
+   #     env:
+   #       DO_SSH_KEY: ${{ secrets.DO_SSH_KEY }}
+   #       DO_HOST: ${{ secrets.DO_HOST }}
+   #       DO_USER: ${{ secrets.DO_USER }}
+   #       DO_PATH: ${{ secrets.DO_PATH }}
+   #     run: |
+   #       mkdir -p ~/.ssh
+   #       echo "$DO_SSH_KEY" > ~/.ssh/id_rsa
+   #       chmod 600 ~/.ssh/id_rsa
+   #       rsync -avz --delete \
+   #         -e "ssh -o StrictHostKeyChecking=no" \
+   #         dist/ \
+   #         "$DO_USER@$DO_HOST:$DO_PATH"
