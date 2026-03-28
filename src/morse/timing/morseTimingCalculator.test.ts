@@ -17,24 +17,33 @@ describe('MorseTimingCalculator', () => {
     it('counts dits, dahs, spaces for morse with slash word separators', () => {
       const wave = new MorseCWWave(true, 20, 20)
       wave.translate('A')
+      // NOTE: this replace is safe for single-character input only. MorseCWWave
+      // produces 'A' as '.-' (no intra-character spaces in the string), so there
+      // are no real inter-character spaces to accidentally promote to word separators.
+      // For multi-character input the approach would break: ' ' (inter-char separator)
+      // would become '/' (word separator), corrupting all counts.
       const morseWithSlash = wave.morse.replace(/ /g, '/') // calculator splits words on /
       wave.morse = morseWithSlash
 
       const counts = MorseTimingCalculator.countUnits(wave, new MorseCountUnits())
       expect(counts.ditCount).toBe(1)
       expect(counts.dahCount).toBe(1)
+      // 'A' = '.-' → character.length - 1 = 1 intra-character space
       expect(counts.intraCharacterSpaceCount).toBe(1)
     })
 
-    it('reuses prePopulated object when provided', () => {
+    it('reuses prePopulated object when provided and ACCUMULATES into it', () => {
+      // countUnits uses += for all counts — it does NOT reset them first.
+      // This means it accumulates on top of any pre-existing values.
+      // This test documents that behaviour: 99 (pre-existing) + 1 (dit for 'E') = 100.
       const wave = new MorseCWWave(true, 20, 20)
       wave.translate('E')
       wave.morse = wave.morse.replace(/ /g, '/')
       const pre = new MorseCountUnits()
       pre.ditCount = 99
       const out = MorseTimingCalculator.countUnits(wave, pre)
-      expect(out).toBe(pre)
-      expect(pre.ditCount).not.toBe(99)
+      expect(out).toBe(pre)                // same object returned
+      expect(pre.ditCount).toBe(100)       // 99 pre-existing + 1 dit from 'E'
     })
   })
 

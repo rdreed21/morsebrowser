@@ -19,4 +19,10 @@ describe('GeneralUtils.getParameterByName', () => {
     expect(GeneralUtils.getParameterByName('x', url)).toBe('y')
     expect(GeneralUtils.getParameterByName('missing', url)).toBeNull()
   })
+
+  it('returns empty string for a parameter present but with no value (?foo)', () => {
+    // The implementation returns '' (not null) when the param key exists but has no =value.
+    const url = 'https://example.com/path?foo'
+    expect(GeneralUtils.getParameterByName('foo', url)).toBe('')
+  })
 })

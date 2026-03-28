@@ -36,4 +36,18 @@ describe('FrequencySettings', () => {
     expect(f.ditFrequency()).toBe(432)
     expect(f.dahFrequency()).toBe(678)
   })
+
+  it('turning syncFreq on after diverged frequencies snaps dahFrequency to ditFrequency', () => {
+    const f = new FrequencySettings()
+    // Start with sync off and different values
+    f.syncFreq(false)
+    f.ditFrequency(500)
+    f.dahFrequency(650)
+    expect(f.ditFrequency()).toBe(500)
+    expect(f.dahFrequency()).toBe(650)
+
+    // Enable sync — dahFrequency computed read path returns trudDitFrequency when synced
+    f.syncFreq(true)
+    expect(f.dahFrequency()).toBe(500)  // snapped to current dit frequency
+  })
 })

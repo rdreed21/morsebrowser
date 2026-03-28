@@ -83,7 +83,7 @@ describe('observableArray', () => {
     expect(a()).toEqual([1, 3])
   })
 
-  it('replace swaps matching item', () => {
+  it('replace swaps ALL matching items (not just the first)', () => {
     const a = observableArray(['a', 'b', 'a'])
     a.replace('a', 'z')
     expect(a()).toEqual(['z', 'b', 'z'])

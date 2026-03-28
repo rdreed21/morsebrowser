@@ -52,6 +52,19 @@ describe('SpeedSettings', () => {
     expect(later.wpm).toBe(20)
   })
 
+  it('getApplicableSpeed clamps to last entry when elapsed time exceeds all intervals', () => {
+    // Intervals: [30, 60] → cumulative [30, 90]. At 150s the loop never sets idx,
+    // so idx stays -1 and the fallback uses the last array index.
+    const s = new SpeedSettings(vm)
+    s.speedInterval(true)
+    s.intervalTimingsText('30,60')
+    s.intervalWpmText('10,20')
+    s.intervalFwpmText('10,20')
+    const beyond = s.getApplicableSpeed(new PlayingTimeInfo(0, 150))
+    expect(beyond.wpm).toBe(20)   // last defined speed
+    expect(beyond.fwpm).toBe(20)
+  })
+
   it('handleCookies applies wpm, fwpm, syncWpm from CookieInfo list', () => {
     const s = new SpeedSettings(vm)
     const cookies: CookieInfo[] = [
