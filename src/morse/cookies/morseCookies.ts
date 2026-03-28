@@ -17,8 +17,6 @@ export class MorseCookies {
     const { lockoutCookieChanges, ctxt, custom, ignoreCookies, ifLoadSettings, keyBlacklist, afterSettingsChange } = settingsChangeInfo
     if (lockoutCookieChanges) {
       if (ctxt.allowSaveCookies() && settingsChangeInfo.isYourSettings) {
-        // not currently locked out so save serialized settings
-        // console.log('setting current serialized')
         ctxt.currentSerializedSettings = MorseSettingsHandler.getCurrentSerializedSettings(ctxt)
       }
       if (ctxt.lockoutSaveCookiesTimerHandle) {
@@ -27,18 +25,30 @@ export class MorseCookies {
       ctxt.allowSaveCookies(false)
       ctxt.lockoutSaveCookiesTimerHandle = setTimeout(() => { ctxt.allowSaveCookies(true) }, 700)
     }
-    const cks = Cookies.get()
-    const cksKeys: string[] = []
-    for (const key in cks) {
-      cksKeys.push(key)
-    }
+
+    // Read from localStorage, falling back to cookies for one-time migration
+    const cks: Record<string, string> = {}
+    const lsKeys = Object.keys(localStorage)
+    const cookieKeys = Object.keys(Cookies.get())
+    const allKeys = new Set([...lsKeys, ...cookieKeys])
+    allKeys.forEach(k => {
+      const val = localStorage.getItem(k) ?? Cookies.get(k)
+      if (val !== undefined && val !== null) {
+        cks[k] = val
+        // migrate cookie value to localStorage so it won't need the fallback next time
+        if (localStorage.getItem(k) === null && Cookies.get(k) !== undefined) {
+          localStorage.setItem(k, val)
+        }
+      }
+    })
+    const cksKeys = Object.keys(cks)
 
     const settings = custom || licwDefaults.startupSettings
     const cookieFiltered = (ss: any[]) => {
       if (ignoreCookies) {
         return ss
       }
-      // ignore setting for which there's a cookie
+      // ignore setting for which there's a stored value
       return ss.filter((x: any) => cksKeys.indexOf(x.key) < 0)
     }
 
@@ -68,7 +78,6 @@ export class MorseCookies {
             default:
               if (typeof (ctxt as any)[key] !== 'undefined') {
                 if (key === 'xtraWordSpaceDits' && parseInt(val) === 0) {
-                // prior functionality may have this at 0 so make it 1
                   val = 1
                 }
                 (ctxt as any)[key](GeneralUtils.booleanize(val))
@@ -79,8 +88,6 @@ export class MorseCookies {
         }
       })
       MorseCookies.registeredHandlers.forEach((handler) => {
-        // console.log(xtraspecialHandling)
-        // console.log(otherHandling)
         handler.handleCookies(xtraspecialHandling)
         handler.handleCookies(otherHandling)
       })

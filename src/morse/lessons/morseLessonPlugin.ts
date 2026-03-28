@@ -405,12 +405,14 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
   setUserTargetInitialized = () => {
     this.userTargetInitialized = true
+    const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('lesson_userTarget') : null
+    if (saved) this.changeUserTarget(saved)
   }
 
   setSelectedClassInitialized = () => {
     this.selectedClassInitialized = true
     // check for class preset
-    const selectedClassParam = GeneralUtils.getParameterByName('selectedClass')
+    const selectedClassParam = GeneralUtils.getParameterByName('selectedClass') || (typeof localStorage !== 'undefined' ? localStorage.getItem('lesson_selectedClass') : null)
     if (selectedClassParam) {
       const paramClass = selectedClassParam.toUpperCase()
       const targetClass = this.classes().find(c => c.toUpperCase() === paramClass)
@@ -427,7 +429,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
   setLetterGroupInitialized = () => {
     this.letterGroupInitialized = true
     // check for class preset
-    const selectedGroupParam = GeneralUtils.getParameterByName('selectedGroup')
+    const selectedGroupParam = GeneralUtils.getParameterByName('selectedGroup') || (typeof localStorage !== 'undefined' ? localStorage.getItem('lesson_letterGroup') : null)
     if (selectedGroupParam) {
       const paramClass = selectedGroupParam.toUpperCase()
       const targetClass = this.letterGroups().find(c => c.toUpperCase() === paramClass)
@@ -444,7 +446,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
   setDisplaysInitialized = () => {
     this.displaysInitialized = true
     // check for 'displays' lesson preset
-    const selectedLessonParam = GeneralUtils.getParameterByName('selectedLesson')
+    const selectedLessonParam = GeneralUtils.getParameterByName('selectedLesson') || (typeof localStorage !== 'undefined' ? localStorage.getItem('lesson_selectedLesson') : null)
     if (selectedLessonParam) {
       const paramClass = selectedLessonParam.toUpperCase()
       const targetClass = this.displays().find(c => c.display.toUpperCase() === paramClass)

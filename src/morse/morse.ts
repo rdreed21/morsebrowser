@@ -20,7 +20,6 @@ import { VoiceBufferInfo } from './voice/VoiceBufferInfo'
 import { GeneralUtils } from './utils/general'
 import MorseSettingsHandler from './settings/morseSettingsHandler'
 import ScreenWakeLock from './utils/screenWakeLock'
-import Cookies from 'js-cookie'
 
 export class MorseViewModel {
   accessibilityAnnouncement:Observable<string> = observable('')
@@ -226,33 +225,41 @@ export class MorseViewModel {
     // ── Side-effect subscriptions (replaces morseExtenders) ──────────────────
 
     const allow = () => this.allowSaveCookies()
-    const saveCookie = <T>(obs: Observable<T>, key: string) => {
+    const saveToStorage = <T>(obs: Observable<T>, key: string) => {
       obs.subscribe(v => {
-        if (allow()) Cookies.set(key, String(v), { expires: 365 })
+        if (allow()) localStorage.setItem(key, String(v))
       })
     }
 
-    // Cookie persistence
-    saveCookie(this.hideList, 'hideList')
-    saveCookie(this.preSpace, 'preSpace')
-    saveCookie(this.xtraWordSpaceDits, 'xtraWordSpaceDits')
-    saveCookie(this.volume, 'volume')
-    saveCookie(this.noiseVolume, 'noiseVolume')
-    saveCookie(this.noiseType, 'noiseType')
-    saveCookie(this.showExpertSettings, 'showExpertSettings')
-    saveCookie(this.cardFontPx, 'cardFontPx')
-    saveCookie(this.settings.speed.syncWpm, 'syncWpm')
-    saveCookie(this.settings.speed.wpm, 'wpm')
-    saveCookie(this.settings.speed.fwpm, 'fwpm')
-    saveCookie(this.settings.frequency.ditFrequency, 'ditFrequency')
-    saveCookie(this.settings.frequency.dahFrequency, 'dahFrequency')
-    saveCookie(this.settings.frequency.syncFreq, 'syncFreq')
-    saveCookie(this.lessons.autoCloseLessonAccordion, this.lessons.autoCloseCookieName)
-    saveCookie(this.rss.rssFeedUrl, 'rssFeedUrl')
-    saveCookie(this.rss.proxydUrl, 'proxydUrl')
-    saveCookie(this.rss.rssPlayMins, 'rssPlayMins')
-    saveCookie(this.rss.rssPollMins, 'rssPollMins')
-    saveCookie(this.morseVoice.voiceVoiceName, 'voiceVoiceName')
+    // localStorage persistence
+    saveToStorage(this.hideList, 'hideList')
+    saveToStorage(this.preSpace, 'preSpace')
+    saveToStorage(this.xtraWordSpaceDits, 'xtraWordSpaceDits')
+    saveToStorage(this.volume, 'volume')
+    saveToStorage(this.noiseVolume, 'noiseVolume')
+    saveToStorage(this.noiseType, 'noiseType')
+    saveToStorage(this.showExpertSettings, 'showExpertSettings')
+    saveToStorage(this.cardFontPx, 'cardFontPx')
+    saveToStorage(this.settings.speed.syncWpm, 'syncWpm')
+    saveToStorage(this.settings.speed.wpm, 'wpm')
+    saveToStorage(this.settings.speed.fwpm, 'fwpm')
+    saveToStorage(this.settings.frequency.ditFrequency, 'ditFrequency')
+    saveToStorage(this.settings.frequency.dahFrequency, 'dahFrequency')
+    saveToStorage(this.settings.frequency.syncFreq, 'syncFreq')
+    saveToStorage(this.lessons.autoCloseLessonAccordion, this.lessons.autoCloseCookieName)
+    saveToStorage(this.rss.rssFeedUrl, 'rssFeedUrl')
+    saveToStorage(this.rss.proxydUrl, 'proxydUrl')
+    saveToStorage(this.rss.rssPlayMins, 'rssPlayMins')
+    saveToStorage(this.rss.rssPollMins, 'rssPollMins')
+    saveToStorage(this.morseVoice.voiceVoiceName, 'voiceVoiceName')
+
+    // Lesson selection persistence
+    saveToStorage(this.lessons.userTarget, 'lesson_userTarget')
+    saveToStorage(this.lessons.selectedClass, 'lesson_selectedClass')
+    saveToStorage(this.lessons.letterGroup, 'lesson_letterGroup')
+    this.lessons.selectedDisplay.subscribe(d => {
+      if (allow() && d?.display) localStorage.setItem('lesson_selectedLesson', d.display)
+    })
 
     // showingText → rawText (when showRaw is on)
     this.showingText.subscribe(newValue => {

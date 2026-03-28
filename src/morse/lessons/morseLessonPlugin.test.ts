@@ -24,6 +24,10 @@ function stubBrowserGlobals () {
   vi.stubGlobal('document', {
     getElementById: vi.fn(() => null)
   })
+  vi.stubGlobal('localStorage', {
+    getItem: vi.fn(() => null),
+    setItem: vi.fn()
+  })
 }
 
 const fileOptionsFixture = [
