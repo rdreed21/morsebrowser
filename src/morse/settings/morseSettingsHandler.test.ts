@@ -11,12 +11,12 @@ function makeSettingsExportVm () {
         speedInterval: () => false,
         intervalTimingsText: () => 'a',
         intervalWpmText: () => 'b',
-        intervalFwpmText: () => 'c',
+        intervalFwpmText: () => 'c'
       },
       misc: {
         newlineChunking: () => true,
-        isMoreSettingsAccordionOpen: false,
-      },
+        isMoreSettingsAccordionOpen: false
+      }
     },
     xtraWordSpaceDits: () => 3,
     volume: () => 9,
@@ -28,7 +28,7 @@ function makeSettingsExportVm () {
       syncSize: () => false,
       ifOverrideMinMax: () => true,
       overrideMin: () => 4,
-      overrideMax: () => 8,
+      overrideMax: () => 8
     },
     hideList: () => false,
     showRaw: () => true,
@@ -43,12 +43,12 @@ function makeSettingsExportVm () {
       manualVoice: () => false,
       speakFirst: () => true,
       speakFirstAdditionalWordspaces: () => 2,
-      voiceBufferMaxLength: () => 50,
+      voiceBufferMaxLength: () => 50
     },
     numberOfRepeats: () => 2,
     cardSpace: () => 7,
     isShuffled: () => true,
-    shuffleIntraGroup: () => false,
+    shuffleIntraGroup: () => false
   } as unknown as import('../morse').MorseViewModel
 }
 

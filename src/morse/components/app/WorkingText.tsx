@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
-export function WorkingText() {
+export function WorkingText () {
   const { vm, showRaw, playingTime, charsPlayed, rawTextCharCount, showingText, morseLoadImages } = useMorse()
   const fileInputRef = useRef<HTMLInputElement>(null)
 

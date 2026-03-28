@@ -1,6 +1,6 @@
 import { useMorse } from '../../context/MorseContext'
 
-function toggleDarkMode() {
+function toggleDarkMode () {
   const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark'
   document.documentElement.setAttribute('data-bs-theme', isDark ? 'light' : 'dark')
   localStorage.setItem('theme', isDark ? 'light' : 'dark')
@@ -8,7 +8,7 @@ function toggleDarkMode() {
   if (meta) meta.setAttribute('content', isDark ? '#ffffff' : '#212529')
 }
 
-export function Header() {
+export function Header () {
   const { vm, isDev, morseLoadImages } = useMorse()
   const logoSrc = morseLoadImages?.getSrc('logoImage')
   const githubSrc = morseLoadImages?.getSrc('githubImage')

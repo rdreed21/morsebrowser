@@ -24,7 +24,7 @@ export class FrequencySettings implements ICookieHandler {
         if (this.syncFreq()) {
           this.truDahFrequency(value)
         }
-      },
+      }
     }, [this.trudDitFrequency])
 
     this.dahFrequency = writableComputed({
@@ -38,7 +38,7 @@ export class FrequencySettings implements ICookieHandler {
       },
       write: (value) => {
         this.truDahFrequency(value)
-      },
+      }
     }, [this.truDahFrequency, this.trudDitFrequency, this.syncFreq])
   }
 

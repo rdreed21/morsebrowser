@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
-export function NoiseAccordion() {
+export function NoiseAccordion () {
   const [isOpen, setIsOpen] = useState(false)
   const { vm, noiseType, noiseVolume, morseLoadImages } = useMorse()
   const soundwaveImageSrc = morseLoadImages?.getSrc('soundwaveImage') ?? ''

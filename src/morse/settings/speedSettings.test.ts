@@ -61,7 +61,7 @@ describe('SpeedSettings', () => {
     s.intervalWpmText('10,20')
     s.intervalFwpmText('10,20')
     const beyond = s.getApplicableSpeed(new PlayingTimeInfo(0, 150))
-    expect(beyond.wpm).toBe(20)   // last defined speed
+    expect(beyond.wpm).toBe(20) // last defined speed
     expect(beyond.fwpm).toBe(20)
   })
 
@@ -70,7 +70,7 @@ describe('SpeedSettings', () => {
     const cookies: CookieInfo[] = [
       { key: 'syncWpm', val: 'false' },
       { key: 'wpm', val: '22' },
-      { key: 'fwpm', val: '11' },
+      { key: 'fwpm', val: '11' }
     ]
     s.handleCookies(cookies)
     expect(s.syncWpm()).toBe(false)

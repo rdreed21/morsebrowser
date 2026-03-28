@@ -1,6 +1,6 @@
 import { useMorse } from '../../context/MorseContext'
 
-export function KeyboardShortcuts() {
+export function KeyboardShortcuts () {
   const { allShortcutKeys } = useMorse()
 
   return (

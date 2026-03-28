@@ -23,7 +23,7 @@ export interface ObservableArray<T> extends Observable<T[]> {
 
 // ── observable ────────────────────────────────────────────────────────────────
 
-export function observable<T>(initial: T): Observable<T> {
+export function observable<T> (initial: T): Observable<T> {
   let value = initial
   const subscribers: Array<(v: T) => void> = []
 
@@ -40,7 +40,7 @@ export function observable<T>(initial: T): Observable<T> {
       dispose: () => {
         const i = subscribers.indexOf(callback)
         if (i >= 0) subscribers.splice(i, 1)
-      },
+      }
     }
   }
 
@@ -50,7 +50,7 @@ export function observable<T>(initial: T): Observable<T> {
 // ── computed ──────────────────────────────────────────────────────────────────
 
 /** Read-only derived value that re-evaluates whenever any dep changes. */
-export function computed<T>(fn: () => T, deps: Observable<any>[]): Observable<T> {
+export function computed<T> (fn: () => T, deps: Observable<any>[]): Observable<T> {
   let evaluating = false
   const obs = observable(fn())
   deps.forEach(dep =>
@@ -67,9 +67,9 @@ export function computed<T>(fn: () => T, deps: Observable<any>[]): Observable<T>
  * Read/write derived value.  The read function is re-run whenever a dep
  * changes; the write function contains the mutation logic.
  */
-export function writableComputed<T>(
+export function writableComputed<T> (
   options: { read: () => T; write: (value: T) => void },
-  deps: Observable<any>[],
+  deps: Observable<any>[]
 ): Observable<T> {
   let evaluating = false
   const reread = () => {
@@ -92,7 +92,7 @@ export function writableComputed<T>(
 
 // ── observableArray ───────────────────────────────────────────────────────────
 
-export function observableArray<T>(initial: T[] = []): ObservableArray<T> {
+export function observableArray<T> (initial: T[] = []): ObservableArray<T> {
   const obs = observable<T[]>([...initial]) as ObservableArray<T>
 
   obs.push = (...items: T[]) => {

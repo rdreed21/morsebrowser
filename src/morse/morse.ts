@@ -95,7 +95,7 @@ export class MorseViewModel {
   testToneCount:number = 0
   testToneFlagHandle:any = 0
   screenWakeLock:ScreenWakeLock
-  logoClickCount:number =0
+  logoClickCount:number = 0
   cachedShuffle:boolean = false
   shuffleIntraGroup:Observable<boolean> = observable(false)
   adminMode:Observable<boolean> = observable(false)
@@ -913,7 +913,7 @@ export class MorseViewModel {
 
   logoClick = () => {
     console.log('logo clicked')
-    this.logoClickCount++;
+    this.logoClickCount++
     if (this.logoClickCount % 4 === 0) {
       this.lessons.toggleQueryStringSettingsOn()
     }

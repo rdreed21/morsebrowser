@@ -17,7 +17,7 @@ import { UnitTimingsAndMultipliers } from './UnitTimingsAndMultipliers'
 import { MorseCountUnits } from './MorseCountUnits'
 
 /** Helper: creates a clean MorseCountUnits with all zeros. */
-function makeCountUnits(overrides: Partial<MorseCountUnits> = {}): MorseCountUnits {
+function makeCountUnits (overrides: Partial<MorseCountUnits> = {}): MorseCountUnits {
   const c = new MorseCountUnits()
   Object.assign(c, overrides)
   return c
@@ -54,7 +54,7 @@ describe('ComputedTimes', () => {
       const counts = makeCountUnits({
         ditCount: 1,
         dahCount: 1,
-        intraCharacterSpaceCount: 1,
+        intraCharacterSpaceCount: 1
       })
       const times = new ComputedTimes(units, counts)
       // 1×100 + 1×300 + 1×100 = 500ms
@@ -125,9 +125,9 @@ describe('ComputedTimes', () => {
 
     it('extraWordSpacingDitsTime is included in totalTime', () => {
       const countsWithout = makeCountUnits({ wordSpacesCount: 1 })
-      const countsWith    = makeCountUnits({ wordSpacesCount: 1, extraWordSpacingDitsCount: 5 })
+      const countsWith = makeCountUnits({ wordSpacesCount: 1, extraWordSpacingDitsCount: 5 })
       const without = new ComputedTimes(units, countsWithout)
-      const with_   = new ComputedTimes(units, countsWith)
+      const with_ = new ComputedTimes(units, countsWith)
       expect(with_.totalTime).toBeGreaterThan(without.totalTime)
     })
 
@@ -139,7 +139,7 @@ describe('ComputedTimes', () => {
     })
 
     it('singleWordSpaceTime grows with extraWordSpacingDitsCount', () => {
-      const noExtra  = makeCountUnits({ extraWordSpacingDitsCount: 0 })
+      const noExtra = makeCountUnits({ extraWordSpacingDitsCount: 0 })
       const withExtra = makeCountUnits({ extraWordSpacingDitsCount: 4 })
       const t1 = new ComputedTimes(units, noExtra)
       const t2 = new ComputedTimes(units, withExtra)

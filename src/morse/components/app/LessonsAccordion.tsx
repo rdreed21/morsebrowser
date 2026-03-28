@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
-export function LessonsAccordion() {
+export function LessonsAccordion () {
   const { vm, lessons, misc, trailReveal, allowSaveCookies, applyEnabled, morseLoadImages } = useMorse()
   const settingsFileRef = useRef<HTMLInputElement>(null)
   const [isOpen, setIsOpen] = useState(true)

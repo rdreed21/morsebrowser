@@ -202,7 +202,7 @@ const MorseContext = createContext<MorseContextValue | null>(null)
 // ─── KO → React bridge ───────────────────────────────────────────────────────
 
 /** Read all current observable values into a plain snapshot object. */
-function snapshot(vm: MorseViewModel): MorseContextValue {
+function snapshot (vm: MorseViewModel): MorseContextValue {
   const l = vm.lessons
   const s = vm.settings
   const v = vm.morseVoice
@@ -279,13 +279,13 @@ function snapshot(vm: MorseViewModel): MorseContextValue {
       vWpm: s.speed.vWpm(),
       vFwpm: s.speed.vFwpm(),
       variableSpeedDisplay: s.speed.variableSpeedDisplay(),
-      trueWpm: s.speed.trueWpm(),
+      trueWpm: s.speed.trueWpm()
     },
 
     frequency: {
       ditFrequency: s.frequency.ditFrequency(),
       dahFrequency: s.frequency.dahFrequency(),
-      syncFreq: s.frequency.syncFreq(),
+      syncFreq: s.frequency.syncFreq()
     },
 
     lessons: {
@@ -310,7 +310,7 @@ function snapshot(vm: MorseViewModel): MorseContextValue {
       syncSize: l.syncSize(),
       settingsPresets: l.settingsPresets(),
       selectedSettingsPreset: l.selectedSettingsPreset(),
-      settingsOverridden: l.settingsOverridden(),
+      settingsOverridden: l.settingsOverridden()
     },
 
     voice: {
@@ -331,16 +331,16 @@ function snapshot(vm: MorseViewModel): MorseContextValue {
       speakFirst: v.speakFirst(),
       speakFirstRepeats: v.speakFirstRepeats(),
       speakFirstAdditionalWordspaces: v.speakFirstAdditionalWordspaces(),
-      voiceThinkingTimeWpm: v.voiceThinkingTimeWpm(),
+      voiceThinkingTimeWpm: v.voiceThinkingTimeWpm()
     },
 
     flaggedWords: {
       flaggedWordsText: vm.flaggedWords.flaggedWords(),
-      flaggedWordsCount: vm.flaggedWords.flaggedWordsCount(),
+      flaggedWordsCount: vm.flaggedWords.flaggedWordsCount()
     },
 
     misc: {
-      newlineChunking: s.misc.newlineChunking(),
+      newlineChunking: s.misc.newlineChunking()
     },
 
     rss: {
@@ -354,8 +354,8 @@ function snapshot(vm: MorseViewModel): MorseContextValue {
       proxydUrl: vm.rss.proxydUrl(),
       rssPollMins: vm.rss.rssPollMins(),
       rssPlayMins: vm.rss.rssPlayMins(),
-      playRssButtonText: vm.rss.playRssButtonText(),
-    },
+      playRssButtonText: vm.rss.playRssButtonText()
+    }
   }
 }
 
@@ -363,7 +363,7 @@ function snapshot(vm: MorseViewModel): MorseContextValue {
  * Subscribe to all ViewModel observables that matter for the UI.
  * When any changes, re-snapshot and set React state.
  */
-function useKOBridge(vm: MorseViewModel): MorseContextValue {
+function useKOBridge (vm: MorseViewModel): MorseContextValue {
   const [value, setValue] = useState<MorseContextValue>(() => snapshot(vm))
 
   useEffect(() => {
@@ -503,7 +503,7 @@ function useKOBridge(vm: MorseViewModel): MorseContextValue {
       vm.rss.proxydUrl.subscribe(bump),
       vm.rss.rssPollMins.subscribe(bump),
       vm.rss.rssPlayMins.subscribe(bump),
-      vm.rss.playRssButtonText.subscribe(bump),
+      vm.rss.playRssButtonText.subscribe(bump)
     ]
 
     return () => {
@@ -521,14 +521,14 @@ interface MorseProviderProps {
   children?: ReactNode
 }
 
-export function MorseProvider({ vm, children }: MorseProviderProps) {
+export function MorseProvider ({ vm, children }: MorseProviderProps) {
   const value = useKOBridge(vm)
   return <MorseContext.Provider value={value}>{children}</MorseContext.Provider>
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
-export function useMorse(): MorseContextValue {
+export function useMorse (): MorseContextValue {
   const ctx = useContext(MorseContext)
   if (!ctx) {
     throw new Error('useMorse must be used inside <MorseProvider>')

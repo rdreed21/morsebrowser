@@ -52,7 +52,7 @@ describe('writableComputed', () => {
     const base = observable(0)
     const wc = writableComputed({
       read: () => base() * 2,
-      write: (v) => { base(v) },
+      write: (v) => { base(v) }
     }, [base])
     expect(wc()).toBe(0)
     wc(5)

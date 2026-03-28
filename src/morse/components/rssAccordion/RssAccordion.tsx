@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
-export function RssAccordion() {
+export function RssAccordion () {
   const [isOpen, setIsOpen] = useState(false)
   const { vm, rss, morseLoadImages } = useMorse()
   const rssImageSrc = morseLoadImages?.getSrc('rssImage') ?? ''

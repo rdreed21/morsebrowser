@@ -52,7 +52,7 @@ export default class SpeedSettings implements ICookieHandler {
         if (this.syncWpm() || parseInt(value) < parseInt(this.trueFwpm() as any)) {
           this.trueFwpm(value)
         }
-      },
+      }
     }, [this.trueWpm])
 
     this.fwpm = writableComputed({
@@ -72,7 +72,7 @@ export default class SpeedSettings implements ICookieHandler {
         if (parseInt(value) <= parseInt(this.trueWpm() as any)) {
           this.trueFwpm(value)
         }
-      },
+      }
     }, [this.syncWpm, this.trueFwpm, this.trueWpm])
 
     this.variableSpeedDisplay = computed(() => {

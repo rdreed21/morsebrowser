@@ -1,6 +1,6 @@
 import { useMorse } from '../../context/MorseContext'
 
-export function WordList() {
+export function WordList () {
   const { vm, cardsVisible, words, currentIndex, hideList, trailReveal, maxRevealedTrail, cardFontPx } = useMorse()
 
   if (!cardsVisible) return null

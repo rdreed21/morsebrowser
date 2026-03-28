@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
-export function FlaggedWordsAccordion() {
+export function FlaggedWordsAccordion () {
   const [isOpen, setIsOpen] = useState(false)
   const { vm, flaggedWords, morseLoadImages } = useMorse()
   const flagImageSrc = morseLoadImages?.getSrc('flagImage') ?? ''

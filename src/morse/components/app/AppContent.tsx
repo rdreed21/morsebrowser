@@ -9,7 +9,7 @@ import { Controls } from './Controls'
 import { WordList } from './WordList'
 import { KeyboardShortcuts } from './KeyboardShortcuts'
 
-export function AppContent() {
+export function AppContent () {
   const { accessibilityAnnouncement } = useMorse()
 
   return (

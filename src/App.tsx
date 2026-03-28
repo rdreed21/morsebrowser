@@ -6,7 +6,7 @@ interface AppProps {
   vm: MorseViewModel
 }
 
-export default function App({ vm }: AppProps) {
+export default function App ({ vm }: AppProps) {
   return (
     <MorseProvider vm={vm}>
       <AppContent />

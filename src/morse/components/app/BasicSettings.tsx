@@ -1,7 +1,7 @@
 import { useMorse } from '../../context/MorseContext'
 import { SimpleImage } from '../morseImage/SimpleImage'
 
-export function BasicSettings() {
+export function BasicSettings () {
   const { vm, speed, volume, morseLoadImages } = useMorse()
   const lockSrc = morseLoadImages?.getSrc('lockImage')
   const unlockSrc = morseLoadImages?.getSrc('unlockImage')

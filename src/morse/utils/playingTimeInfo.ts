@@ -7,5 +7,5 @@ export class PlayingTimeInfo {
   }
 
   get normedSeconds ():string { return (this.seconds < 10 ? '0' : '') + this.seconds }
-  get totalSeconds ():number { return this.minutes * 60 + this.seconds}
+  get totalSeconds ():number { return this.minutes * 60 + this.seconds }
 }

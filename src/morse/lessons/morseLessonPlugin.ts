@@ -100,7 +100,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
         if (this.syncSize()) {
           this.trueOverrideMax(value)
         }
-      },
+      }
     }, [this.trueOverrideMin])
 
     this.overrideMax = writableComputed({
@@ -116,7 +116,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
         if (value >= this.trueOverrideMin()) {
           this.trueOverrideMax(value)
         }
-      },
+      }
     }, [this.trueOverrideMax, this.trueOverrideMin, this.syncSize])
 
     this.userTargets = computed(() => {
@@ -190,7 +190,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
   // toggle queryStringSettingsOn
   toggleQueryStringSettingsOn = () => {
-    console.log("toggling queryStringSettingsOn")
+    console.log('toggling queryStringSettingsOn')
     this.queryStringSettingsOn = !this.queryStringSettingsOn
   }
 
@@ -210,11 +210,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
 
     // if the variable is in the priority list, remove all other variables of lower priority, with "lower priority" being later in the order of the priority array
-    const idx = priority.indexOf(variable as typeof priority[number]);
+    const idx = priority.indexOf(variable as typeof priority[number])
     if (idx !== -1) {
       // remove only lower-priority params (those that come later)
       for (let i = idx + 1; i < priority.length; i++) {
-        urlParams.delete(priority[i]);
+        urlParams.delete(priority[i])
       }
     }
 
@@ -422,7 +422,6 @@ export default class MorseLessonPlugin implements ICookieHandler {
         }
       }
     }
-
   }
 
   setLetterGroupInitialized = () => {
@@ -449,7 +448,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     if (selectedLessonParam) {
       const paramClass = selectedLessonParam.toUpperCase()
       const targetClass = this.displays().find(c => c.display.toUpperCase() === paramClass)
-      var skipPresets = false
+      let skipPresets = false
       if (GeneralUtils.getParameterByName('selectedPreset')) {
         skipPresets = true
       }
@@ -495,7 +494,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  changeSelectedClass = (selectedClass: any, fromClick = "") => {
+  changeSelectedClass = (selectedClass: any, fromClick = '') => {
     if (this.selectedClassInitialized) {
       this.selectedClass(selectedClass)
       this.setPresetSelected(this.selectedSettingsPreset(), true)
@@ -503,7 +502,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  setLetterGroup = (letterGroup: any, fromClick="") => {
+  setLetterGroup = (letterGroup: any, fromClick = '') => {
     if (this.letterGroupInitialized) {
       this.letterGroup(letterGroup)
       this.setPresetSelected(this.selectedSettingsPreset(), true)
@@ -525,7 +524,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  setDisplaySelected = (display: any, skipPresets = false, fromClick="") => {
+  setDisplaySelected = (display: any, skipPresets = false, fromClick = '') => {
     if (!display.isDummy) {
       if (this.displaysInitialized) {
         this.selectedDisplay(display)
@@ -540,14 +539,14 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
-  setPresetSelected = (preset:SettingsOption, skipReinit = false, fromClick="") => {
+  setPresetSelected = (preset:SettingsOption, skipReinit = false, fromClick = '') => {
     // if the query string has selectedPreset, only proceed if that value equals preset.display
     const qsPreset = GeneralUtils.getParameterByName('selectedPreset')
-    if (!(fromClick==='click') && qsPreset && qsPreset.toUpperCase() !== preset.display.toUpperCase()) {
+    if (!(fromClick === 'click') && qsPreset && qsPreset.toUpperCase() !== preset.display.toUpperCase()) {
       console.log(`skipping preset selection as query string preset is ${qsPreset}`)
       return
     }
-    if (fromClick==='click') {
+    if (fromClick === 'click') {
       this.removeQueryStringVariable('selectedPreset')
     }
     console.log(`setPresetSelected:${preset.display}`)

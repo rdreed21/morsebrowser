@@ -5,24 +5,24 @@ vi.spyOn(console, 'log').mockImplementation(() => {})
 
 const getMorseLessonFile = vi.fn()
 vi.mock('../morseLessonFinder', () => ({
-  MorseLessonFileFinder: { getMorseLessonFile: (...args: unknown[]) => getMorseLessonFile(...args) },
+  MorseLessonFileFinder: { getMorseLessonFile: (...args: unknown[]) => getMorseLessonFile(...args) }
 }))
 
 vi.mock('../morsePresetFinder', () => ({
-  MorsePresetFileFinder: { getMorsePresetFile: vi.fn() },
+  MorsePresetFileFinder: { getMorsePresetFile: vi.fn() }
 }))
 
 vi.mock('../morsePresetSetFinder', () => ({
-  MorsePresetSetFileFinder: { getMorsePresetSetFile: vi.fn() },
+  MorsePresetSetFileFinder: { getMorsePresetSetFile: vi.fn() }
 }))
 
 function stubBrowserGlobals () {
   vi.stubGlobal('window', {
     location: { pathname: '/test', search: '' },
-    history: { replaceState: vi.fn() },
+    history: { replaceState: vi.fn() }
   })
   vi.stubGlobal('document', {
-    getElementById: vi.fn(() => null),
+    getElementById: vi.fn(() => null)
   })
 }
 
@@ -34,7 +34,7 @@ const fileOptionsFixture = [
     letterGroup: 'REA',
     newlineChunking: false,
     display: 'Lesson A',
-    fileName: 'lessonA.txt',
+    fileName: 'lessonA.txt'
   },
   {
     sort: 2,
@@ -43,7 +43,7 @@ const fileOptionsFixture = [
     letterGroup: 'REA',
     newlineChunking: false,
     display: 'Lesson B',
-    fileName: 'lessonB.txt',
+    fileName: 'lessonB.txt'
   },
   {
     sort: 3,
@@ -52,8 +52,8 @@ const fileOptionsFixture = [
     letterGroup: 'REA',
     newlineChunking: false,
     display: 'Lesson A',
-    fileName: 'lessonA.txt',
-  },
+    fileName: 'lessonA.txt'
+  }
 ]
 
 function mountPlugin () {
@@ -64,16 +64,16 @@ function mountPlugin () {
     morseWordPlayer: { getTimeEstimate },
     cachedShuffle: false,
     shuffleWords: vi.fn(),
-    currentSerializedSettings: null,
+    currentSerializedSettings: null
   }
   const morseSettings = {
-    misc: { newlineChunking: vi.fn() },
+    misc: { newlineChunking: vi.fn() }
   }
   const plugin = new MorseLessonPlugin(
     morseSettings as never,
     setText,
     getTimeEstimate,
-    vm as never,
+    vm as never
   )
   plugin.wordLists(fileOptionsFixture as never[])
   return { plugin, setText, vm }
@@ -160,7 +160,7 @@ describe('MorseLessonPlugin', () => {
     // recompute. Once stuck at false, setDisplaySelected was permanently blocked.
     // Verify that displaysInitialized stays true across a user-target switch and
     // that setDisplaySelected can still load a word list after the round-trip.
-    const { plugin, setText } = mountPlugin()
+    const { plugin } = mountPlugin()
     selectClassAndGroup(plugin)
     plugin.displaysInitialized = true
 

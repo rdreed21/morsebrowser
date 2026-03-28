@@ -42,8 +42,8 @@ describe('MorseTimingCalculator', () => {
       const pre = new MorseCountUnits()
       pre.ditCount = 99
       const out = MorseTimingCalculator.countUnits(wave, pre)
-      expect(out).toBe(pre)                // same object returned
-      expect(pre.ditCount).toBe(100)       // 99 pre-existing + 1 dit from 'E'
+      expect(out).toBe(pre) // same object returned
+      expect(pre.ditCount).toBe(100) // 99 pre-existing + 1 dit from 'E'
     })
   })
 
@@ -59,7 +59,7 @@ describe('MorseTimingCalculator', () => {
         ditUnitMultiPlier: 1,
         dahUnitMultiplier: 3,
         interCharacterSpaceMultiplier: 3,
-        wordSpaceMultiplier: 7,
+        wordSpaceMultiplier: 7
       } as unknown as UnitTimingsAndMultipliers
       const cfg = new SoundMakerConfig()
       cfg.prePaddingMs = 0

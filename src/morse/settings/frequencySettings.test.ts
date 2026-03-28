@@ -29,7 +29,7 @@ describe('FrequencySettings', () => {
     const cookies: CookieInfo[] = [
       { key: 'syncFreq', val: 'false' },
       { key: 'ditFrequency', val: '432' },
-      { key: 'dahFrequency', val: '678' },
+      { key: 'dahFrequency', val: '678' }
     ]
     f.handleCookies(cookies)
     expect(f.syncFreq()).toBe(false)
@@ -48,6 +48,6 @@ describe('FrequencySettings', () => {
 
     // Enable sync — dahFrequency computed read path returns trudDitFrequency when synced
     f.syncFreq(true)
-    expect(f.dahFrequency()).toBe(500)  // snapped to current dit frequency
+    expect(f.dahFrequency()).toBe(500) // snapped to current dit frequency
   })
 })

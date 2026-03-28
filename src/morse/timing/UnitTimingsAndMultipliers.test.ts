@@ -66,7 +66,7 @@ describe('UnitTimingsAndMultipliers', () => {
     it('increases as FWPM decreases for a fixed WPM', () => {
       // The slower the Farnsworth target, the longer the gaps.
       const u1 = new UnitTimingsAndMultipliers(20, 15) // mild stretch
-      const u2 = new UnitTimingsAndMultipliers(20, 8)  // heavy stretch
+      const u2 = new UnitTimingsAndMultipliers(20, 8) // heavy stretch
       expect(u2.calculatedFWUnitsMs).toBeGreaterThan(u1.calculatedFWUnitsMs)
     })
   })

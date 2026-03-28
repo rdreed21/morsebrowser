@@ -3,7 +3,6 @@ import MorseWavBufferPlayer from './soundmakers/WavBufferPlayer/morseWavBufferPl
 import SmoothedSoundsPlayer from './soundmakers/SmoothedSounds/SmoothedSoundsPlayer'
 import { SoundMakerConfig } from './soundmakers/SoundMakerConfig'
 import { MorseStringToWavBuffer } from './wav/morseStringToWavBuffer'
-import { CreatedWav } from './wav/CreatedWav'
 
 export class MorseWordPlayer {
   soundMaker:ISoundMaker
