@@ -1,8 +1,10 @@
 import { useMorse } from '../../context/MorseContext'
 
-export function Controls() {
-  const { vm, playerPlaying, isPaused, playingTime, isShuffled, loop, loopnoshuffle,
-    hideList, voice, morseLoadImages } = useMorse()
+export function Controls () {
+  const {
+    vm, playerPlaying, isPaused, playingTime, isShuffled, loop, loopnoshuffle,
+    hideList, voice, morseLoadImages
+  } = useMorse()
 
   const img = (key: string) => morseLoadImages?.getSrc(key)
 

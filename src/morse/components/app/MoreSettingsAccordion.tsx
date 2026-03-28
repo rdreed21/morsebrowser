@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
-function SubHeading({ children }: { children: ReactNode }) {
+function SubHeading ({ children }: { children: ReactNode }) {
   return (
     <p className="text-body-secondary fw-semibold small text-uppercase mb-2 mt-1">
       {children}
@@ -10,12 +10,14 @@ function SubHeading({ children }: { children: ReactNode }) {
   )
 }
 
-export function MoreSettingsAccordion() {
+export function MoreSettingsAccordion () {
   const [isOpen, setIsOpen] = useState(false)
-  const { vm, lessons, speed, frequency, voice, showExpertSettings, adminMode, cardsVisible,
+  const {
+    vm, lessons, speed, frequency, voice, showExpertSettings, adminMode, cardsVisible,
     trailReveal, trailPreDelay, trailPostDelay, trailFinal,
     preSpace, xtraWordSpaceDits, cardSpace, cardFontPx,
-    numberOfRepeats, shuffleIntraGroup, morseLoadImages } = useMorse()
+    numberOfRepeats, shuffleIntraGroup, morseLoadImages
+  } = useMorse()
 
   const img = (key: string) => morseLoadImages?.getSrc(key)
   const checkOrCircle = (on: boolean) => on ? img('checkImage') : img('circleImage')
