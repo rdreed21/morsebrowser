@@ -1,8 +1,38 @@
+# OS
 .DS_Store
+
+# Dependencies
 node_modules
-morse.zip
+
+# Build outputs
 dist
 coverage
+morse.zip
+
+# Compiled JS from TS sources (edit the .ts files instead)
+zipdist.js
+prebuildLessons.js
+prebuildPresetSets.js
+prebuildPresets.js
+
+# Logs
+npm-debug.log*
+*.log
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea
+.claude
+
+# Scratch / personal notes
+notes.txt
+junk.txt
+ignore_01132006.txt
+
+# Legacy build helpers (no longer used)
 morseLessonFinder.js
 morsePresetFinder.js
-notes.txt
