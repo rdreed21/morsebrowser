@@ -88,6 +88,14 @@ export function Controls() {
           </button>
         )}
 
+        {/* Download audio */}
+        <button type="button" className="btn btn-outline-secondary"
+          title="Downloads an audio file using the current settings"
+          onClick={() => vm.doDownload()}>
+          <img src={img('downloadImage')} alt="" height={16} width={16} />&nbsp;Download Audio
+        </button>
+        <a id="downloadLink"></a>
+
       </div>
     </section>
   )
