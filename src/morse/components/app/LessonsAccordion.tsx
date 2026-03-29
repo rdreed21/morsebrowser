@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
+/**
+ * Renders the "LICW Lessons" accordion with controls for selecting lessons, presets,
+ * playback options, overrides, and related settings.
+ *
+ * This component consumes state and actions from `useMorse()` and manages only the
+ * accordion open/closed UI state; all lesson/configuration state is driven by the
+ * provided view model. It also wires file input for loading settings and ensures
+ * sensible auto-selection when lesson lists recompute.
+ *
+ * @returns The accordion JSX element containing lesson selection, preset save/load,
+ * playback toggles, override controls, and the Apply button.
+ */
 export function LessonsAccordion () {
   const { vm, lessons, misc, trailReveal, allowSaveCookies, applyEnabled, morseLoadImages } = useMorse()
   const settingsFileRef = useRef<HTMLInputElement>(null)
