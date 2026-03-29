@@ -236,7 +236,10 @@ export class MorseViewModel {
     // ── Side-effect subscriptions (replaces morseExtenders) ──────────────────
 
     const allow = () => this.allowSaveCookies()
+    // Track all [observable, key] pairs so we can flush them when a lockout lifts.
+    const persist: Array<[Observable<any>, string]> = []
     const saveToStorage = <T>(obs: Observable<T>, key: string) => {
+      persist.push([obs, key])
       obs.subscribe(v => {
         if (allow()) localStorage.setItem(key, String(v))
       })
@@ -272,6 +275,22 @@ export class MorseViewModel {
       if (allow() && d?.display) localStorage.setItem('lesson_selectedLesson', d.display)
     })
 
+    // When the preset-apply lockout (allowSaveCookies=false for 700ms) lifts,
+    // flush all current observable values so preset-applied settings (wpm, fwpm, etc.)
+    // are captured even though they changed while saves were blocked.
+    this.allowSaveCookies.subscribe((allowed: boolean) => {
+      if (allowed) {
+        persist.forEach(([obs, key]) => localStorage.setItem(key, String(obs())))
+        const d = this.lessons.selectedDisplay()
+        if (d?.display) localStorage.setItem('lesson_selectedLesson', d.display)
+      }
+    })
+    // Save preset label without the allow() lockout guard — we only want to remember
+    // which preset was last shown, not reapply settings on restore.
+    this.lessons.selectedSettingsPreset.subscribe((p: any) => {
+      if (p?.display && !p.isDummy) localStorage.setItem('lesson_selectedSettingsPreset', p.display)
+    })
+
     // showingText → rawText (when showRaw is on)
     this.showingText.subscribe(newValue => {
       if (this.showRaw()) {
@@ -287,6 +306,13 @@ export class MorseViewModel {
         this.showingText('')
       }
     })
+
+    // showRaw was set to false in the constructor before this subscribe was wired,
+    // so the subscriber never fired. Clear showingText now to remove the default
+    // licwdefaults.json value ("{CQ|c q} {LICW|l i c w}") from the textarea.
+    if (!this.showRaw()) {
+      this.showingText('')
+    }
 
     // volume → audio player
     this.volume.subscribe(newValue => {

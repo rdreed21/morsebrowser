@@ -243,7 +243,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     return urlParams.toString()
   }
 
-  getSettingsPresets = (forceRefresh:boolean = false, selectFirstNonYour:boolean = false) => {
+  getSettingsPresets = (forceRefresh:boolean = false, selectFirstNonYour:boolean = false, presetToRestore:string | null = null) => {
     let sps:SettingsOption[] = []
     sps.push(this.yourSettingsDummy)
     sps = sps.concat(this.customSettingsOptions)
@@ -266,6 +266,15 @@ export default class MorseLessonPlugin implements ICookieHandler {
       } else {
         this.settingsPresets(sps)
         this.setPresetSelected(this.settingsPresets()[0])
+      }
+      // If restoring a saved preset, just update the dropdown label — don't call
+      // setPresetSelected (which would re-apply settings and trigger the lockout).
+      if (presetToRestore) {
+        const found = this.settingsPresets().find((p: SettingsOption) => !p.isDummy && p.display.toUpperCase() === presetToRestore.toUpperCase())
+        if (found) {
+          this.selectedSettingsPreset(found)
+          return
+        }
       }
       handleAutoSelect()
     }
@@ -471,9 +480,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
     // Restore complete — re-enable the subscriptions, then populate the preset
     // dropdown for the restored class/group WITHOUT applying (selectFirstNonYour=false).
-    // This keeps the user's saved settings intact while making the preset options visible.
+    // Pass the saved preset name so the dropdown label is restored after the async
+    // file load, without re-applying settings or triggering the lockout.
     this.restoringState = false
-    this.getSettingsPresets(false, false)
+    const savedPreset = typeof localStorage !== 'undefined' ? localStorage.getItem('lesson_selectedSettingsPreset') : null
+    this.getSettingsPresets(false, false, savedPreset)
   }
 
   setUserTargetInitialized = () => {
