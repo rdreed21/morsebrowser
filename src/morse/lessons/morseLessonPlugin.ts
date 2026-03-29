@@ -56,6 +56,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
   yourSettingsDummy:SettingsOption
   customSettingsOptions:SettingsOption[] = []
   queryStringSettingsOn:boolean = false
+  restoringState:boolean = false
 
   constructor (morseSettings:MorseSettings, setTextCallBack:any, timeEstimateCallback:any, morseViewModel:MorseViewModel) {
     MorseCookies.registerHandler(this)
@@ -181,9 +182,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
       return dps.length > 0 ? dps : [{ display: 'Select wordlist', fileName: 'dummy.txt', isDummy: true }]
     }, [this.wordLists, this.selectedClass, this.userTarget, this.letterGroup])
 
-    // Fire getSettingsPresets whenever class or letter group changes
-    this.selectedClass.subscribe(() => { this.getSettingsPresets(false, true) })
-    this.letterGroup.subscribe(() => { this.getSettingsPresets(false, true) })
+    // Fire getSettingsPresets whenever class or letter group changes.
+    // Guard: skip during restoreLessonState so the async preset fetch doesn't
+    // overwrite localStorage-restored settings before the first paint.
+    this.selectedClass.subscribe(() => { if (!this.restoringState) this.getSettingsPresets(false, true) })
+    this.letterGroup.subscribe(() => { if (!this.restoringState) this.getSettingsPresets(false, true) })
   }
 
   // end constructor
@@ -401,6 +404,76 @@ export default class MorseLessonPlugin implements ICookieHandler {
 
       MorseLessonFileFinder.getMorseLessonFile(filename, afterFound)
     }
+  }
+
+  /**
+   * Restore lesson dropdown state from localStorage / URL querystring.
+   * Called from MorseViewModel constructor after initializeWordList(), before
+   * the saveToStorage subscriptions are wired up.  Direct observable sets are
+   * used instead of changeSelectedClass / setLetterGroup / setDisplaySelected so
+   * we avoid triggering saveToStorage (subscriptions don't exist yet) and avoid
+   * the setPresetSelected side-effect that would override the user's saved settings.
+   */
+  restoreLessonState = () => {
+    if (typeof localStorage === 'undefined') return
+
+    // Suppress the selectedClass/letterGroup subscriptions so the async preset
+    // fetch doesn't fire (and overwrite localStorage-restored settings) during restore.
+    this.restoringState = true
+
+    // 1. User target
+    const savedUserTarget = localStorage.getItem('lesson_userTarget')
+    if (savedUserTarget) {
+      this.userTarget(savedUserTarget)
+      // classes computed fires: resets selectedClass('') + selectedClassInitialized=false
+    }
+    this.userTargetInitialized = true
+
+    // 2. Class (URL param takes priority over localStorage)
+    const savedClass = GeneralUtils.getParameterByName('selectedClass') ||
+      localStorage.getItem('lesson_selectedClass')
+    if (savedClass) {
+      const target = this.classes().find((c: string) => c.toUpperCase() === savedClass.toUpperCase())
+      if (target) {
+        this.selectedClass(target)
+        // letterGroups computed fires: resets letterGroup('') + letterGroupInitialized=false
+        if (!this.queryStringSettingsOn) this.removeQueryStringVariable('selectedClass')
+      }
+    }
+    this.selectedClassInitialized = true
+
+    // 3. Letter group
+    const savedGroup = GeneralUtils.getParameterByName('selectedGroup') ||
+      localStorage.getItem('lesson_letterGroup')
+    if (savedGroup) {
+      const target = this.letterGroups().find((g: string) => !g.startsWith('Select') && g.toUpperCase() === savedGroup.toUpperCase())
+      if (target) {
+        this.letterGroup(target)
+        // displays computed fires: resets selectedDisplay({})
+        if (!this.queryStringSettingsOn) this.removeQueryStringVariable('selectedGroup')
+      }
+    }
+    this.letterGroupInitialized = true
+
+    // 4. Lesson
+    const savedLesson = GeneralUtils.getParameterByName('selectedLesson') ||
+      localStorage.getItem('lesson_selectedLesson')
+    if (savedLesson) {
+      const target = this.displays().find((d: any) => !d.isDummy && d.display.toUpperCase() === savedLesson.toUpperCase())
+      if (target) {
+        this.selectedDisplay(target)
+        this.morseSettings.misc.newlineChunking(target.newlineChunking)
+        this.getWordList(target.fileName)
+        if (!this.queryStringSettingsOn) this.removeQueryStringVariable('selectedLesson')
+      }
+    }
+    this.displaysInitialized = true
+
+    // Restore complete — re-enable the subscriptions, then populate the preset
+    // dropdown for the restored class/group WITHOUT applying (selectFirstNonYour=false).
+    // This keeps the user's saved settings intact while making the preset options visible.
+    this.restoringState = false
+    this.getSettingsPresets(false, false)
   }
 
   setUserTargetInitialized = () => {

@@ -152,6 +152,19 @@ export class MorseViewModel {
     // initialize the wordlist
     this.lessons.initializeWordList()
 
+    // Force showRaw to false NOW, before restoreLessonState.
+    // licwdefaults.json sets showRaw=true, and setText() branches on showRaw():
+    // if true it stores into showingText (the editable textarea), not rawText.
+    // The showRaw.subscribe that would clear showingText isn't wired until after
+    // the constructor, so leaving showRaw=true here causes the raw {word|speech}
+    // lesson content to appear in the textarea on first render.
+    this.showRaw(false)
+
+    // Restore lesson dropdown state from localStorage before saveToStorage
+    // subscriptions are wired up below, so intermediate resets (selectedClass='',
+    // letterGroup='') never reach localStorage.
+    this.lessons.restoreLessonState()
+
     this.flaggedWords = new FlaggedWords()
 
     // check for voice feature turned on
@@ -177,8 +190,6 @@ export class MorseViewModel {
       this.allShortcutKeys.push({ key, title })
     })
     this.shortcutKeys.registerKeyboardShortcutHandlers(this)
-
-    this.showRaw(false)
 
     this.applyEnabled = computed(() => {
       if (this.lessons && this.lessons.customGroup()) {
