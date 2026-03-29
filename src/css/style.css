@@ -7,7 +7,7 @@ simpleimage {
     animation: app-fade-in 0.25s ease-in;
 }
 
-`@keyframes` app-fade-in {
+@keyframes app-fade-in {
     from { opacity: 0; }
     to   { opacity: 1; }
 }
