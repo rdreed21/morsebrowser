@@ -2,6 +2,16 @@ simpleimage {
     display: contents;
 }
 
+/* Fade-in on load to hide async re-renders (word list + preset file loading after first paint) */
+#react-root {
+    animation: appFadeIn 0.25s ease-in;
+}
+
+@keyframes appFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
 noiseaccordion {
     display: contents;
 }
