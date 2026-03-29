@@ -11,7 +11,7 @@ It is also a practical guide for LICW admins maintaining this fork.
 ```bash
 npm run dev            # Start local dev server at http://localhost:3000
 npm run build          # Production build → dist/
-npm test               # Run all 88 automated tests (takes ~135ms)
+npm test               # Run all 148 automated tests (takes ~300ms)
 npm run test:watch     # Tests re-run live as you edit code
 npm run test:coverage  # Tests + show what % of code is covered
 ```
@@ -25,6 +25,24 @@ The **UI is React** (`src/App.tsx`, `src/morse/components/**/*.tsx`). **`MorseVi
 ---
 
 ## Changes vs Upstream
+
+### 8. Settings & Lesson State Persistence (localStorage migration) — IN PROGRESS
+**Files:** `src/morse/cookies/morseCookies.ts`, `src/morse/morse.ts`, `src/morse/lessons/morseLessonPlugin.ts`, `src/morse/components/app/LessonsAccordion.tsx`, `src/morse/context/MorseContext.tsx`
+
+**What was done:**
+- Migrated all settings persistence from `js-cookie` to `localStorage` (cookies were unreliable in browsers with ITP/ETP). One-time migration reads old cookie values into localStorage on first load.
+- Added 4 new lesson subscriptions in `morse.ts`: `lesson_userTarget`, `lesson_selectedClass`, `lesson_letterGroup`, `lesson_selectedLesson`.
+- Added `restoreLessonState()` to `MorseLessonPlugin`. Called from `MorseViewModel` constructor after `initializeWordList()`, **before** `saveToStorage` subscriptions are wired up. This is critical: the `classes` / `letterGroups` computed observables have side effects (`selectedClass('')`, `letterGroup('')`) that would overwrite saved localStorage values if subscriptions were active.
+- `LessonsAccordion.tsx` `useEffect` simplified — no longer runs the init cascade; only wires reactive subscriptions for future user interactions (re-arms `*Initialized` flags and auto-selects fallbacks when user changes TYPE/CLASS/GROUP).
+- `MorseContext.tsx` `bump` debounced with `requestAnimationFrame` to batch rapid observable changes into one React re-render per frame.
+
+**Flash fix (applied):** Added `restoringState` flag to `MorseLessonPlugin`. The `selectedClass.subscribe` / `letterGroup.subscribe` callbacks check `!this.restoringState` before calling `getSettingsPresets`, so no async preset fetch fires during restore. At the end of `restoreLessonState`, `getSettingsPresets(false, false)` is called once to populate the preset dropdown **without** applying any preset — user's saved wpm/fwpm/etc. from localStorage are preserved.
+
+**Text box fix (applied):** `showRaw` initializes `true` (from `licwdefaults.json`). `setText()` branches on `showRaw()`: if `true`, it stores into `showingText` (the textarea) instead of `rawText`. The `showRaw.subscribe` that would clear `showingText` isn't wired until after the constructor. Moving `this.showRaw(false)` to just before `restoreLessonState()` in `morse.ts` ensures `setText` uses the `rawText` path during restore, so the textarea stays empty on first render.
+
+**Remaining behavior:** The preset dropdown populates asynchronously after first paint (when the preset set file loads). This causes a single, subtle dropdown-only re-render — no settings values change.
+
+---
 
 ### 1. Lesson Dropdown Bug Fix
 **File:** `src/morse/lessons/morseLessonPlugin.ts`

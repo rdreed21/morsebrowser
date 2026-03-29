@@ -360,14 +360,23 @@ function snapshot (vm: MorseViewModel): MorseContextValue {
 }
 
 /**
- * Subscribe to all ViewModel observables that matter for the UI.
- * When any changes, re-snapshot and set React state.
+ * Mirror relevant MorseViewModel observables into React state so components re-render on changes.
+ *
+ * @param vm - The ViewModel whose observables are bridged into React state
+ * @returns The current `MorseContextValue` snapshot derived from `vm`
  */
 function useKOBridge (vm: MorseViewModel): MorseContextValue {
   const [value, setValue] = useState<MorseContextValue>(() => snapshot(vm))
 
   useEffect(() => {
-    const bump = () => setValue(snapshot(vm))
+    let rafHandle: number | null = null
+    const bump = () => {
+      if (rafHandle !== null) return
+      rafHandle = requestAnimationFrame(() => {
+        rafHandle = null
+        setValue(snapshot(vm))
+      })
+    }
     const l = vm.lessons
     const s = vm.settings
     const v = vm.morseVoice
@@ -507,6 +516,7 @@ function useKOBridge (vm: MorseViewModel): MorseContextValue {
     ]
 
     return () => {
+      if (rafHandle !== null) cancelAnimationFrame(rafHandle)
       subs.forEach(s => s.dispose())
     }
   }, [vm])

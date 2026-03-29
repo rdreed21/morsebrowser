@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
 
+/**
+ * Renders the "LICW Lessons" accordion with controls for selecting lessons, presets,
+ * playback options, overrides, and related settings.
+ *
+ * This component consumes state and actions from `useMorse()` and manages only the
+ * accordion open/closed UI state; all lesson/configuration state is driven by the
+ * provided view model. It also wires file input for loading settings and ensures
+ * sensible auto-selection when lesson lists recompute.
+ *
+ * @returns The accordion JSX element containing lesson selection, preset save/load,
+ * playback toggles, override controls, and the Apply button.
+ */
 export function LessonsAccordion () {
   const { vm, lessons, misc, trailReveal, allowSaveCookies, applyEnabled, morseLoadImages } = useMorse()
   const settingsFileRef = useRef<HTMLInputElement>(null)
@@ -9,46 +21,50 @@ export function LessonsAccordion () {
   useEffect(() => {
     const l = vm.lessons
 
-    // One-time initialization on mount
-    l.setUserTargetInitialized()
-    l.setDisplaysInitialized()
+    // Lesson state (userTarget / selectedClass / letterGroup / selectedDisplay) was
+    // already restored from localStorage in the MorseViewModel constructor
+    // (restoreLessonState), before any saveToStorage subscriptions existed.
+    // This effect only needs to:
+    //  1. Handle URL-querystring preset param (settingsPresetsInitialized).
+    //  2. Re-arm the *Initialized flags and auto-select fallbacks whenever the user
+    //     changes TYPE / CLASS / GROUP, which causes the computed observables to reset
+    //     selectedClass / letterGroup / selectedDisplay back to empty.
+
     l.setSettingsPresetsInitialized()
 
-    // When classes recomputes it resets selectedClassInitialized=false and selectedClass=''.
-    // Re-initialize and auto-select the first class so the cascade populates.
+    // When the user changes TYPE, classes recomputes and resets selectedClass='' /
+    // selectedClassInitialized=false.  Re-arm the flag and auto-select first class.
     const onClassesChange = (newClasses: any[]) => {
-      l.setSelectedClassInitialized()
+      l.selectedClassInitialized = true
       if (!l.selectedClass() && newClasses.length > 0) {
         l.changeSelectedClass(newClasses[0])
       }
     }
     const classesSub = l.classes.subscribe(onClassesChange)
-    // Run immediately for the current value
     onClassesChange(l.classes())
 
-    // When letterGroups recomputes it resets letterGroupInitialized=false and letterGroup=''.
-    // Re-initialize and auto-select the first valid letter group.
+    // When the user changes CLASS, letterGroups recomputes and resets letterGroup='' /
+    // letterGroupInitialized=false.  Re-arm and auto-select first valid group.
     const onLetterGroupsChange = (newGroups: any[]) => {
-      l.setLetterGroupInitialized()
+      l.letterGroupInitialized = true
       const valid = newGroups.filter((g: string) => !g.startsWith('Select'))
       if (!l.letterGroup() && valid.length > 0) {
         l.setLetterGroup(valid[0])
       }
     }
     const letterGroupsSub = l.letterGroups.subscribe(onLetterGroupsChange)
-    // Run immediately for the current value
     onLetterGroupsChange(l.letterGroups())
 
-    // When displays recomputes, auto-select the first non-dummy display.
-    // KO's value binding used to do this automatically; React's controlled select does not.
+    // When the user changes LETTER GROUP, displays recomputes and resets selectedDisplay={}.
+    // Re-arm displaysInitialized and auto-select the first non-dummy lesson.
     const onDisplaysChange = (newDisplays: any[]) => {
+      l.displaysInitialized = true
       const nonDummy = newDisplays.filter((d: any) => !d.isDummy)
       if (!l.selectedDisplay()?.display && nonDummy.length > 0) {
         l.setDisplaySelected(nonDummy[0])
       }
     }
     const displaysSub = l.displays.subscribe(onDisplaysChange)
-    // Run immediately for the current value
     onDisplaysChange(l.displays())
 
     return () => {
