@@ -13,7 +13,7 @@ MorseBrowser is a static single-page application (no backend). All commands are 
 ### Lint / Test / Build
 
 - **Lint**: `npx eslint src/` — the `.eslintignore` does not exclude `dist/`, so always target `src/` explicitly.
-- **Test**: `npm test` — runs 88 Vitest unit tests (~150ms).
+- **Test**: `npm test` — runs 148 Vitest unit tests (~300ms).
 - **Build**: `npm run build` — runs prebuild scripts (lesson/preset generation via `tsx`), then Webpack production build to `dist/`. Build warnings about unreferenced wordfiles are expected and harmless.
 
 ### Gotchas

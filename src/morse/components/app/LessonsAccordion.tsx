@@ -303,7 +303,7 @@ export function LessonsAccordion () {
                     <input type="number" className="form-control" aria-label="Minimum" min={1}
                       disabled={!lessons.ifOverrideMinMax}
                       value={lessons.overrideMin}
-                      onChange={e => vm.lessons.trueOverrideMin(Number(e.target.value))} />
+                      onChange={e => vm.lessons.overrideMin(Number(e.target.value))} />
                   </div>
                   <div className="input-group input-group-sm">
                     <span
@@ -324,7 +324,7 @@ export function LessonsAccordion () {
                       min={lessons.overrideMin}
                       disabled={!lessons.ifOverrideMinMax || lessons.syncSize}
                       value={lessons.overrideMax}
-                      onChange={e => vm.lessons.trueOverrideMax(Number(e.target.value))}
+                      onChange={e => vm.lessons.overrideMax(Number(e.target.value))}
                     />
                   </div>
                   <button type="button" className="btn btn-success btn-sm" id="btnApply"

@@ -141,15 +141,17 @@ npm test
 You will see output like this:
 
 ```
- ✓ src/morse-pro/morse-pro.test.ts         (25 tests)
+ ✓ src/morse-pro/morse-pro.test.ts         (26 tests)
  ✓ src/morse/timing/UnitTimingsAndMultipliers.test.ts (12 tests)
- ✓ src/morse/timing/ComputedTimes.test.ts  (9 tests)
- ✓ src/morse/utils/morseStringUtils.test.ts (23 tests)
- ✓ src/morse/utils/wordInfo.test.ts        (19 tests)
+ ✓ src/morse/timing/ComputedTimes.test.ts  (15 tests)
+ ✓ src/morse/utils/morseStringUtils.test.ts (25 tests)
+ ✓ src/morse/utils/wordInfo.test.ts        (25 tests)
+ ✓ ... additional settings, lessons, observable, flagged words, general,
+     preset finder, and wordlist integrity tests
 
- Test Files  5 passed (5)
-      Tests  88 passed (88)
-   Duration  135ms
+ Test Files  15 passed (15)
+      Tests  148 passed (148)
+   Duration  300ms
 ```
 
 Every line with ✓ means those tests passed. If something is wrong, you'll see ✗

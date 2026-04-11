@@ -40,7 +40,7 @@ MorseBrowser is a Morse code practice tool. Users pick a class (like "BC1" for B
 4. Shows word cards on screen that reveal after playing
 5. Optionally speaks the words aloud using text-to-speech
 
-Everything runs in the browser — there is no server or database. Settings are saved in browser cookies.
+Everything runs in the browser — there is no server or database. Settings are saved in localStorage, with a one-time fallback migration from older cookies.
 
 ---
 
@@ -49,7 +49,7 @@ Everything runs in the browser — there is no server or database. Settings are 
 ```bash
 npm install        # Install dependencies (once)
 npm run dev        # Start dev server at http://localhost:3000
-npm test           # Run 88 automated tests
+npm test           # Run 148 automated tests
 npm run build      # Production build to dist/
 ```
 
@@ -81,7 +81,7 @@ morsebrowser/
 │   │   ├── timing/               # Morse timing math (WPM → milliseconds)
 │   │   ├── voice/                # Text-to-speech integration
 │   │   ├── utils/                # Observables, string parsing, helpers
-│   │   ├── cookies/              # Cookie read/write for settings persistence
+│   │   ├── cookies/              # Legacy cookie migration + settings restore helpers
 │   │   ├── flaggedWords/         # Flagged word tracking
 │   │   ├── rss/                  # RSS feed experiment (not active in UI)
 │   │   ├── images/               # Icon/image URL registry
@@ -301,7 +301,7 @@ This is the largest and most important file. It is the central hub that connects
 | **Audio config** | `volume`, `smoothing`, rise/decay times | How the Morse tones sound |
 | **Subsystems** | `settings`, `lessons`, `morseVoice`, `morseWordPlayer` | Delegated logic for specific domains |
 | **UI state** | `hideList`, `showExpert`, `currentCardIndex` | What's visible on screen |
-| **Persistence** | `allowSaveCookies` | Whether to save settings to cookies |
+| **Persistence** | `allowSaveCookies` | Whether to save settings to localStorage |
 
 ### Key Methods
 
@@ -592,12 +592,12 @@ The app has two ways to generate audio, selectable via the "smoothing" setting:
 
 **Directory:** `src/morse/cookies/`
 
-Settings persist in browser cookies using the `js-cookie` library:
+Settings persist in `localStorage`; `js-cookie` is still used as a legacy read path so older saved values can migrate:
 
-1. In the ViewModel constructor, `saveCookie(observable, key)` subscribes to many observables
-2. Whenever a subscribed observable changes, the new value is written to a cookie
-3. On page load, `MorseCookies.loadCookiesOrDefaults()` reads cookies and restores values
-4. When loading a preset, cookies are temporarily disabled to avoid saving intermediate states
+1. In the ViewModel constructor, `saveToStorage(observable, key)` subscribes to many observables
+2. Whenever a subscribed observable changes, the new value is written to `localStorage`
+3. On page load, `MorseCookies.loadCookiesOrDefaults()` reads `localStorage`, falling back to cookies only when a key has not migrated yet
+4. When loading a preset, storage writes are temporarily disabled to avoid saving intermediate states
 
 ---
 
