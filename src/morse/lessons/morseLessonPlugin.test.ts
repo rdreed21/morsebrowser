@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import MorseLessonPlugin from './morseLessonPlugin'
+import { CookieInfo } from '../cookies/CookieInfo'
 
 vi.spyOn(console, 'log').mockImplementation(() => {})
 
@@ -205,5 +206,42 @@ describe('MorseLessonPlugin', () => {
     plugin.displaysInitialized = true
     plugin.setDisplaysInitialized()
     expect(plugin.selectedDisplay().fileName).toBe('lessonA.txt')
+  })
+
+  it('keeps override sizes valid and synced', () => {
+    const { plugin } = mountPlugin()
+
+    plugin.syncSize(false)
+    plugin.overrideMin(5)
+    expect(plugin.overrideMin()).toBe(5)
+    expect(plugin.overrideMax()).toBe(5)
+
+    plugin.overrideMax(4)
+    expect(plugin.overrideMax()).toBe(5)
+
+    plugin.overrideMax(7)
+    expect(plugin.overrideMax()).toBe(7)
+
+    plugin.overrideMin(0)
+    expect(plugin.overrideMin()).toBe(5)
+  })
+
+  it('does not loop forever when override sizes are invalid', () => {
+    const { plugin, setText } = mountPlugin()
+
+    plugin.ifOverrideMinMax(true)
+    plugin.trueOverrideMin(0)
+    plugin.trueOverrideMax(0)
+    plugin.randomWordList({ letters: 'ABC', practiceSeconds: 60, minWordSize: 1, maxWordSize: 3 }, false)
+
+    expect(setText).toHaveBeenCalledWith('')
+  })
+
+  it('restores stickySets as text even when the saved value looks boolean-like', () => {
+    const { plugin } = mountPlugin()
+
+    plugin.handleCookies([{ key: 'stickySets', val: 'true' }] as CookieInfo[])
+
+    expect(plugin.stickySets()).toBe('true')
   })
 })

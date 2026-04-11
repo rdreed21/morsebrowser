@@ -189,11 +189,11 @@ At build time, **`prebuildLessons.ts`** (and related scripts) generate **static 
 ## 8. Settings and persistence
 
 - **`MorseSettings`** groups **speed**, **frequency**, **misc** (volume, spacing, etc.).
-- **Cookie handlers** implement **`ICookieHandler`**: `save`, `load`, `getKey`.
-- **`MorseCookies`** registers handlers and coordinates **load on startup** and **save** after changes.
-- **`localStorage`** is used for **theme** (see Header / template script).
+- **Cookie handlers** implement **`ICookieHandler`**: `handleCookies(cookies)` and `handleCookie(cookie)`.
+- **`MorseCookies`** registers handlers and coordinates startup restore from **localStorage**, falling back to legacy cookies for one-time migration.
+- **`localStorage`** is also used for **theme** (see Header / template script).
 
-When you add a **persisted** setting, you typically wire it through **settings** + **cookie handler** + **MorseContext** snapshot + **React** control.
+When you add a **persisted** setting, you typically wire it through **settings** + **storage restore handler** + **MorseContext** snapshot + **React** control.
 
 ---
 

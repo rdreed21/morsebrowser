@@ -90,6 +90,9 @@ export class MorseShortcutKeys {
     this.registerShortcutKeyHandler('f', 'Flag current card', () => {
       const index = mv.currentIndex()
       const word = mv.words()[index]
+      if (!word) {
+        return
+      }
       mv.flaggedWords.addFlaggedWord(word)
       mv.accessibilityAnnouncement('Flagged')
     })

@@ -97,28 +97,36 @@ export default class MorseLessonPlugin implements ICookieHandler {
         return this.trueOverrideMin()
       },
       write: (value) => {
-        this.trueOverrideMin(value)
+        const nextMin = Number(value)
+        if (!Number.isFinite(nextMin) || nextMin < 1) return
+
+        this.trueOverrideMin(nextMin)
         if (this.syncSize()) {
-          this.trueOverrideMax(value)
+          this.trueOverrideMax(nextMin)
+        } else if (this.trueOverrideMax() < nextMin) {
+          this.trueOverrideMax(nextMin)
         }
       }
     }, [this.trueOverrideMin])
 
     this.overrideMax = writableComputed({
       read: () => {
-        if (!this.syncSize()) {
-          return this.trueOverrideMax()
-        } else {
-          this.trueOverrideMax(this.trueOverrideMin())
-          return this.trueOverrideMin()
-        }
+        return this.syncSize() ? this.trueOverrideMin() : this.trueOverrideMax()
       },
       write: (value) => {
-        if (value >= this.trueOverrideMin()) {
-          this.trueOverrideMax(value)
+        const nextMax = Number(value)
+        if (!Number.isFinite(nextMax) || nextMax < this.trueOverrideMin()) {
+          return
         }
+
+        this.trueOverrideMax(nextMax)
       }
     }, [this.trueOverrideMax, this.trueOverrideMin, this.syncSize])
+
+    // When sync is re-enabled, snap max to the current min value.
+    this.syncSize.subscribe((v: boolean) => {
+      if (v) this.trueOverrideMax(this.trueOverrideMin())
+    })
 
     this.userTargets = computed(() => {
       const targs: any[] = []
@@ -334,6 +342,18 @@ export default class MorseLessonPlugin implements ICookieHandler {
     const controlTime = (this.ifOverrideTime() || ifCustom) ? (this.overrideMins() * 60) : data.practiceSeconds
     const minWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMin() : data.minWordSize
     const maxWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMax() : data.maxWordSize
+    if (
+      chars.length === 0 ||
+      !Number.isFinite(controlTime) ||
+      !Number.isFinite(minWordSize) ||
+      !Number.isFinite(maxWordSize) ||
+      controlTime <= 0 ||
+      minWordSize < 1 ||
+      maxWordSize < minWordSize
+    ) {
+      this.setText('')
+      return
+    }
     const randomNumber = (min: number, max: number) => {
       min = Math.ceil(min)
       max = Math.floor(max)
@@ -748,7 +768,7 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
     target = cookies.find(x => x.key === 'stickySets')
     if (target) {
-      this.stickySets(GeneralUtils.booleanize(target.val))
+      this.stickySets(target.val)
     }
     target = cookies.find(x => x.key === 'ifStickySets')
     if (target) {
@@ -764,11 +784,11 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
     target = cookies.find(x => x.key === 'overrideSizeMin')
     if (target) {
-      this.overrideMin(target.val as unknown as number)
+      this.overrideMin(parseInt(target.val))
     }
     target = cookies.find(x => x.key === 'overrideSizeMax')
     if (target) {
-      this.overrideMax(target.val as unknown as number)
+      this.overrideMax(parseInt(target.val))
     }
     target = cookies.find(x => x.key === 'syncSize')
     if (target) {

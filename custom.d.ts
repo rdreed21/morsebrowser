@@ -30,19 +30,8 @@ declare module '*.svg' {
     export = toWav
   }
 
-// TypeScript 5.x requires an explicit namespace for ko.Observable<T> etc.
-// @types/knockout uses KnockoutObservable<T> global interfaces without a namespace,
-// so we bridge the gap here.
-declare namespace ko {
-  type Observable<T> = KnockoutObservable<T>
-  type Computed<T> = KnockoutComputed<T>
-  type PureComputed<T> = KnockoutComputed<T>
-  type ObservableArray<T> = KnockoutObservableArray<T>
-  // Used as a cast target for .extend() calls with custom extender keys
-  type ObservableExtenderOptions<T> = { [key: string]: any }
-}
-
-// Allow assigning custom extenders to ko.extenders (saveCookie, showingChange, etc.)
-interface KnockoutExtenders {
-  [key: string]: (target: any, option: any) => any
-}
+  declare module 'xml2js' {
+    export interface Options {
+      [key: string]: any
+    }
+  }

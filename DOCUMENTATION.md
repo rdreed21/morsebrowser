@@ -52,7 +52,7 @@ MorseBrowser is a **browser-based Morse code practice tool** built for the Long 
 - Adjust speed (WPM), tone frequency (Hz), volume, spacing, and noise background
 - Track practice sessions with word cards showing progress
 - Shuffle, repeat, or advance through practice sets
-- Persist all preferences across sessions via browser cookies/localStorage
+- Persist all preferences across sessions via localStorage, with migration from legacy browser cookies
 
 The app is intentionally built with **accessible, "ham-tinkerer-friendly" code** — no server requirement. The UI is **React**; core logic lives in `MorseViewModel` with custom observables. It runs entirely in the browser from static files.
 
@@ -70,7 +70,7 @@ The app is intentionally built with **accessible, "ham-tinkerer-friendly" code**
 | Transpiler | Babel | 7.x |
 | Audio | Web Audio API (browser built-in) | — |
 | Speech | EasySpeech (wrapper) | 2.3.1 |
-| State | js-cookie + localStorage | 3.0.1 |
+| State | localStorage + js-cookie migration fallback | 3.0.1 |
 | RSS | rss-parser | 3.12.0 |
 | Noise | pink-noise-node, white-noise-node, brown-noise-node | — |
 | Linting | ESLint + @typescript-eslint | — |
@@ -212,7 +212,7 @@ This is the **central hub** of the application. It is instantiated once in `src/
 **Initialisation sequence:**
 1. Loads `licwdefaults.json` config
 2. Instantiates Settings, LessonPlugin, MorseVoice, RssPlugin
-3. Restores cookies (saved class, lesson, WPM, etc.)
+3. Restores saved localStorage/cookie-migrated settings (saved class, lesson, WPM, etc.)
 4. React mounts under `#react-root`; `MorseContext` attaches subscriptions to observables the UI reads
 
 ---
@@ -309,12 +309,11 @@ Settings are organised into four groups:
 | `settings.ts` | Aggregates all groups |
 | `morseSettingsHandler.ts` | Applies setting changes to the player |
 
-Each setting follows the **cookie handler pattern**:
+Persisted settings restore through the **cookie handler pattern**:
 ```typescript
 interface ICookieHandler {
-  save(): void;       // writes current value to cookie
-  load(): void;       // reads cookie and restores value
-  getKey(): string;   // unique cookie name
+  handleCookies(cookies: CookieInfo[]): void
+  handleCookie(cookie: string): void
 }
 ```
 
@@ -676,20 +675,20 @@ The layout is implemented in **React** (see `src/morse/components/app/AppContent
 
 ## 12. State Persistence
 
-User preferences persist across browser sessions via two mechanisms:
+User preferences persist across browser sessions via localStorage, with cookies retained as a legacy migration fallback:
 
 | Mechanism | What's stored |
 |-----------|--------------|
-| **Cookies (js-cookie)** | WPM, FWPM, frequency, volume, selected class, selected lesson, letter group, voice settings |
-| **localStorage** | Dark mode preference (`theme: "dark"` or `"light"`) |
+| **localStorage** | WPM, FWPM, frequency, volume, selected class, selected lesson, letter group, voice settings, dark mode preference |
+| **Cookies (js-cookie)** | Legacy values read once when a localStorage key is missing |
 
-**Cookie naming pattern:** Each setting has a unique key, e.g.:
-- `licw_wpm` → current WPM
-- `licw_class` → selected class ("BC1")
-- `licw_display` → selected lesson display name
-- `licw_lettergroup` → selected letter group
+**Storage key examples:**
+- `wpm` → current WPM
+- `lesson_selectedClass` → selected class ("BC1")
+- `lesson_selectedLesson` → selected lesson display name
+- `lesson_letterGroup` → selected letter group
 
-**On load:** The ViewModel calls each handler's `.load()` method, which reads the cookie and restores the observable value before the React tree reads initial state via `MorseContext`.
+**On load:** The ViewModel calls `MorseCookies.loadCookiesOrDefaults()`, which reads localStorage first, migrates missing values from legacy cookies, and restores observable values before the React tree reads initial state via `MorseContext`.
 
 ---
 
