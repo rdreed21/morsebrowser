@@ -2,7 +2,8 @@ import { useMorse } from '../../context/MorseContext'
 import { SimpleImage } from '../morseImage/SimpleImage'
 
 export function BasicSettings () {
-  const { vm, speed, volume, morseLoadImages } = useMorse()
+  const { vm, speed, lessons, volume, morseLoadImages } = useMorse()
+  const userPresetActive = !!lessons.selectedSettingsPreset?.isDummy
   const lockSrc = morseLoadImages?.getSrc('lockImage')
   const unlockSrc = morseLoadImages?.getSrc('unlockImage')
   const volumeSrc = morseLoadImages?.getSrc('volumeImage')
@@ -23,6 +24,7 @@ export function BasicSettings () {
             className="form-control form-control-sm"
             style={{ width: 80, display: speed.variableSpeedDisplay ? 'none' : '' }}
             min={1}
+            disabled={!userPresetActive}
             value={speed.wpm}
             onChange={e => vm.settings.speed.wpm(Number(e.target.value))}
           />
@@ -42,8 +44,8 @@ export function BasicSettings () {
           <label
             htmlFor="trueWpm"
             className="form-label mb-1 small fw-semibold text-secondary"
-            style={{ cursor: 'pointer' }}
-            onClick={() => vm.settings.speed.syncWpm(!speed.syncWpm)}
+            style={{ cursor: userPresetActive ? 'pointer' : 'default' }}
+            onClick={() => userPresetActive && vm.settings.speed.syncWpm(!speed.syncWpm)}
           >
             Effective Speed (FWPM)&nbsp;
             <input
@@ -63,7 +65,7 @@ export function BasicSettings () {
             style={{ width: 80, display: speed.variableSpeedDisplay ? 'none' : '' }}
             min={1}
             max={speed.trueWpm}
-            disabled={speed.syncWpm}
+            disabled={speed.syncWpm || !userPresetActive}
             value={speed.fwpm}
             onChange={e => vm.settings.speed.fwpm(Number(e.target.value))}
           />
