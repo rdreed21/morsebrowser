@@ -125,6 +125,7 @@ export class MorseShortcutKeys {
     })
 
     const changeFarnsworth = (x: number) => {
+      if (!mv.lessons.selectedSettingsPreset().isDummy) return
       const newWpm = parseInt(mv.settings.speed.wpm() as any) + x
       const newFwpm = parseInt(mv.settings.speed.fwpm() as any) + x
       if (newWpm < 1 || newFwpm < 1) {

@@ -57,16 +57,9 @@ export default class SpeedSettings implements ICookieHandler {
 
     this.fwpm = writableComputed({
       read: () => {
-        if (!this.syncWpm()) {
-          if (parseInt(this.trueFwpm() as any) <= parseInt(this.trueWpm() as any)) {
-            return this.trueFwpm()
-          } else {
-            return this.trueWpm()
-          }
-        } else {
-          this.trueFwpm(this.trueWpm())
-          return this.trueFwpm()
-        }
+        const fwpm = parseInt(this.trueFwpm() as any)
+        const wpm = parseInt(this.trueWpm() as any)
+        return this.syncWpm() ? wpm : Math.min(fwpm, wpm)
       },
       write: (value:any) => {
         if (parseInt(value) <= parseInt(this.trueWpm() as any)) {
@@ -74,6 +67,11 @@ export default class SpeedSettings implements ICookieHandler {
         }
       }
     }, [this.syncWpm, this.trueFwpm, this.trueWpm])
+
+    // When sync is re-enabled, snap trueFwpm to the current trueWpm.
+    this.syncWpm.subscribe((v: boolean) => {
+      if (v) this.trueFwpm(this.trueWpm())
+    })
 
     this.variableSpeedDisplay = computed(() => {
       return !!(this.speedInterval() && this.intervalTimingsText() && vm.playerPlaying())
