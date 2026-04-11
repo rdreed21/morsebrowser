@@ -43,7 +43,7 @@ export function Header () {
           </div>
           <section id="credits-and-info" title="Credits and additional information" aria-label="Credits and additional information">
             <span title="Contributor info" id="contributor-info">
-              by KN4YRM with assistance from AB5TN, KN6WKV, N1CC, VE3QBZ, VK5PL, WO6W, and W4EMB
+              by KN4YRM with assistance from AB5TN, KN6WKV, N1CC, VE3QBZ, VK5PL, WO6W, W4EMB, and KQ4NKF
             </span>
             <span>
               Inspired by and adapted from the{' '}
