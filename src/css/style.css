@@ -45,8 +45,23 @@ noiseaccordion {
     width: 1px;
 }
 
+/* ===================== LAYOUT ===================== */
+.app-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.working-textarea {
+    min-height: 3.5rem;
+    max-height: 12rem;
+    resize: vertical;
+    field-sizing: content;
+}
+
 section:last-of-type {
-    padding-bottom: 2rem;
+    padding-bottom: 0.75rem;
 }
 
 /* ===================== HEADER BANNER ===================== */

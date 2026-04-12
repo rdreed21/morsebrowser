@@ -13,8 +13,8 @@ export function AppContent () {
   const { accessibilityAnnouncement } = useMorse()
 
   return (
-    <div className="container-fluid" style={{ overflowY: 'auto' }}>
-      <div className="row gy-2 row-cols-1">
+    <div className="app-container" style={{ overflowY: 'auto' }}>
+      <div className="row gy-1 row-cols-1">
 
         <Header />
 
@@ -39,7 +39,6 @@ export function AppContent () {
 
         <div className="col">
           <KeyboardShortcuts />
-          <br /><br />
         </div>
 
       </div>
