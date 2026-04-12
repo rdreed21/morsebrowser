@@ -49,29 +49,116 @@ section:last-of-type {
     padding-bottom: 2rem;
 }
 
-#contributor-info {
-    display: block;
-    margin-bottom: .5rem;
-    font-size: calc(1.3rem + .6vw);
+/* ===================== HEADER BANNER ===================== */
+.header-banner {
+    padding: 1rem 0 0.75rem;
+    border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+    margin-bottom: 0.5rem;
+}
+
+.header-banner-inner {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.header-title-block {
+    flex: 1;
+    min-width: 0;
+}
+
+.header-title {
     font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.header-tagline {
+    margin: 0.15rem 0 0;
+    font-size: 0.95rem;
+    color: var(--bs-secondary-color, #6c757d);
+    font-weight: 400;
+}
+
+.header-tagline a {
     font-weight: 500;
-    line-height: 1.2;
 }
 
-#credits-and-info>span {
-    display: block;
-    margin-top: 0;
-    margin-bottom: .5rem;
+.header-dev-warning {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--bs-warning-text-emphasis, #664d03);
+    background: var(--bs-warning-bg-subtle, #fff3cd);
+    border: 1px solid var(--bs-warning-border-subtle, #ffe69c);
+    border-radius: 0.375rem;
+}
+
+#credits-and-info {
+    margin-top: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.15rem 1rem;
+    font-size: 0.8rem;
+    color: var(--bs-secondary-color, #6c757d);
+    line-height: 1.5;
+}
+
+#contributor-info {
+    width: 100%;
+    font-size: 0.8rem;
     font-weight: 500;
-    font-size: 1rem;
-    line-height: 1.2;
-    box-sizing: border-box;
+    color: var(--bs-secondary-color, #6c757d);
+    margin-bottom: 0;
+    line-height: 1.5;
 }
 
-#credits-and-info>span#contributor-info, #credits-and-info>span.warning {
-    font-size: calc(1.3rem + .6vw);
+.header-attribution {
+    font-size: 0.8rem;
 }
 
+.header-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.header-link-sep {
+    color: var(--bs-tertiary-color, #adb5bd);
+    user-select: none;
+}
+
+.header-github-icon {
+    height: 13px;
+    width: 13px;
+    margin-left: 2px;
+    vertical-align: -1px;
+}
+
+#version-info {
+    font-size: 0.75rem;
+    color: var(--bs-tertiary-color, #adb5bd);
+    font-weight: 400;
+}
+
+@media (max-width: 575.98px) {
+    .header-banner-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .header-title {
+        font-size: 1.4rem;
+    }
+}
+
+/* ===================== KEYBOARD SHORTCUTS ===================== */
 #keyboard-shortcuts table thead tr {
     background-color: var(--theme-table-header-bg, #e7f1ff);
 }
@@ -83,16 +170,6 @@ section:last-of-type {
 
 #keyboard-shortcuts table td.key {
     text-align: right;
-}
-
-@media (min-width: 1200px) {
-    #contributor-info {
-        font-size: 1.75rem;
-    }
-
-    #credits-and-info>span#contributor-info, #credits-and-info>span.warning {
-        font-size: 1.75rem;
-    }
 }
 
 /* ===================== LOADING SPINNER ===================== */
