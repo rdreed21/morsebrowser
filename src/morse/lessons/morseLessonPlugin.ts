@@ -630,6 +630,19 @@ export default class MorseLessonPlugin implements ICookieHandler {
     }
   }
 
+  /**
+   * Word lists set `newlineChunking` in wordlists.json (shown as Keep Lines).
+   * Preset JSON also includes keepLines; after a preset loads, that value would
+   * overwrite the word-list flag. Re-apply the current lesson's value whenever
+   * preset application finishes.
+   */
+  syncNewlineChunkingFromSelectedLesson = () => {
+    const d = this.selectedDisplay()
+    if (d && !d.isDummy && typeof d.newlineChunking === 'boolean') {
+      this.morseSettings.misc.newlineChunking(d.newlineChunking)
+    }
+  }
+
   setDisplaySelected = (display: any, skipPresets = false, fromClick = '') => {
     if (!display.isDummy) {
       if (this.displaysInitialized) {
@@ -668,6 +681,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
       settingsInfo.ignoreCookies = true
       settingsInfo.lockoutCookieChanges = true
       settingsInfo.keyBlacklist = ['ditFrequency', 'dahFrequency', 'syncFreq', 'cardFontPx', 'preSpace', 'volume', 'voiceVolume']
+      settingsInfo.afterSettingsChange = () => {
+        this.syncNewlineChunkingFromSelectedLesson()
+      }
 
       const applyLegacyMixin = () => {
         if (!LegacyMixinJson || !LegacyMixinJson.morseSettings) return

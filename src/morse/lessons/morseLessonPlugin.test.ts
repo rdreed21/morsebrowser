@@ -81,7 +81,7 @@ function mountPlugin () {
     vm as never
   )
   plugin.wordLists(fileOptionsFixture as never[])
-  return { plugin, setText, vm }
+  return { plugin, setText, vm, morseSettings }
 }
 
 /**
@@ -119,6 +119,17 @@ describe('MorseLessonPlugin', () => {
     const d = plugin.displays()
     expect(d).toHaveLength(1)
     expect(d[0].isDummy).toBe(true)
+  })
+
+  it('syncNewlineChunkingFromSelectedLesson applies wordlist newlineChunking (Keep Lines)', () => {
+    const { plugin, morseSettings } = mountPlugin()
+    plugin.selectedDisplay({ display: 'L', fileName: 'f.txt', isDummy: false, newlineChunking: true })
+    plugin.syncNewlineChunkingFromSelectedLesson()
+    expect(morseSettings.misc.newlineChunking).toHaveBeenCalledWith(true)
+    vi.mocked(morseSettings.misc.newlineChunking).mockClear()
+    plugin.selectedDisplay({ display: 'L', fileName: 'f.txt', isDummy: false, newlineChunking: false })
+    plugin.syncNewlineChunkingFromSelectedLesson()
+    expect(morseSettings.misc.newlineChunking).toHaveBeenCalledWith(false)
   })
 
   it('setDisplaySelected loads word list when displays are initialized', () => {
