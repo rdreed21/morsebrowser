@@ -12,6 +12,8 @@ import * as toWav from 'audiobuffer-to-wav'
 export default class SmoothedSoundsPlayer implements ISoundMaker {
   sourceEnded:boolean = true
   sourceEndedCallBack: any
+  /** Cleared on forceStop so a second Zero Beat click stops audio immediately. */
+  playbackEndTimer: ReturnType<typeof setTimeout> | null = null
   noisePlaying:boolean = false
   lastNoiseType = 'off'
   scaledVolume: number
@@ -128,6 +130,10 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
   }
 
   doPlay = async (wavInfo:CreatedWav | null, scaledVolume: number, config:SoundMakerConfig, onEnded: any) => {
+    if (this.playbackEndTimer != null) {
+      clearTimeout(this.playbackEndTimer)
+      this.playbackEndTimer = null
+    }
     this.scaledVolume = scaledVolume
     this.wavInfo = wavInfo
     this.config = config
@@ -147,7 +153,8 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
 
     // if its not an offline, we know by the endtime when it will end
     if (!this.config.offline) {
-      setTimeout(() => {
+      this.playbackEndTimer = setTimeout(() => {
+        this.playbackEndTimer = null
         const closeOutCallback = () => {
           this.sourceEnded = true
           this.sourceEndedCallBack()
@@ -207,6 +214,10 @@ export default class SmoothedSoundsPlayer implements ISoundMaker {
   }
 
   forceStop = (pauseCallBack: () => void, killNoise: boolean) => {
+    if (this.playbackEndTimer != null) {
+      clearTimeout(this.playbackEndTimer)
+      this.playbackEndTimer = null
+    }
     if (!this.ssContext) {
       pauseCallBack()
     } else {

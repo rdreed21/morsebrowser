@@ -551,15 +551,17 @@ export class MorseViewModel {
   }
 
   testTone = () => {
-    console.log(`testTone clidked playing status ${this.testTonePlaying}`)
     if (!this.testTonePlaying) {
       const config = this.getMorseStringToWavBufferConfig('T', true)
       config.isToneTest = true
       this.testTonePlaying = true
+      if (this.testToneFlagHandle) {
+        clearTimeout(this.testToneFlagHandle)
+      }
       this.morseWordPlayer.play(config, (fromVoiceOrTrail: any) => {})
       this.testToneFlagHandle = setTimeout(() => {
         this.testTonePlaying = false
-      }, 10000)
+      }, config.testToneDuration)
     } else {
       clearTimeout(this.testToneFlagHandle)
       this.morseWordPlayer.pause(() => {
