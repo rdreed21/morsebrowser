@@ -39,12 +39,16 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "commitlint": "commitlint --edit",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
     "@babel/eslint-parser": "^7.28.6",
     "@babel/preset-env": "^7.29.2",
+    "@commitlint/cli": "^20.5.0",
+    "@commitlint/config-conventional": "^20.5.0",
     "@types/bootstrap": "^5.2.10",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",
@@ -62,6 +66,7 @@
     "eslint-webpack-plugin": "^3.1.1",
     "glob": "^13.0.6",
     "html-loader": "^3.1.0",
+    "husky": "^9.1.7",
     "mini-css-extract-plugin": "^2.6.0",
     "purgecss-webpack-plugin": "^8.0.0",
     "ts-loader": "^9.5.4",
