@@ -74,7 +74,7 @@ export function WorkingText () {
         This can be set manually or selected using the options found in the LICW Lessons section.
       </p>
       <textarea
-        className="form-control"
+        className="form-control working-textarea"
         aria-label="Text"
         disabled={!showRaw}
         value={showingText}
