@@ -179,7 +179,7 @@ export function MoreSettingsAccordion () {
             {/* Cards visible toggle — after numeric fields (reading order / layout) */}
             <div>
               <input type="checkbox" className="btn-check" autoComplete="off"
-                id="btncheckcardsvisible" title="Toggles card visibility" aria-label="Cards"
+                id="btncheckcardsvisible" title="Toggles card visibility" aria-label="Show Cards"
                 checked={cardsVisible}
                 onChange={e => vm.cardsVisible(e.target.checked)} />
               <label className="btn btn-outline-primary" htmlFor="btncheckcardsvisible" aria-hidden="true">
