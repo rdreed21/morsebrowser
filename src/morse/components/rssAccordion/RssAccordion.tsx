@@ -9,12 +9,12 @@ export function RssAccordion () {
 
   return (
     <>
-      <h2 className="accordion-header" id="headingOne">
+      <h2 className="accordion-header" id="headingRssExperimental">
         <button
           className={`accordion-button${isOpen ? '' : ' collapsed'}`}
           type="button"
           aria-expanded={isOpen ? 'true' : 'false'}
-          aria-controls="collapseOne"
+          aria-controls="collapseRssExperimental"
           id="btnRssAccordionButton"
           onClick={() => setIsOpen(o => !o)}
         >
@@ -34,7 +34,7 @@ export function RssAccordion () {
           </span>
         </button>
       </h2>
-      <div id="collapseOne" className={`accordion-collapse${isOpen ? ' show' : ' collapse'}`} aria-labelledby="headingOne">
+      <div id="collapseRssExperimental" className={`accordion-collapse${isOpen ? ' show' : ' collapse'}`} aria-labelledby="headingRssExperimental">
         <div className="accordion-body">
           <div className="row row-cols-3 gy-2 gx-2">
             <div className="col-auto">

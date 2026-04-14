@@ -10,6 +10,7 @@ import { MorseSettings } from './settings/settings'
 import { MorseVoice } from './voice/MorseVoice'
 import { FlaggedWords } from './flaggedWords/flaggedWords'
 import { NoiseConfig } from './player/soundmakers/NoiseConfig'
+import { effectiveNoiseType } from './player/soundmakers/noisePlayback'
 import MorseRssPlugin from './rss/morseRssPlugin'
 import { RssConfig } from './rss/RssConfig'
 import { CardBufferManager } from './utils/cardBufferManager'
@@ -129,12 +130,6 @@ export class MorseViewModel {
       this.rss.rssEnabled(true)
     }
 
-    // check for noise feature turned on
-    if (GeneralUtils.getParameterByName('noiseEnabled')) {
-      this.noiseEnabled(GeneralUtils.getParameterByName('noiseEnabled') === 'true')
-    }
-
-    // check for noise feature turned on
     if (GeneralUtils.getParameterByName('morseDisabled')) {
       this.morseDisabled(GeneralUtils.getParameterByName('morseDisabled') === 'true')
     }
@@ -148,6 +143,17 @@ export class MorseViewModel {
     setTimeout(() => { this.morseVoice.initEasySpeech() }, 5000)
 
     this.loadDefaultsAndCookieSettings()
+
+    // After persisted settings: optional URL override for background noise (?noiseEnabled=true|false)
+    const noiseUrl = GeneralUtils.getParameterByName('noiseEnabled')
+    if (noiseUrl !== null) {
+      if (noiseUrl === 'true' && this.noiseType() === 'off') {
+        this.noiseType('white')
+      } else if (noiseUrl === 'false') {
+        this.noiseType('off')
+      }
+    }
+    this.noiseEnabled(effectiveNoiseType(this.noiseType()) !== 'off')
 
     // initialize the wordlist
     this.lessons.initializeWordList()
@@ -324,11 +330,10 @@ export class MorseViewModel {
       this.morseWordPlayer.setNoiseVolume(newValue)
     })
 
-    // noiseType → audio player
-    this.noiseType.subscribe(newValue => {
-      const config = this.getMorseStringToWavBufferConfig('')
-      config.noise.type = this.noiseEnabled() ? newValue : 'off'
-      this.morseWordPlayer.setNoiseType(config)
+    // noiseType → audio player (noiseEnabled mirrors whether type is a real noise colour)
+    this.noiseType.subscribe(() => {
+      this.noiseEnabled(effectiveNoiseType(this.noiseType()) !== 'off')
+      this.morseWordPlayer.setNoiseType(this.getMorseStringToWavBufferConfig(''))
     })
 
     // rawText → undo shuffle if text changed externally
@@ -529,7 +534,7 @@ export class MorseViewModel {
     config.xtraWordSpaceDits = (parseInt(this.xtraWordSpaceDits() as any) - 1) * 7
     config.volume = parseInt(this.volume() as any)
     config.noise = new NoiseConfig()
-    config.noise.type = this.noiseEnabled() ? this.noiseType() : 'off'
+    config.noise.type = effectiveNoiseType(this.noiseType())
     config.noise.volume = parseInt(this.noiseVolume() as any)
     config.playerPlaying = this.playerPlaying()
     config.riseTimeConstant = parseFloat(this.riseTimeConstant() as any)

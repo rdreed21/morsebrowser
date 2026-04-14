@@ -13,7 +13,8 @@ export default class MorseRssPlugin implements ICookieHandler {
   rssCookieWhiteList = ['rssFeedUrl', 'proxydUrl', 'rssPlayMins', 'rssPollMins']
   rssTitlesQueue:ObservableArray<RssTitle> = observableArray()
   rssPlayOn:Observable<boolean> = observable(false)
-  lastRSSPoll:Observable<number> = observable(new Date(1900, 0, 0).getMilliseconds())
+  /** Epoch ms of last successful poll; `0` means never polled (first wait passes immediately). */
+  lastRSSPoll:Observable<number> = observable(0)
   rssPlayTimerHandle: any = null
   rssPollTimerHandle: any = null
   rssMinsToWait:Observable<number> = observable(-1)
@@ -44,7 +45,6 @@ export default class MorseRssPlugin implements ICookieHandler {
         waitingText += Math.round(60 * minsToWait).toString() + ' sec'
       }
     }
-    console.log(waitingText)
     this.rssPlayWaitingBadgeText(waitingText)
     return (this.rssPlayOn() ? 'Stop' : 'Play') + ' RSS (' + this.unreadRssCount() + ')' + waitingText
   }, [this.rssMinsToWait, this.rssPlayOn, this.unreadRssCount])
@@ -104,7 +104,6 @@ export default class MorseRssPlugin implements ICookieHandler {
         clearTimeout(this.rssPlayTimerHandle)
       }
     }
-    document.getElementById('btnRssAccordionButton')!.click()
   }
 
   doRSSCallback = () => {

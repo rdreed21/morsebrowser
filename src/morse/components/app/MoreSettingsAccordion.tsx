@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 import { useMorse } from '../../context/MorseContext'
+import { NoiseAccordion } from '../noiseAccordion/NoiseAccordion'
+import { RssAccordion } from '../rssAccordion/RssAccordion'
 
 function SubHeading ({ children }: { children: ReactNode }) {
   return (
@@ -425,6 +427,21 @@ export function MoreSettingsAccordion () {
                   )}
                 </>}
 
+              </div>
+
+              <hr className="my-3" />
+              <SubHeading>Experimental</SubHeading>
+              <p className="text-body-secondary small mb-2">
+                Background noise mixes under Morse audio. RSS pulls headlines through a CORS proxy you run locally
+                or host yourself (default proxy URL is for development only).
+              </p>
+              <div className="accordion accordion-flush border rounded overflow-hidden" id="accordionAdvancedExperimental">
+                <div className="accordion-item">
+                  <NoiseAccordion />
+                </div>
+                <div className="accordion-item">
+                  <RssAccordion />
+                </div>
               </div>
             </div>
           )}
