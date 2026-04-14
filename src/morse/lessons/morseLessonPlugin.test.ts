@@ -64,12 +64,28 @@ const fileOptionsFixture = [
 function mountPlugin () {
   stubBrowserGlobals()
   const setText = vi.fn()
-  const getTimeEstimate = vi.fn(() => ({ timeCalcs: { totalTime: 0 } }))
+  const getTimeEstimate = vi.fn(() => ({
+    timeCalcs: { totalTime: 0 },
+    timingUnits: { calculatedFWUnitsMs: 200, wordSpaceMultiplier: 7, ditUnitMultiPlier: 1 }
+  }))
   const vm = {
     morseWordPlayer: { getTimeEstimate },
     cachedShuffle: false,
     shuffleWords: vi.fn(),
-    currentSerializedSettings: null
+    currentSerializedSettings: null,
+    numberOfRepeats: vi.fn(() => 0),
+    cardSpace: vi.fn(() => 0),
+    preSpace: vi.fn(() => 0),
+    xtraWordSpaceDits: vi.fn(() => 1),
+    trailReveal: vi.fn(() => false),
+    trailPreDelay: vi.fn(() => 0),
+    trailPostDelay: vi.fn(() => 0),
+    morseVoice: {
+      voiceEnabled: vi.fn(() => false),
+      manualVoice: vi.fn(() => false),
+      voiceThinkingTime: vi.fn(() => 0),
+      speakFirstAdditionalWordspaces: vi.fn(() => 0)
+    }
   }
   const morseSettings = {
     misc: { newlineChunking: vi.fn() }
