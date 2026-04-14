@@ -439,9 +439,9 @@ export default class MorseLessonPlugin implements ICookieHandler {
       //  2. +1 trailing word space per complete play set    (trailingSpaceMs × repeatsMultiplier)
       //  3. empty subpart plays from additionalWordSpaces   (wordSpaceMs per empty × repeats × N)
       //  4. per-card overhead (cardSpace, voiceThinking…)   (perCardOverheadMs × N)
-      const realTimeMs = (est.timeCalcs.totalTime + trailingSpaceMs) * repeatsMultiplier
-        + wordCount * repeatsMultiplier * additionalWordSpaces * wordSpaceMs
-        + wordCount * perCardOverheadMs
+      const realTimeMs = (est.timeCalcs.totalTime + trailingSpaceMs) * repeatsMultiplier +
+        wordCount * repeatsMultiplier * additionalWordSpaces * wordSpaceMs +
+        wordCount * perCardOverheadMs
       seconds = realTimeMs / 1000
     } while (seconds < controlTime)
 
