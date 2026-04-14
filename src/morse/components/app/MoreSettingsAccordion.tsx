@@ -126,19 +126,7 @@ export function MoreSettingsAccordion () {
 
           {/* ── Cards ────────────────────────────────────────── */}
           <SubHeading>Cards</SubHeading>
-          <div className="d-flex flex-wrap gap-2 align-items-start">
-
-            {/* Cards visible toggle */}
-            <div>
-              <input type="checkbox" className="btn-check" autoComplete="off"
-                id="btncheckcardsvisible" title="Toggles card visibility" aria-label="Cards"
-                checked={cardsVisible}
-                onChange={e => vm.cardsVisible(e.target.checked)} />
-              <label className="btn btn-outline-primary" htmlFor="btncheckcardsvisible" aria-hidden="true">
-                <img src={img('grid3x3gapImage')} alt="" />&nbsp;Show Cards&nbsp;
-                <img src={checkOrCircle(cardsVisible)} alt="" />
-              </label>
-            </div>
+          <div className="d-flex flex-wrap gap-2 align-items-end">
 
             {/* Card size */}
             <div>
@@ -186,6 +174,18 @@ export function MoreSettingsAccordion () {
                   value={trailFinal}
                   onChange={e => vm.trailFinal(Number(e.target.value))} />
               </div>
+            </div>
+
+            {/* Cards visible toggle — after numeric fields (reading order / layout) */}
+            <div>
+              <input type="checkbox" className="btn-check" autoComplete="off"
+                id="btncheckcardsvisible" title="Toggles card visibility" aria-label="Show Cards"
+                checked={cardsVisible}
+                onChange={e => vm.cardsVisible(e.target.checked)} />
+              <label className="btn btn-outline-primary" htmlFor="btncheckcardsvisible" aria-hidden="true">
+                <img src={img('grid3x3gapImage')} alt="" />&nbsp;Show Cards&nbsp;
+                <img src={checkOrCircle(cardsVisible)} alt="" />
+              </label>
             </div>
 
           </div>
