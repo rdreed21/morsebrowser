@@ -342,6 +342,25 @@ export default class MorseLessonPlugin implements ICookieHandler {
     const controlTime = (this.ifOverrideTime() || ifCustom) ? (this.overrideMins() * 60) : data.practiceSeconds
     const minWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMin() : data.minWordSize
     const maxWordSize = (this.ifOverrideMinMax() || ifCustom) ? this.overrideMax() : data.maxWordSize
+
+    // Compute per-card playback overhead not captured by timeCalcs.totalTime.
+    // These factors cause actual session wall-clock time to exceed the morse-only estimate.
+    const vm = this.morseViewModel
+    const rawRepeats = parseInt(vm.numberOfRepeats() as any)
+    const repeatsMultiplier = rawRepeats === 0 ? 1 : rawRepeats + 1
+    const cardSpaceMs = vm.cardSpace() * 1000
+    const voiceThinkingMs = (vm.morseVoice?.voiceEnabled?.() && !vm.morseVoice?.manualVoice?.())
+      ? (vm.morseVoice?.voiceThinkingTime?.() ?? 0) * 1000
+      : 0
+    const trailDelayMs = (vm.trailReveal?.() ?? false)
+      ? ((vm.trailPreDelay?.() ?? 0) + (vm.trailPostDelay?.() ?? 0)) * 1000
+      : 0
+    const perCardOverheadMs = cardSpaceMs + voiceThinkingMs + trailDelayMs
+    // speakFirstAdditionalWordspaces inserts empty subpart plays (each = 1 word space) after
+    // every word play. Applies regardless of whether speakFirst/voice is enabled.
+    const additionalWordSpaces = parseInt(vm.morseVoice?.speakFirstAdditionalWordspaces?.() as any) || 0
+    // xtraWordSpaceDits (UI val - 1) * 7 dits of extra silence appended to each play
+    const xtraWordSpaceDitsConfig = Math.max(0, (parseInt(vm.xtraWordSpaceDits() as any) - 1) * 7)
     if (
       chars.length === 0 ||
       !Number.isFinite(controlTime) ||
@@ -405,7 +424,25 @@ export default class MorseLessonPlugin implements ICookieHandler {
       str += seconds > 0 ? (' ' + word.toUpperCase()) : word.toUpperCase()
 
       const est = this.getTimeEstimate(str)
-      seconds = est.timeCalcs.totalTime / 1000
+      const wordCount = str.trim().split(/\s+/).length
+
+      // Word space appended after every play by SmoothedSoundsPlayer.getEndTime():
+      //   wordSpaceTime + xtraWordSpaceDitsTime (both in Farnsworth units)
+      // totalTime already contains (wordCount-1) of these; actual playback has wordCount.
+      // Adding +1 wordspace corrects for that one extra trailing space per play set.
+      const fwUnitsMs = est.timingUnits.calculatedFWUnitsMs
+      const wordSpaceMs = est.timingUnits.wordSpaceMultiplier * fwUnitsMs
+      const trailingSpaceMs = wordSpaceMs + xtraWordSpaceDitsConfig * fwUnitsMs
+
+      // Estimate wall-clock time accounting for all playback overheads:
+      //  1. morse signal × repeats                          (totalTime × repeatsMultiplier)
+      //  2. +1 trailing word space per complete play set    (trailingSpaceMs × repeatsMultiplier)
+      //  3. empty subpart plays from additionalWordSpaces   (wordSpaceMs per empty × repeats × N)
+      //  4. per-card overhead (cardSpace, voiceThinking…)   (perCardOverheadMs × N)
+      const realTimeMs = (est.timeCalcs.totalTime + trailingSpaceMs) * repeatsMultiplier
+        + wordCount * repeatsMultiplier * additionalWordSpaces * wordSpaceMs
+        + wordCount * perCardOverheadMs
+      seconds = realTimeMs / 1000
     } while (seconds < controlTime)
 
     this.setText(str)
