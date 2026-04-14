@@ -9,7 +9,11 @@
       "target": "es2020",
       "jsx": "react-jsx",
       "allowJs": true,
-      "moduleResolution": "node",
+      "moduleResolution": "bundler",
+      "baseUrl": ".",
+      "paths": {
+        "easy-speech": ["./node_modules/easy-speech/dist/index.d.ts"]
+      },
       "allowSyntheticDefaultImports": true,
       "resolveJsonModule": true,
       "allowUmdGlobalAccess": true
