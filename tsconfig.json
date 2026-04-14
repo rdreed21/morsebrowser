@@ -9,7 +9,8 @@
       "target": "es2020",
       "jsx": "react-jsx",
       "allowJs": true,
-      "moduleResolution": "node",
+      "moduleResolution": "bundler",
+      "resolvePackageJsonExports": false,
       "allowSyntheticDefaultImports": true,
       "resolveJsonModule": true,
       "allowUmdGlobalAccess": true
