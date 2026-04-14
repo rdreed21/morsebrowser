@@ -1,6 +1,6 @@
 import { observable, Observable, computed, observableArray, ObservableArray } from '../utils/observable'
 import { MorseVoiceInfo } from './MorseVoiceInfo'
-import EasySpeech, { Status } from 'easy-speech'
+import EasySpeech from 'easy-speech'
 import { MorseViewModel } from '../morse'
 import { ICookieHandler } from '../cookies/ICookieHandler'
 import { CookieInfo } from '../cookies/CookieInfo'
@@ -133,7 +133,7 @@ export class MorseVoice implements ICookieHandler {
       return
     }
 
-    const easySpeechStatus:Status = EasySpeech.status()
+    const easySpeechStatus = EasySpeech.status()
     let idx = 0
     let nameIdx = -1
     if ((easySpeechStatus as any).voices && (easySpeechStatus as any).voices.length) {

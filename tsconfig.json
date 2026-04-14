@@ -10,7 +10,10 @@
       "jsx": "react-jsx",
       "allowJs": true,
       "moduleResolution": "bundler",
-      "resolvePackageJsonExports": false,
+      "baseUrl": ".",
+      "paths": {
+        "easy-speech": ["./node_modules/easy-speech/dist/index.d.ts"]
+      },
       "allowSyntheticDefaultImports": true,
       "resolveJsonModule": true,
       "allowUmdGlobalAccess": true
