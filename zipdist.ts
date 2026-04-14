@@ -20,7 +20,7 @@ class TestMe {
     // zip has circular problem so we do it in stages
     // delete old directorty
     if (fs.existsSync(endDownLoadFolder)) {
-      fs.rmdirSync(endDownLoadFolder, { recursive: true })
+      fs.rmSync(endDownLoadFolder, { recursive: true, force: true })
     }
     // console.log('removed')
     await zip.zip(zipFromFolder, initialZipFile)
