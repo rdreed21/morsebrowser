@@ -119,9 +119,12 @@ export default class MorseRssPlugin implements ICookieHandler {
           parser.parseURL(this.proxydUrl() + this.rssFeedUrl().toString(), (err, feed) => {
             if (err) {
               this.lastRSSPoll(Date.now())
-              alert('rss error')
+              if (typeof globalThis.alert === 'function') {
+                globalThis.alert('rss error')
+              }
               this.rssPolling(false)
-              throw err
+              console.error('rss error', err)
+              return
             }
             feed.items.reverse().forEach((entry) => {
               if (!this.rssTitlesQueue().find(x => x.title === entry.title)) {
